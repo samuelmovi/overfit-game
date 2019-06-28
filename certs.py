@@ -1,5 +1,12 @@
 #!/usr/bin/env python
 
+'''
+Before executing, create the following folder on the repository's root:
+
+certificates/
+	client/
+	server/
+'''
 
 import os
 import shutil
