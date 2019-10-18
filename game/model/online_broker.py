@@ -6,8 +6,8 @@ import time
 class OnlineBroker:
 
 	mq = None
-	opponent = None
-	player = None
+	opponent = {}
+	player = {}
 	counter = 0
 	no_challenger = True
 	challenging = False
@@ -118,14 +118,15 @@ class OnlineBroker:
 			self.accept_challenge()
 
 	def accept_challenge(self):
-		self.player.online = 'accepted'
 		message = [self.opponent['sender'], json.dumps(self.player.get_stats())]
 		for i in range(len(message)):
 			message[i] = message[i].encode()
 		if self.mq.push_send_multi(message):
 			print('[broker] Challenged received and accepted!')
+			self.player.online = 'accepted'
 			return True
 		else:
+			self.player.online = 'available'
 			return False
 
 	def is_it_on(self):
@@ -144,7 +145,11 @@ class OnlineBroker:
 		message = [self.opponent['sender'], json.dumps(self.player.get_stats())]
 		for i in range(len(message)):
 			message[i] = message[i].encode()
-		return self.mq.push_send_multi(message)
+		if self.mq.push_send_multi(message) is True:
+			self.player.online = 'challenger'
+			return True
+		else:
+			return False
 
 	def check_challenge_response(self):
 		self.challenge_ap()
@@ -156,6 +161,8 @@ class OnlineBroker:
 			if message['sender'] == self.opponent['sender'] and message['online'] == 'accepted':
 				self.opponent = message
 				return True
+			else:
+				return False
 		else:
 			return False
 

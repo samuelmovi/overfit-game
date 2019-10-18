@@ -2,8 +2,8 @@ import unittest
 from unittest.mock import Mock
 import sys
 import os
-# sys.path.append(os.path.abspath(sys.path[0]) + '/../../')
-sys.path.append(os.path.abspath('../..'))
+# sys.path.append(os.path.abspath(sys.path[0]) + '/../../game/')
+sys.path.append(os.path.abspath('../../game/'))
 from model import board
 
 
@@ -16,6 +16,8 @@ class ColumnPatch:
 
 
 class TestBoard(unittest.TestCase):
+	
+	my_board = None
 
 	def __init__(self, *args, **kwargs):
 		super(TestBoard, self).__init__(*args, **kwargs)
@@ -30,6 +32,7 @@ class TestBoard(unittest.TestCase):
 		print("[#] Testing method: Board.add_row()")
 		# since a row is 7 figures the total count of the columns contents must be +7
 		first_total = 0
+		self.my_board = board.Board()
 		for column in self.my_board.columns:
 			first_total += column.occupancy()
 
