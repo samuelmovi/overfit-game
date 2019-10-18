@@ -1,6 +1,7 @@
 import pygame
 import os
 from pygame.locals import *
+from . import button
 
 
 FPS = 30  # frames per second to update the screen
@@ -8,68 +9,7 @@ W_WIDTH = 800  # width of the program's window, in pixels
 W_HEIGHT = 600  # height in pixels
 
 
-class MyButton(pygame.sprite.Sprite):
-	rect = None
-	surface = None
-
-	def __init__(self, font, text, text_color, bg_color):
-		self.surface = font.render(text, True, text_color, bg_color)
-		self.rect = self.surface.get_rect()
-
-	def set_coords(self, x, y):
-		self.rect.center = (x, y)
-
-
-class InputBox:
-
-	def __init__(self, x, y, w, h, text=''):
-		self.SMALLFONT = pygame.font.Font('freesansbold.ttf', 22)
-		self.rect = pygame.Rect(x, y, w, h)
-		grey = (100, 100, 100)
-		self.color = grey
-		self.text = text
-		self.txt_surface = self.SMALLFONT.render(self.text, True, self.color)
-		self.active = False
-
-	def handle_event(self, event):
-		if event.type == pygame.MOUSEBUTTONUP:
-			# If the user clicked on the input_box rect.
-			if self.rect.collidepoint(event.pos):
-				# Toggle the active variable.
-				self.active = not self.active
-			else:
-				self.active = False
-		if event.type == pygame.KEYDOWN:
-			if self.active:
-				if event.key == pygame.K_BACKSPACE:
-					if len(self.text) > 0:
-						self.text = self.text[:-1]
-						print("[#] Removing last character from input box: {}".format(self.text))
-						self.txt_surface = self.SMALLFONT.render(self.text, True, (0, 0, 0))
-				else:
-					self.text += event.unicode
-					print("[#] adding character to input box: {}".format(self.text))
-				# Re-render the text.
-				self.txt_surface = self.SMALLFONT.render(self.text, True, self.color)
-
-	def update(self):
-		# Resize the box if the text is too long.
-		width = max(200, self.txt_surface.get_width()+10)
-		self.rect.w = width
-
-	def draw(self, screen):
-		# blackout box
-		pygame.draw.rect(screen, (0, 0, 0), self.rect, 0)
-		# Blit the rect.
-		pygame.draw.rect(screen, self.color, self.rect, 2)
-		# Blit the text.
-		screen.blit(self.txt_surface, (self.rect.x+5, self.rect.y+5))
-
-	def get_text(self):
-		return self.text
-
-
-class MyView:
+class View:
 	#       R   G   B
 	GREY = (100, 100, 100)
 	# NAVYBLUE = ( 60, 60, 100)
@@ -86,47 +26,47 @@ class MyView:
 	base_dir = os.getcwd()
 
 	def __init__(self):
-		os.path.join(self.base_dir, 'resources/ball.png')
-		print('[#] Initiating View...')
 		self.screen = pygame.display.set_mode((W_WIDTH, W_HEIGHT))
+		
+		self.SMALLFONT = None
+		self.MEDIUMFONT = None
+		self.BIGFONT = None
+		self.ball = None
+		self.triangle_full = None
+		self.triangle_empty = None
+		self.square_full = None
+		self.square_empty = None
+		self.triangle_hole_complete = None
+		self.triangle_hole_full = None
+		self.triangle_hole_empty = None
+		self.square_hole_complete = None
+		self.square_hole_full = None
+		self.square_hole_empty = None
+		self.player_full = None
+		self.player_empty = None
+		self.fire1 = None
+		self.fire2 = None
+		self.fire3 = None
+		self.ray = None
+	
+	def set_up_fonts(self):
 		self.SMALLFONT = pygame.font.Font('freesansbold.ttf', 22)
 		self.MEDIUMFONT = pygame.font.Font('freesansbold.ttf', 28)
 		self.BIGFONT = pygame.font.Font('freesansbold.ttf', 34)
-
-		self.ball = pygame.image.load(os.path.join(self.base_dir, 'resources/ball.png'))
-		self.triangle_full = pygame.image.load(os.path.join(self.base_dir, 'resources/triangle-pink-full.png'))
-		self.triangle_empty = pygame.image.load(os.path.join(self.base_dir, 'resources/triangle-pink-empty.png'))
-		self.square_full = pygame.image.load(os.path.join(self.base_dir, 'resources/square-yellow-full.png'))
-		self.square_empty = pygame.image.load(os.path.join(self.base_dir, 'resources/square-yellow-empty.png'))
-		self.triangle_hole_complete = pygame.image.load(os.path.join(self.base_dir,
-																	 'resources/triangle-hole-green-complete.png'))
-		self.triangle_hole_full = pygame.image.load(os.path.join(self.base_dir, 'resources/triangle-hole-green-full.png'))
-		self.triangle_hole_empty = pygame.image.load(os.path.join(self.base_dir, 'resources/triangle-hole-green-empty.png'))
-		self.square_hole_complete = pygame.image.load(os.path.join(self.base_dir, 'resources/square-hole-red-complete.png'))
-		self.square_hole_full = pygame.image.load(os.path.join(self.base_dir, 'resources/square-hole-red-full.png'))
-		self.square_hole_empty = pygame.image.load(os.path.join(self.base_dir, 'resources/square-hole-red-empty.png'))
-		self.player_full = pygame.image.load(os.path.join(self.base_dir, 'resources/player-full.png'))
-		self.player_empty = pygame.image.load(os.path.join(self.base_dir, 'resources/player-empty.png'))
-
-		self.fire1 = pygame.image.load(os.path.join(self.base_dir, 'resources/fire1.png'))
-		self.fire2 = pygame.image.load(os.path.join(self.base_dir, 'resources/fire2.png'))
-		self.fire3 = pygame.image.load(os.path.join(self.base_dir, 'resources/fire3.png'))
-
-		self.ray = pygame.image.load('resources/ray-short.png')
-
+	
 	# DISPLAY-DRAWING FUNCTIONS
 	def draw_start_screen(self):
 		self.screen.fill(self.BLACK)
-		welcome_button = MyButton(self.BIGFONT, 'Welcome to WeeriMeeris', self.BLACK, self.GREEN)
+		welcome_button = button.MyButton(self.BIGFONT, 'Welcome to WeeriMeeris', self.BLACK, self.GREEN)
 		welcome_button.set_coords(W_WIDTH/2, 100)
 
-		single_player_button = MyButton(self.MEDIUMFONT, 'Single Player', self.RED, self.YELLOW)
+		single_player_button = button.MyButton(self.MEDIUMFONT, 'Single Player', self.RED, self.YELLOW)
 		single_player_button.set_coords(W_WIDTH/2, W_HEIGHT/2)
 
-		online_multi_button = MyButton(self.MEDIUMFONT, 'Online Multiplayer', self.RED, self.YELLOW)
+		online_multi_button = button.MyButton(self.MEDIUMFONT, 'Online Multiplayer', self.RED, self.YELLOW)
 		online_multi_button.set_coords(W_WIDTH/2, W_HEIGHT/2 + 50)
 
-		settings_button = MyButton(self.MEDIUMFONT, 'Settings', self.RED, self.ORANGE)
+		settings_button = button.MyButton(self.MEDIUMFONT, 'Settings', self.RED, self.ORANGE)
 		settings_button.set_coords(W_WIDTH/2, W_HEIGHT/2 + 150)
 
 		self.screen.fill(self.BLACK)
@@ -146,28 +86,28 @@ class MyView:
 			pygame.draw.line(self.screen, self.WHITE, (150+90*n, 0), (150+90*n, W_HEIGHT-100), 4)
 		# player 1 score board
 		# draw player name
-		player_name = MyButton(self.MEDIUMFONT, player.name, self.WHITE, self.GREY)
+		player_name = button.MyButton(self.MEDIUMFONT, player.name, self.WHITE, self.GREY)
 		player_name.set_coords(75, 25)
 		self.screen.blit(player_name.surface, player_name.rect)
 		# draw player score
-		player_score_title = MyButton(self.SMALLFONT, 'SCORE', self.RED, self.BLACK)
+		player_score_title = button.MyButton(self.SMALLFONT, 'SCORE', self.RED, self.BLACK)
 		player_score_title.set_coords(75, 65)
 		self.screen.blit(player_score_title.surface, player_score_title.rect)
-		player_score = MyButton(self.BIGFONT, format(player.score), self.RED, self.BLACK)
+		player_score = button.MyButton(self.BIGFONT, format(player.score), self.RED, self.BLACK)
 		player_score.set_coords(75, 105)
 		self.screen.blit(player_score.surface, player_score.rect)
 		# draw total number of figures at play
-		player_total_title = MyButton(self.SMALLFONT, 'TOTAL', self.GREEN, self.BLACK)
+		player_total_title = button.MyButton(self.SMALLFONT, 'TOTAL', self.GREEN, self.BLACK)
 		player_total_title.set_coords(75, 145)
 		self.screen.blit(player_total_title.surface, player_total_title.rect)
-		player_total_title = MyButton(self.BIGFONT, format(player.total), self.GREEN, self.BLACK)
+		player_total_title = button.MyButton(self.BIGFONT, format(player.total), self.GREEN, self.BLACK)
 		player_total_title.set_coords(75, 185)
 		self.screen.blit(player_total_title.surface, player_total_title.rect)
 		# draw occupancy of the most occupied column
-		player_longest_title = MyButton(self.SMALLFONT, 'LONGEST', self.YELLOW, self.BLACK)
+		player_longest_title = button.MyButton(self.SMALLFONT, 'LONGEST', self.YELLOW, self.BLACK)
 		player_longest_title.set_coords(75, 225)
 		self.screen.blit(player_longest_title.surface, player_longest_title.rect)
-		player_longest_title = MyButton(self.BIGFONT, format(player.longest), self.YELLOW, self.BLACK)
+		player_longest_title = button.MyButton(self.BIGFONT, format(player.longest), self.YELLOW, self.BLACK)
 		player_longest_title.set_coords(75, 265)
 		self.screen.blit(player_longest_title.surface, player_longest_title.rect)
 
@@ -186,7 +126,7 @@ class MyView:
 		name_rect.center = (W_WIDTH / 2 - 100, 225)
 		name_input = InputBox(W_WIDTH / 2 + 25, 210, 150, 30, player_name)
 
-		start_multi_button = MyButton(self.MEDIUMFONT, 'Online Multiplayer', self.RED, self.YELLOW)
+		start_multi_button = button.MyButton(self.MEDIUMFONT, 'Online Multiplayer', self.RED, self.YELLOW)
 		start_multi_button.set_coords(W_WIDTH / 2, W_HEIGHT / 2 + 50)
 
 		inputs = (host_input, name_input)
@@ -215,7 +155,7 @@ class MyView:
 		name_rect.center = (W_WIDTH / 2 - 100, 225)
 		name_input = InputBox(W_WIDTH/2+25, 210, 150, 30, player_name)
 
-		save_button = MyButton(self.MEDIUMFONT, 'Save', self.RED, self.YELLOW)
+		save_button = button.MyButton(self.MEDIUMFONT, 'Save', self.RED, self.YELLOW)
 		save_button.set_coords(W_WIDTH / 2, W_HEIGHT / 2 + 50)
 
 		inputs = (host_input, name_input)
@@ -230,10 +170,10 @@ class MyView:
 		return inputs, save_button
 
 	def draw_wait_screen(self, text='  WAITING FOR AVAILABLE ONLINE PLAYER  '):
-		banner = MyButton(self.BIGFONT, text, self.GREEN, self.BLACK)
+		banner = button.MyButton(self.BIGFONT, text, self.GREEN, self.BLACK)
 		banner.set_coords(W_WIDTH/2, 200)
 
-		dots = MyButton(self.BIGFONT, '...', self.GREEN, self.BLACK)
+		dots = button.MyButton(self.BIGFONT, '...', self.GREEN, self.BLACK)
 		dots.set_coords(W_WIDTH/2, 300)
 
 		self.screen.fill(self.BLACK)
@@ -291,28 +231,28 @@ class MyView:
 
 	def draw_opponent(self, opponent):
 		# draw opponent name
-		player_name = MyButton(self.MEDIUMFONT, opponent['name'], self.WHITE, self.GREY)
+		player_name = button.MyButton(self.MEDIUMFONT, opponent['name'], self.WHITE, self.GREY)
 		player_name.set_coords(75, 325)
 		self.screen.blit(player_name.surface, player_name.rect)
 		# draw opponent score
-		player_score_title = MyButton(self.SMALLFONT, 'SCORE', self.RED, self.BLACK)
+		player_score_title = button.MyButton(self.SMALLFONT, 'SCORE', self.RED, self.BLACK)
 		player_score_title.set_coords(75, 365)
 		self.screen.blit(player_score_title.surface, player_score_title.rect)
-		player_score = MyButton(self.BIGFONT, str(opponent['score']), self.RED, self.BLACK)
+		player_score = button.MyButton(self.BIGFONT, str(opponent['score']), self.RED, self.BLACK)
 		player_score.set_coords(75, 405)
 		self.screen.blit(player_score.surface, player_score.rect)
 		# draw total number of figures at play
-		player_total_title = MyButton(self.SMALLFONT, 'TOTAL', self.GREEN, self.BLACK)
+		player_total_title = button.MyButton(self.SMALLFONT, 'TOTAL', self.GREEN, self.BLACK)
 		player_total_title.set_coords(75, 445)
 		self.screen.blit(player_total_title.surface, player_total_title.rect)
-		player_total_title = MyButton(self.BIGFONT, format(opponent['total']), self.GREEN, self.BLACK)
+		player_total_title = button.MyButton(self.BIGFONT, format(opponent['total']), self.GREEN, self.BLACK)
 		player_total_title.set_coords(75, 485)
 		self.screen.blit(player_total_title.surface, player_total_title.rect)
 		# draw occupancy of the most occupied column
-		player_longest_title = MyButton(self.SMALLFONT, 'LONGEST', self.YELLOW, self.BLACK)
+		player_longest_title = button.MyButton(self.SMALLFONT, 'LONGEST', self.YELLOW, self.BLACK)
 		player_longest_title.set_coords(75, 525)
 		self.screen.blit(player_longest_title.surface, player_longest_title.rect)
-		player_longest_title = MyButton(self.BIGFONT, format(opponent['longest']), self.YELLOW, self.BLACK)
+		player_longest_title = button.MyButton(self.BIGFONT, format(opponent['longest']), self.YELLOW, self.BLACK)
 		player_longest_title.set_coords(75, 565)
 		self.screen.blit(player_longest_title.surface, player_longest_title.rect)
 
@@ -360,12 +300,12 @@ class MyView:
 		return y
 
 	def draw_game_over(self):
-		banner = MyButton(self.BIGFONT, '  GAME OVER  ', self.BLACK, self.YELLOW)
+		banner = button.MyButton(self.BIGFONT, '  GAME OVER  ', self.BLACK, self.YELLOW)
 		banner.set_coords(W_WIDTH/2, W_HEIGHT/2)
 		self.screen.blit(banner.surface, banner.rect)
 
 	def draw_victory(self):
-		banner = MyButton(self.BIGFONT, '  VICTORY!!!  ', self.BLACK, self.GREEN)
+		banner = button.MyButton(self.BIGFONT, '  VICTORY!!!  ', self.BLACK, self.GREEN)
 		banner.set_coords(W_WIDTH/2, W_HEIGHT/2)
 		self.screen.blit(banner.surface, banner.rect)
 
@@ -373,12 +313,12 @@ class MyView:
 		filter_rect = pygame.Rect((0, 0), (W_WIDTH, W_HEIGHT))
 		pygame.draw.rect(self.screen, self.GREY, filter_rect)
 
-		title = MyButton(self.MEDIUMFONT, 'CONFIRM EXIT', self.RED, self.BLACK)
+		title = button.MyButton(self.MEDIUMFONT, 'CONFIRM EXIT', self.RED, self.BLACK)
 		title.set_coords(W_WIDTH/2, 200)
 
-		yes_button = MyButton(self.SMALLFONT, 'YES', self.BLACK, self.RED)
+		yes_button = button.MyButton(self.SMALLFONT, 'YES', self.BLACK, self.RED)
 		yes_button.set_coords(W_WIDTH/2-100, 400)
-		no_button = MyButton(self.SMALLFONT, 'NO', self.BLACK, self.GREEN)
+		no_button = button.MyButton(self.SMALLFONT, 'NO', self.BLACK, self.GREEN)
 		no_button.set_coords(W_WIDTH/2+100, 400)
 
 		self.screen.fill(self.BLACK)
@@ -392,12 +332,12 @@ class MyView:
 		filter_rect = pygame.Rect((0, 0), (W_WIDTH, W_HEIGHT))
 		pygame.draw.rect(self.screen, self.GREY, filter_rect)
 
-		title = MyButton(self.MEDIUMFONT, 'CONFIRM LEAVE GAME', self.RED, self.BLACK)
+		title = button.MyButton(self.MEDIUMFONT, 'CONFIRM LEAVE GAME', self.RED, self.BLACK)
 		title.set_coords(W_WIDTH/2, 200)
 
-		yes_button = MyButton(self.SMALLFONT, 'YES', self.BLACK, self.RED)
+		yes_button = button.MyButton(self.SMALLFONT, 'YES', self.BLACK, self.RED)
 		yes_button.set_coords(W_WIDTH/2-100, 400)
-		no_button = MyButton(self.SMALLFONT, 'NO', self.BLACK, self.GREEN)
+		no_button = button.MyButton(self.SMALLFONT, 'NO', self.BLACK, self.GREEN)
 		no_button.set_coords(W_WIDTH/2+100, 400)
 
 		self.screen.fill(self.BLACK)

@@ -2,6 +2,7 @@ import pygame
 import sys
 import time
 import json
+import os
 from pygame.locals import *
 from model import board, zmq_connector, online_broker
 
@@ -28,15 +29,49 @@ class Controller:
 	player = None
 	targets = []
 	FPSCLOCK = None
+	base_dir = os.getcwd()
 
-	def __init__(self):
+	def __init__(self, view, player):
 		print('[#] Initiating Controller...')
 		pygame.init()
 		pygame.mixer.quit()
+		
+		self.my_view = view
+		self.my_view.set_up_fonts()
+		self.load_external_resources()
+
+		self.player = player
 
 		self.FPSCLOCK = pygame.time.Clock()
 		pygame.display.set_caption('WeeriMeeris')
-
+		
+		self.start_screen()
+	
+	def load_external_resources(self):
+		self.my_view.ball = pygame.image.load(os.path.join(self.base_dir, 'resources/ball.png'))
+		self.my_view.triangle_full = pygame.image.load(os.path.join(self.base_dir, 'resources/triangle-pink-full.png'))
+		self.my_view.triangle_empty = pygame.image.load(os.path.join(self.base_dir, 'resources/triangle-pink-empty.png'))
+		self.my_view.square_full = pygame.image.load(os.path.join(self.base_dir, 'resources/square-yellow-full.png'))
+		self.my_view.square_empty = pygame.image.load(os.path.join(self.base_dir, 'resources/square-yellow-empty.png'))
+		self.my_view.triangle_hole_complete = pygame.image.load(
+			os.path.join(self.base_dir, 'resources/triangle-hole-green-complete.png'))
+		self.my_view.triangle_hole_full = pygame.image.load(
+			os.path.join(self.base_dir, 'resources/triangle-hole-green-full.png'))
+		self.my_view.triangle_hole_empty = pygame.image.load(
+			os.path.join(self.base_dir, 'resources/triangle-hole-green-empty.png'))
+		self.my_view.square_hole_complete = pygame.image.load(
+			os.path.join(self.base_dir, 'resources/square-hole-red-complete.png'))
+		self.my_view.square_hole_full = pygame.image.load(os.path.join(self.base_dir, 'resources/square-hole-red-full.png'))
+		self.my_view.square_hole_empty = pygame.image.load(os.path.join(self.base_dir, 'resources/square-hole-red-empty.png'))
+		self.my_view.player_full = pygame.image.load(os.path.join(self.base_dir, 'resources/player-full.png'))
+		self.my_view.player_empty = pygame.image.load(os.path.join(self.base_dir, 'resources/player-empty.png'))
+		
+		self.my_view.fire1 = pygame.image.load(os.path.join(self.base_dir, 'resources/fire1.png'))
+		self.my_view.fire2 = pygame.image.load(os.path.join(self.base_dir, 'resources/fire2.png'))
+		self.my_view.fire3 = pygame.image.load(os.path.join(self.base_dir, 'resources/fire3.png'))
+		
+		self.my_view.ray = pygame.image.load('resources/ray-short.png')
+	
 	# SCREENS
 	def start_screen(self):
 		single_player_button, online_multi_button, settings_button = self.my_view.draw_start_screen()

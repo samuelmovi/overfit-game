@@ -8,14 +8,10 @@ def main():
 	my_player = player.Player()
 	
 	# start view
-	my_view = view.MyView()
+	my_view = view.View()
 	
 	# start controller
-	ctrl = controller.Controller()
-	ctrl.my_view = my_view
-	ctrl.player = my_player
-	
-	ctrl.start_screen()
+	controller.Controller(my_view, my_player)
 	
 
 if __name__ == '__main__':
