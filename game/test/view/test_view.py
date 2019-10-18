@@ -14,6 +14,7 @@ class TestView(unittest.TestCase):
         pygame.init()
         self.test_view = view.View()
         self.test_view.base_dir = os.path.join(os.getcwd(), '../../')
+        # could use a mock surface object to replace screen
         pass
 
     def test_init(self):
@@ -33,6 +34,15 @@ class TestView(unittest.TestCase):
         for result in results:
             self.assertIsNotNone(result)
 
-    
+    def test_draw_online_options_screen(self):
+        # set object state
+        self.test_view.set_up_fonts()
+        # execute method
+        results = self.test_view.draw_online_options_screen("player_name", "host_ip")
+        # assert expected outcome
+        for result in results:
+            self.assertIsNotNone(result)
+        
+
 if __name__ == '__main__':
     unittest.main()

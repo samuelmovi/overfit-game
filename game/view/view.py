@@ -1,7 +1,7 @@
 import pygame
 import os
 from pygame.locals import *
-from . import button
+from . import button, input_box
 
 
 FPS = 30  # frames per second to update the screen
@@ -119,12 +119,12 @@ class View:
 		host = self.SMALLFONT.render('Online Host', 1, self.GREEN, self.GREY)
 		host_rect = host.get_rect()
 		host_rect.center = (W_WIDTH / 2 - 100, 175)
-		host_input = InputBox(W_WIDTH / 2 + 25, 160, 150, 30, ip)
+		host_input = input_box.InputBox(W_WIDTH / 2 + 25, 160, 150, 30, ip)
 
 		name = self.SMALLFONT.render('Player Name', 1, self.GREEN, self.GREY)
 		name_rect = name.get_rect()
 		name_rect.center = (W_WIDTH / 2 - 100, 225)
-		name_input = InputBox(W_WIDTH / 2 + 25, 210, 150, 30, player_name)
+		name_input = input_box.InputBox(W_WIDTH / 2 + 25, 210, 150, 30, player_name)
 
 		start_multi_button = button.MyButton(self.MEDIUMFONT, 'Online Multiplayer', self.RED, self.YELLOW)
 		start_multi_button.set_coords(W_WIDTH / 2, W_HEIGHT / 2 + 50)
@@ -148,12 +148,12 @@ class View:
 		host = self.SMALLFONT.render('Online Host', 1, self.GREEN, self.GREY)
 		host_rect = host.get_rect()
 		host_rect.center = (W_WIDTH/2-100, 175)
-		host_input = InputBox(W_WIDTH/2+25, 160, 150, 30, ip)
+		host_input = input_box.InputBox(W_WIDTH/2+25, 160, 150, 30, ip)
 
 		name = self.SMALLFONT.render('Player Name', 1, self.GREEN, self.GREY)
 		name_rect = name.get_rect()
 		name_rect.center = (W_WIDTH / 2 - 100, 225)
-		name_input = InputBox(W_WIDTH/2+25, 210, 150, 30, player_name)
+		name_input = input_box.InputBox(W_WIDTH/2+25, 210, 150, 30, player_name)
 
 		save_button = button.MyButton(self.MEDIUMFONT, 'Save', self.RED, self.YELLOW)
 		save_button.set_coords(W_WIDTH / 2, W_HEIGHT / 2 + 50)
