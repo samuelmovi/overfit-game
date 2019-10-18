@@ -16,6 +16,7 @@ class ZmqConnector:
 	subscriber = None
 	requester = None
 	replier = None
+	base_dir = None
 
 	HOST = ''
 
@@ -30,11 +31,11 @@ class ZmqConnector:
 		print("[zmq] Initializing ZMQ client object...")
 		self.HOST = host
 		self.context = zmq.Context()
+		self.base_dir = os.getcwd()
 	
 	def check_folder_structure(self):
 		print("[#] checking folder structure...")
-		base_dir = os.getcwd()
-		keys_dir = os.path.join(base_dir, 'certs')
+		keys_dir = os.path.join(self.base_dir, 'certs')
 		self.public_keys_dir = os.path.join(keys_dir, 'public')    # has the public keys of allowed clients
 		self.secret_keys_dir = os.path.join(keys_dir, 'private')   # has the server's private cert
 

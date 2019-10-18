@@ -10,11 +10,11 @@ from model import online_broker
 
 class TestOnlineBroker(unittest.TestCase):
 	
+	test_broker = None
 	mock_mq = None
 	mock_player = None
 	player_stats = {'sender': 'player inbox', 'name': 'Mr. Player', 'status': '', 'online': ''}
 	mock_queue = 'player mock queue'
-	test_broker = None
 	mock_opponent = {'sender': 'opponent inbox', 'name': 'Mr. Opponent',  'status': '', 'online': '', 'score': 123, 'total': 231, 'longest': 312}
 
 	def __init__(self, *args, **kwargs):

@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 - figure out way to spy on test classes
-
+- allow certs.py to create required folders if non-existing
 
 ## 2019-10-18
 ### Added
