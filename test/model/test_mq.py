@@ -37,24 +37,23 @@ class TestMQ(unittest.TestCase):
 		outcome = self.test_mq.check_folder_structure()
 		# assert expected outcome
 		self.assertTrue(outcome)
-		
-	# def test_connect(self):
-	# 	pass
+	
+	# TODO: figure out how to mock ThreadAuthenticator
+	# def test_server_auth(self):
+	# 	# set object state
 	#
-	# def test_declare_queue(self):
-	# 	pass
+	# 	# execute method
 	#
-	# def test_send_message(self):
-	# 	pass
+	# 	# assert expected outcome
 	#
-	# def test_get_messages(selfs):
-	# 	pass
+
+	# TODO: test execution without errors
+	# def test_client_auth(self):
+	# 	# set object state
 	#
-	# def test_get_last_message(self):
-	# 	pass
+	# 	# execute method
 	#
-	# def test_disconnect(self):
-	# 	pass
+	# 	# assert expected outcome
 
 
 if __name__ == '__main__':

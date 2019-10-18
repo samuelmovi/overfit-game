@@ -1,6 +1,5 @@
 import pygame
 import sys
-# import random
 import time
 import json
 from pygame.locals import *
@@ -25,13 +24,18 @@ class Controller:
 	broker = None
 	mq = None
 	HOST = '127.0.0.1'
+	
+	my_view = None
+	player = None
+	targets = None
+	FPSCLOCK = None
 
 	def __init__(self):
 		print('[#] Initiating Controller...')
 		pygame.init()
 		pygame.mixer.quit()
 
-		self.myView = view.MyView()
+		self.my_view = view.MyView()
 		self.player = player.Player()
 		self.targets = []
 
@@ -42,7 +46,7 @@ class Controller:
 
 	# SCREENS
 	def start_screen(self):
-		single_player_button, online_multi_button, settings_button = self.myView.draw_start_screen()
+		single_player_button, online_multi_button, settings_button = self.my_view.draw_start_screen()
 
 		while True:
 			for event in pygame.event.get():  # event handling loop
@@ -63,7 +67,7 @@ class Controller:
 
 	def online_setup_screen(self):
 		print('[#] Showing Online Setup screen')
-		inputs, start_button = self.myView.draw_online_options_screen(self.player.name, self.HOST)
+		inputs, start_button = self.my_view.draw_online_options_screen(self.player.name, self.HOST)
 		while True:
 			# event handling loop
 			for event in pygame.event.get():
@@ -85,13 +89,13 @@ class Controller:
 						if len(inputs[1].get_text()) > 0:
 							self.player.name = inputs[1].get_text()
 						self.find_online_match()
-			self.myView.refresh_input(inputs)
+			self.my_view.refresh_input(inputs)
 			pygame.display.update()
 			self.FPSCLOCK.tick(self.FPS)
 
 	def settings_screen(self):
 		print('[#] Showing settings screen')
-		inputs, save_button = self.myView.draw_settings_screen(self.player.name, self.HOST)
+		inputs, save_button = self.my_view.draw_settings_screen(self.player.name, self.HOST)
 		while True:
 			# event handling loop
 			for event in pygame.event.get():
@@ -114,12 +118,12 @@ class Controller:
 						print("[#] Data updated\n\t> Host: {}\n\t> Player Name: {}".format(inputs[0].text, inputs[1].text))
 				for instance in inputs:
 					instance.handle_event(event)
-			self.myView.refresh_input(inputs)
+			self.my_view.refresh_input(inputs)
 			pygame.display.update()
 			self.FPSCLOCK.tick(self.FPS)
 
 	def confirm_exit(self):
-		yes_button, no_button = self.myView.confirm_exit()
+		yes_button, no_button = self.my_view.confirm_exit()
 		while True:
 			for event in pygame.event.get():  # event handling loop
 				if event.type == pygame.QUIT:
@@ -136,7 +140,7 @@ class Controller:
 			self.FPSCLOCK.tick(self.FPS)
 
 	def confirm_leave_game(self):
-		yes_button, no_button = self.myView.confirm_leave_game()
+		yes_button, no_button = self.my_view.confirm_leave_game()
 		while True:
 			for event in pygame.event.get():  # event handling loop
 				if event.type == pygame.QUIT:
@@ -166,7 +170,7 @@ class Controller:
 		while True:
 			self.check_player_events()
 			self.update_player_stats()
-			self.myView.update_game_screen(self.board.columns, self.player)
+			self.my_view.update_game_screen(self.board.columns, self.player)
 			self.check_online_play()
 
 			# check for capture
@@ -184,12 +188,12 @@ class Controller:
 			self.FPSCLOCK.tick(self.FPS)
 
 	def capture_animation(self):
-		if self.myView.animate_return(self.ray_coords) is False:
+		if self.my_view.animate_return(self.ray_coords) is False:
 			# remove bottom figure from column and capture it
 			self.player.capture_figure(self.board.columns[self.ray_coords['position']].figures.pop(-1))
 
 	def return_animation(self):
-		if self.myView.animate_return(self.ray_coords) is False:
+		if self.my_view.animate_return(self.ray_coords) is False:
 			# after the ray has finished being drawn
 			# if column is empty add captured figure to column
 			if len(self.board.columns[self.ray_coords['position']].figures) == 0:
@@ -217,7 +221,7 @@ class Controller:
 
 	def explode_all_targets(self):
 		if self.frame < 16:
-			self.myView.draw_explosion(self.targets, self.frame)
+			self.my_view.draw_explosion(self.targets, self.frame)
 			self.frame += 1
 		else:
 			# sorting targets by height, to avoid IndexOutOfBoundsError
@@ -305,7 +309,7 @@ class Controller:
 			if self.broker.timeout() is True:
 				break
 
-			self.myView.draw_wait_screen(text)
+			self.my_view.draw_wait_screen(text)
 			pygame.display.update()
 			self.FPSCLOCK.tick(self.FPS)
 
@@ -318,7 +322,7 @@ class Controller:
 				self.broker.update_player_stats()
 			self.send_counter += 1
 			# draw opponents score board
-			self.myView.draw_opponent(self.opponent)
+			self.my_view.draw_opponent(self.opponent)
 
 	def check_on_opponent(self):
 		message = self.mq.sub_receive_multi()
@@ -335,7 +339,7 @@ class Controller:
 
 	# END GAME
 	def game_over(self):
-		self.myView.draw_game_over()
+		self.my_view.draw_game_over()
 
 		while True:
 			# event handling loop
@@ -350,7 +354,7 @@ class Controller:
 			self.FPSCLOCK.tick(self.FPS)
 
 	def victory(self):
-		self.myView.draw_victory()
+		self.my_view.draw_victory()
 
 		while True:
 			# event handling loop
