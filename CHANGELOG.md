@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - figure out way to spy on test classes
 - allow certs.py to create required folders if non-existing
-- change game.py to allow for better MVC pattern injection
 
 ## 2019-10-18
 ### Added
 - test classes for model, to be completed
+
+### Changed
+- changed game.py to allow for better MVC pattern injection
+
 

@@ -3,8 +3,7 @@ import sys
 import time
 import json
 from pygame.locals import *
-from view import view
-from model import board, player, zmq_connector, online_broker
+from model import board, zmq_connector, online_broker
 
 
 class Controller:
@@ -35,14 +34,12 @@ class Controller:
 		pygame.init()
 		pygame.mixer.quit()
 
-		self.my_view = view.MyView()
-		self.player = player.Player()
 		self.targets = []
 
 		self.FPSCLOCK = pygame.time.Clock()
 		pygame.display.set_caption('WeeriMeeris')
 
-		self.start_screen()
+		# self.start_screen()
 
 	# SCREENS
 	def start_screen(self):

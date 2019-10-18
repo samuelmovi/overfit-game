@@ -1,16 +1,22 @@
 from controller import controller
+from model import player
+from view import view
 
 
 def main():
-	
-	# start modules
+	# start model
+	my_player = player.Player()
 	
 	# start view
+	my_view = view.MyView()
 	
-	# pass to controller
+	# start controller
+	ctrl = controller.Controller()
+	ctrl.my_view = my_view
+	ctrl.player = my_player
 	
-	controller.Controller()
-
+	ctrl.start_screen()
+	
 
 if __name__ == '__main__':
 	main() 
