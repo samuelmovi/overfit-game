@@ -3,7 +3,7 @@ from unittest.mock import Mock
 import sys
 import os
 # sys.path.append(os.path.abspath(sys.path[0]) + '/../../')
-sys.path.append(os.path.abspath('../../game/'))
+sys.path.append(os.path.abspath('../../'))
 from model import zmq_connector
 
 
@@ -32,7 +32,7 @@ class TestMQ(unittest.TestCase):
 	def test_check_folder_structure(self):
 		# set object state
 		self.test_mq = zmq_connector.ZmqConnector()
-		self.test_mq.base_dir = os.path.join(os.getcwd(), '../../game/')
+		self.test_mq.base_dir = os.path.join(os.getcwd(), '../../')
 		# execute method
 		outcome = self.test_mq.check_folder_structure()
 		# assert expected outcome

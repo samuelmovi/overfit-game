@@ -2,7 +2,7 @@ import unittest
 import sys
 import os
 
-sys.path.append(os.path.abspath('../../game/'))
+sys.path.append(os.path.abspath('../../'))
 from controller import controller
 
 
