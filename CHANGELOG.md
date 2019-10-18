@@ -15,4 +15,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - changed game.py to allow for better MVC pattern injection
 - moved test folder inside game to separate from server tests
+- controller.load_external_resources() now static method
 

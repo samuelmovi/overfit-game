@@ -38,7 +38,7 @@ class Controller:
 		
 		self.my_view = view
 		self.my_view.set_up_fonts()
-		self.load_external_resources()
+		self.load_external_resources(self.my_view)
 
 		self.player = player
 
@@ -47,31 +47,36 @@ class Controller:
 		
 		self.start_screen()
 	
-	def load_external_resources(self):
-		self.my_view.ball = pygame.image.load(os.path.join(self.base_dir, 'resources/ball.png'))
-		self.my_view.triangle_full = pygame.image.load(os.path.join(self.base_dir, 'resources/triangle-pink-full.png'))
-		self.my_view.triangle_empty = pygame.image.load(os.path.join(self.base_dir, 'resources/triangle-pink-empty.png'))
-		self.my_view.square_full = pygame.image.load(os.path.join(self.base_dir, 'resources/square-yellow-full.png'))
-		self.my_view.square_empty = pygame.image.load(os.path.join(self.base_dir, 'resources/square-yellow-empty.png'))
-		self.my_view.triangle_hole_complete = pygame.image.load(
-			os.path.join(self.base_dir, 'resources/triangle-hole-green-complete.png'))
-		self.my_view.triangle_hole_full = pygame.image.load(
-			os.path.join(self.base_dir, 'resources/triangle-hole-green-full.png'))
-		self.my_view.triangle_hole_empty = pygame.image.load(
-			os.path.join(self.base_dir, 'resources/triangle-hole-green-empty.png'))
-		self.my_view.square_hole_complete = pygame.image.load(
-			os.path.join(self.base_dir, 'resources/square-hole-red-complete.png'))
-		self.my_view.square_hole_full = pygame.image.load(os.path.join(self.base_dir, 'resources/square-hole-red-full.png'))
-		self.my_view.square_hole_empty = pygame.image.load(os.path.join(self.base_dir, 'resources/square-hole-red-empty.png'))
-		self.my_view.player_full = pygame.image.load(os.path.join(self.base_dir, 'resources/player-full.png'))
-		self.my_view.player_empty = pygame.image.load(os.path.join(self.base_dir, 'resources/player-empty.png'))
+	@staticmethod
+	def load_external_resources(my_view, base_dir):
 		
-		self.my_view.fire1 = pygame.image.load(os.path.join(self.base_dir, 'resources/fire1.png'))
-		self.my_view.fire2 = pygame.image.load(os.path.join(self.base_dir, 'resources/fire2.png'))
-		self.my_view.fire3 = pygame.image.load(os.path.join(self.base_dir, 'resources/fire3.png'))
+		my_view.ball = pygame.image.load(os.path.join(base_dir, 'resources/ball.png'))
+		my_view.triangle_full = pygame.image.load(os.path.join(base_dir, 'resources/triangle-pink-full.png'))
+		my_view.triangle_empty = pygame.image.load(
+			os.path.join(base_dir, 'resources/triangle-pink-empty.png'))
+		my_view.square_full = pygame.image.load(os.path.join(base_dir, 'resources/square-yellow-full.png'))
+		my_view.square_empty = pygame.image.load(os.path.join(base_dir, 'resources/square-yellow-empty.png'))
+		my_view.triangle_hole_complete = pygame.image.load(
+			os.path.join(base_dir, 'resources/triangle-hole-green-complete.png'))
+		my_view.triangle_hole_full = pygame.image.load(
+			os.path.join(base_dir, 'resources/triangle-hole-green-full.png'))
+		my_view.triangle_hole_empty = pygame.image.load(
+			os.path.join(base_dir, 'resources/triangle-hole-green-empty.png'))
+		my_view.square_hole_complete = pygame.image.load(
+			os.path.join(base_dir, 'resources/square-hole-red-complete.png'))
+		my_view.square_hole_full = pygame.image.load(
+			os.path.join(base_dir, 'resources/square-hole-red-full.png'))
+		my_view.square_hole_empty = pygame.image.load(
+			os.path.join(base_dir, 'resources/square-hole-red-empty.png'))
+		my_view.player_full = pygame.image.load(os.path.join(base_dir, 'resources/player-full.png'))
+		my_view.player_empty = pygame.image.load(os.path.join(base_dir, 'resources/player-empty.png'))
 		
-		self.my_view.ray = pygame.image.load('resources/ray-short.png')
-	
+		my_view.fire1 = pygame.image.load(os.path.join(base_dir, 'resources/fire1.png'))
+		my_view.fire2 = pygame.image.load(os.path.join(base_dir, 'resources/fire2.png'))
+		my_view.fire3 = pygame.image.load(os.path.join(base_dir, 'resources/fire3.png'))
+		
+		my_view.ray = pygame.image.load(os.path.join(base_dir,'resources/ray-short.png'))
+
 	# SCREENS
 	def start_screen(self):
 		single_player_button, online_multi_button, settings_button = self.my_view.draw_start_screen()
