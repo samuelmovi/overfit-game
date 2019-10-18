@@ -64,6 +64,7 @@ class OnlineBroker:
 		elif self.player.online == 'itson':
 			self.timer += 1
 			return self.opponent
+		
 		return None
 
 	def check_for_available_player(self):

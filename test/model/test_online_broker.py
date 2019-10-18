@@ -2,6 +2,8 @@ import unittest
 from unittest.mock import Mock
 import sys
 import os
+import json
+
 sys.path.append(os.path.abspath('../../game/'))
 from model import online_broker
 
@@ -28,12 +30,32 @@ class TestOnlineBroker(unittest.TestCase):
 
 		self.test_broker = online_broker.OnlineBroker(self.mock_player, self.mock_mq)
 		self.test_broker.opponent = self.mock_opponent
-
+	
 	def test_init(self):
 		print("[#] Testing method: OnlineBroker.__init__()")
 		self.assertEqual(self.mock_player.connected, True)
 		self.assertEqual(self.test_broker.player, self.mock_player)
 	
+	# def test_negotiate(self):
+	# 	# possible online statuses: '' | available | challenger | accepted | itson | playing | over
+	# 	# set object state
+	# 	self.mock_player.online = 'qwerqeerq'
+	# 	# execute method
+	# 	outcome = self.test_broker.negotiate()
+	# 	# assert expected outcome
+	# 	self.assertEqual(None, outcome)
+	#
+	# 	# set object state
+	# 	self.mock_player.online = ''
+	# 	spy = Mock(spec=online_broker.OnlineBroker)
+	# 	online_broker.OnlineBroker.check_for_available_player(spy)
+	# 	# execute method
+	# 	self.test_broker.negotiate()
+	# 	# assert expected outcome
+	# 	self.mock_mq.filter_sub_socket.assert_called_with('XXX')
+	# 	self.assertEqual(0, self.test_broker.timer)
+	# 	assert spy.mock_calls == [spy.call.check_for_available_player()]
+
 	def test_check_for_available_player(self):
 		# set object state
 		self.mock_mq.sub_receive_multi.return_value = [
@@ -77,14 +99,34 @@ class TestOnlineBroker(unittest.TestCase):
 		self.assertFalse(outcome)
 		self.assertNotEqual(self.mock_player.online, "available")
 	
-	'''
-	def test_negotiate(self):
-		pass
-
-
 	def test_check_for_challenger(self):
-		pass
-	'''
+		# set object data
+		self.mock_mq.sub_receive_multi.return_value = [
+			'',
+			'{"sender": "opponent inbox", "status": "XXX",  "online": "challenger"}'.encode()
+		]
+		message = ['XXX', json.dumps(self.player_stats)]
+		for i in range(len(message)):
+			message[i] = message[i].encode()
+			
+		# execute method
+		outcome = self.test_broker.check_for_challenger()
+		
+		# assert expected outcome
+		self.assertEqual(type(outcome), type({}))
+		self.mock_mq.push_send_multi.assert_called_with(message)
+
+		# BAD DATA
+		self.mock_mq.sub_receive_multi.return_value = [
+			'',
+			'{"sender": "opponent inbox", "status": "XXX",  "online": "qwerqwe"}'.encode()
+		]
+		# execute method
+		outcome = self.test_broker.check_for_challenger()
+		
+		# assert expected outcome
+		self.assertEqual(type(outcome), type(None))
+	
 	def test_handle_challenger(self):
 		pass
 
@@ -114,7 +156,7 @@ class TestOnlineBroker(unittest.TestCase):
 		# if message from inbox has status itson returns true
 		# set object state
 		self.mock_mq.sub_receive_multi.return_value = [
-			'{"sender": "opponent inbox", "status": "XXX", "online": "itson"}',
+			'',
 			'{"sender": "opponent inbox", "status": "XXX",  "online": "itson"}'.encode()
 		]
 		# execute method
