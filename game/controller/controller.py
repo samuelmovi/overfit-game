@@ -34,11 +34,8 @@ class Controller:
 		pygame.init()
 		pygame.mixer.quit()
 
-		# self.targets = []
-
 		self.FPSCLOCK = pygame.time.Clock()
 		pygame.display.set_caption('WeeriMeeris')
-
 
 	# SCREENS
 	def start_screen(self):
@@ -261,9 +258,6 @@ class Controller:
 			self.game_over()
 
 	# ONLINE FUNCTIONS
-	def timeout(self):
-		pass
-
 	def find_online_match(self):
 		print('[#] Finding online match...')
 		self.mq = zmq_connector.ZmqConnector(self.HOST)
