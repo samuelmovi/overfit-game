@@ -55,17 +55,19 @@ class TestView(unittest.TestCase):
     
     def test_animate_capture(self):
         # set object state
+        c_value = 5
         ray_coords = dict()
         ray_coords['top'] = 100
         ray_coords['x'] = 10
         ray_coords['y'] = 200
-        ray_coords['c'] = 10
+        ray_coords['c'] = c_value
         controller.Controller.load_external_resources(self.test_view, os.path.join(os.getcwd(), '../../'))
         
         # execute method
         outcome = self.test_view.animate_capture(ray_coords)
         # assert expected outcome
         self.assertTrue(outcome)
+        self.assertEqual(c_value + 1, ray_coords['c'])
         
         # reset data
         ray_coords['y'] = 10
@@ -73,7 +75,52 @@ class TestView(unittest.TestCase):
         outcome = self.test_view.animate_capture(ray_coords)
         # assert expected outcome
         self.assertFalse(outcome)
+        self.assertEqual(c_value + 1, ray_coords['c'])
+    
+    def test_animate_return(self):
+        # set object state
+        c_value = 5
+        ray_coords = dict()
+        ray_coords['top'] = 100
+        ray_coords['x'] = 10
+        ray_coords['y'] = 200
+        ray_coords['c'] = c_value
+        controller.Controller.load_external_resources(self.test_view, os.path.join(os.getcwd(), '../../'))
+    
+        # execute method
+        outcome = self.test_view.animate_return(ray_coords)
+        # assert expected outcome
+        self.assertTrue(outcome)
+        self.assertEqual(c_value + 1, ray_coords['c'])
+    
+        # reset data
+        ray_coords['y'] = 10
+        # execute method
+        outcome = self.test_view.animate_return(ray_coords)
+        # assert expected outcome
+        self.assertFalse(outcome)
+        self.assertEqual(c_value + 1, ray_coords['c'])
         
+    def test_confirm_exit(self):
+        # set object state
+        self.test_view.set_up_fonts()
+
+        # execute method
+        results = self.test_view.confirm_exit()
+        # assert expected outcome
+        for result in results:
+            self.assertIsNotNone(result)
+    
+    def test_confirm_leave_game(self):
+        # set object state
+        self.test_view.set_up_fonts()
+
+        # execute method
+        results = self.test_view.confirm_leave_game()
+        # assert expected outcome
+        for result in results:
+            self.assertIsNotNone(result)
+
 
 if __name__ == '__main__':
     unittest.main()
