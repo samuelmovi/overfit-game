@@ -67,8 +67,8 @@ class OnlineBroker:
 		return None
 
 	def check_for_available_player(self):
+		time.sleep(0.2)
 		print("[broker] Looking for available players...")
-		time.sleep(0.5)
 		response = self.mq.sub_receive_multi()
 		self.mq.unfilter_sub_socket('XXX')
 		if response is not None:
@@ -83,13 +83,17 @@ class OnlineBroker:
 
 	def set_player_available(self):
 		print('[broker] Setting player available...')
-		self.player.online = 'available'
 		self.mq.filter_sub_socket(self.player.ID)
 		message = ['XXX', json.dumps(self.player.get_stats())]
 		for i in range(len(message)):
 			message[i] = message[i].encode()
-		self.mq.push_send_multi(message)
-
+		if self.mq.push_send_multi(message) is True:
+			self.player.online = 'available'
+			return True
+		else:
+			self.player.online = ''
+			return False
+			
 	def check_for_challenger(self):
 		print("[broker] Resending message as available...")
 		message = ['XXX', json.dumps(self.player.get_stats())]

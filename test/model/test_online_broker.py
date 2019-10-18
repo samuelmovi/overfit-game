@@ -10,10 +10,10 @@ class TestOnlineBroker(unittest.TestCase):
 	
 	mock_mq = None
 	mock_player = None
-	player_stats = {'sender': 'player inbox', 'name': 'Mr. Player', 'status': '', 'online': 'available'}
+	player_stats = {'sender': 'player inbox', 'name': 'Mr. Player', 'status': '', 'online': ''}
 	mock_queue = 'player mock queue'
 	test_broker = None
-	mock_opponent = {'sender': 'opponent inbox', 'name': 'Mr. Opponent',  'status': '', 'online': 'available', 'score': 123, 'total': 231, 'longest': 312}
+	mock_opponent = {'sender': 'opponent inbox', 'name': 'Mr. Opponent',  'status': '', 'online': '', 'score': 123, 'total': 231, 'longest': 312}
 
 	def __init__(self, *args, **kwargs):
 		super(TestOnlineBroker, self).__init__(*args, **kwargs)
@@ -33,15 +33,54 @@ class TestOnlineBroker(unittest.TestCase):
 		print("[#] Testing method: OnlineBroker.__init__()")
 		self.assertEqual(self.mock_player.connected, True)
 		self.assertEqual(self.test_broker.player, self.mock_player)
+	
+	def test_check_for_available_player(self):
+		# set object state
+		self.mock_mq.sub_receive_multi.return_value = [
+			'{"sender": "opponent inbox", "status": "XXX", "online": "available"}',
+			'{"sender": "opponent inbox", "status": "XXX",  "online": "available"}'.encode()
+		]
+		# execute method
+		outcome = self.test_broker.check_for_available_player()
+		
+		# assert expected outcome
+		self.assertTrue(outcome)
+		
+		# BAD DATA
+		self.mock_mq.sub_receive_multi.return_value = [
+			'{"sender": "opponent inbox", "status": "XXX", "online": "qcwrqw"}',
+			'{"sender": "opponent inbox", "status": "XXX",  "online": "rcqweqwe"}'.encode()
+		]
+		# execute method
+		outcome = self.test_broker.check_for_available_player()
+		
+		# assert expected outcome
+		self.assertFalse(outcome)
+		
+	def test_set_player_available(self):
+		# check pre-state
+		self.assertNotEqual(self.mock_player.online, 'available')
+		# set object state
+		self.mock_mq.push_send_multi.return_value = True
+		# execute method
+		outcome = self.test_broker.set_player_available()
+		# assert expected outcome
+		self.assertTrue(outcome)
+		self.assertEqual(self.mock_player.online, "available")
+		# assert if: self.mq.filter_sub_socket(self.player.ID)
+	
+		# BAD DATA
+		self.mock_mq.push_send_multi.return_value = False
+		# execute method
+		outcome = self.test_broker.set_player_available()
+		# assert expected outcome
+		self.assertFalse(outcome)
+		self.assertNotEqual(self.mock_player.online, "available")
+	
 	'''
 	def test_negotiate(self):
 		pass
 
-	def test_check_for_available_player(self):
-		pass
-
-	def test_set_player_available(self):
-		pass
 
 	def test_check_for_challenger(self):
 		pass
