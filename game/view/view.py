@@ -1,4 +1,5 @@
 import pygame
+import os
 from pygame.locals import *
 
 
@@ -81,31 +82,35 @@ class MyView:
 	# PURPLE = (255,0, 255)
 	# CYAN = ( 0, 255, 255)
 	BLACK = (0, 0, 0)
+	
+	base_dir = os.getcwd()
 
 	def __init__(self):
+		os.path.join(self.base_dir, 'resources/ball.png')
 		print('[#] Initiating View...')
 		self.screen = pygame.display.set_mode((W_WIDTH, W_HEIGHT))
 		self.SMALLFONT = pygame.font.Font('freesansbold.ttf', 22)
 		self.MEDIUMFONT = pygame.font.Font('freesansbold.ttf', 28)
 		self.BIGFONT = pygame.font.Font('freesansbold.ttf', 34)
 
-		self.ball = pygame.image.load('resources/ball.png')
-		self.triangle_full = pygame.image.load('resources/triangle-pink-full.png')
-		self.triangle_empty = pygame.image.load('resources/triangle-pink-empty.png')
-		self.square_full = pygame.image.load('resources/square-yellow-full.png')
-		self.square_empty = pygame.image.load('resources/square-yellow-empty.png')
-		self.triangle_hole_complete = pygame.image.load('resources/triangle-hole-green-complete.png')
-		self.triangle_hole_full = pygame.image.load('resources/triangle-hole-green-full.png')
-		self.triangle_hole_empty = pygame.image.load('resources/triangle-hole-green-empty.png')
-		self.square_hole_complete = pygame.image.load('resources/square-hole-red-complete.png')
-		self.square_hole_full = pygame.image.load('resources/square-hole-red-full.png')
-		self.square_hole_empty = pygame.image.load('resources/square-hole-red-empty.png')
-		self.player_full = pygame.image.load('resources/player-full.png')
-		self.player_empty = pygame.image.load('resources/player-empty.png')
+		self.ball = pygame.image.load(os.path.join(self.base_dir, 'resources/ball.png'))
+		self.triangle_full = pygame.image.load(os.path.join(self.base_dir, 'resources/triangle-pink-full.png'))
+		self.triangle_empty = pygame.image.load(os.path.join(self.base_dir, 'resources/triangle-pink-empty.png'))
+		self.square_full = pygame.image.load(os.path.join(self.base_dir, 'resources/square-yellow-full.png'))
+		self.square_empty = pygame.image.load(os.path.join(self.base_dir, 'resources/square-yellow-empty.png'))
+		self.triangle_hole_complete = pygame.image.load(os.path.join(self.base_dir,
+																	 'resources/triangle-hole-green-complete.png'))
+		self.triangle_hole_full = pygame.image.load(os.path.join(self.base_dir, 'resources/triangle-hole-green-full.png'))
+		self.triangle_hole_empty = pygame.image.load(os.path.join(self.base_dir, 'resources/triangle-hole-green-empty.png'))
+		self.square_hole_complete = pygame.image.load(os.path.join(self.base_dir, 'resources/square-hole-red-complete.png'))
+		self.square_hole_full = pygame.image.load(os.path.join(self.base_dir, 'resources/square-hole-red-full.png'))
+		self.square_hole_empty = pygame.image.load(os.path.join(self.base_dir, 'resources/square-hole-red-empty.png'))
+		self.player_full = pygame.image.load(os.path.join(self.base_dir, 'resources/player-full.png'))
+		self.player_empty = pygame.image.load(os.path.join(self.base_dir, 'resources/player-empty.png'))
 
-		self.fire1 = pygame.image.load('resources/fire1.png')
-		self.fire2 = pygame.image.load('resources/fire2.png')
-		self.fire3 = pygame.image.load('resources/fire3.png')
+		self.fire1 = pygame.image.load(os.path.join(self.base_dir, 'resources/fire1.png'))
+		self.fire2 = pygame.image.load(os.path.join(self.base_dir, 'resources/fire2.png'))
+		self.fire3 = pygame.image.load(os.path.join(self.base_dir, 'resources/fire3.png'))
 
 		self.ray = pygame.image.load('resources/ray-short.png')
 

@@ -18,7 +18,6 @@ class TestController(unittest.TestCase):
         # check nulls
         self.assertIsNone(controller.Controller.my_view)
         self.assertIsNone(controller.Controller.player)
-        self.assertIsNone(controller.Controller.targets)
         self.assertIsNone(controller.Controller.FPSCLOCK)
 
         # set object state
@@ -27,10 +26,8 @@ class TestController(unittest.TestCase):
         self.test_ctrl = controller.Controller()
 
         # assert expected outcome
-        self.assertIsNotNone(controller.Controller.my_view)
-        self.assertIsNotNone(controller.Controller.player)
-        self.assertIsNotNone(controller.Controller.targets)
-        self.assertIsNotNone(controller.Controller.FPSCLOCK)
+        self.assertIsNotNone(self.test_ctrl.targets)
+        self.assertIsNotNone(self.test_ctrl.FPSCLOCK)
         
         
 if __name__ == '__main__':

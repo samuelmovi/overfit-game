@@ -26,7 +26,7 @@ class Controller:
 	
 	my_view = None
 	player = None
-	targets = None
+	targets = []
 	FPSCLOCK = None
 
 	def __init__(self):
@@ -34,12 +34,11 @@ class Controller:
 		pygame.init()
 		pygame.mixer.quit()
 
-		self.targets = []
+		# self.targets = []
 
 		self.FPSCLOCK = pygame.time.Clock()
 		pygame.display.set_caption('WeeriMeeris')
 
-		# self.start_screen()
 
 	# SCREENS
 	def start_screen(self):
