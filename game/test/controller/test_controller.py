@@ -1,6 +1,7 @@
 import unittest
 import sys
 import os
+from unittest import mock
 
 sys.path.append(os.path.abspath('../../src/'))
 from controller import controller
@@ -21,8 +22,8 @@ class TestController(unittest.TestCase):
         self.assertIsNone(controller.Controller.FPSCLOCK)
 
         # set object state
-        mock_view = None
-        mock_player = None
+        mock_view = mock.Mock()
+        mock_player = mock.Mock()
         # execute method
         self.test_ctrl = controller.Controller(mock_view, mock_player)
 

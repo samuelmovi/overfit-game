@@ -38,14 +38,13 @@ class Controller:
 		
 		self.my_view = view
 		self.my_view.set_up_fonts()
-		self.load_external_resources(self.my_view)
+		# self.load_external_resources(self.my_view, self.base_dir)
 
 		self.player = player
 
 		self.FPSCLOCK = pygame.time.Clock()
 		pygame.display.set_caption('WeeriMeeris')
 		
-		self.start_screen()
 	
 	@staticmethod
 	def load_external_resources(my_view, base_dir):
