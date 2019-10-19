@@ -2,7 +2,7 @@ import unittest
 import sys
 import os
 
-sys.path.append(os.path.abspath('../../'))
+sys.path.append(os.path.abspath('../../src/'))
 from controller import controller
 
 
@@ -21,14 +21,17 @@ class TestController(unittest.TestCase):
         self.assertIsNone(controller.Controller.FPSCLOCK)
 
         # set object state
-        
+        mock_view = None
+        mock_player = None
         # execute method
-        self.test_ctrl = controller.Controller()
+        self.test_ctrl = controller.Controller(mock_view, mock_player)
 
         # assert expected outcome
         self.assertIsNotNone(self.test_ctrl.targets)
         self.assertIsNotNone(self.test_ctrl.FPSCLOCK)
-    
+        self.assertEqual(mock_view, self.test_ctrl.my_view)
+        self.assertEqual(mock_player, self.test_ctrl.player)
+
     # def test_capture_animation(self):
     #     # set object state
     #

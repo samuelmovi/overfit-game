@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - figure out way to spy on test classes
 - allow certs.py to create required folders if non-existing
 
+## 2019-10-19
+### Changed
+- new folder structure for game source files
+
 ## 2019-10-18
 ### Added
 - test classes for model, to be completed

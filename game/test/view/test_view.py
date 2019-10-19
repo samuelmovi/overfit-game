@@ -1,7 +1,7 @@
 import unittest
 import sys
 import os
-sys.path.append(os.path.abspath('../../'))
+sys.path.append(os.path.abspath('../../src/'))
 from view import view
 from controller import controller
 import pygame

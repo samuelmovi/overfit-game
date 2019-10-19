@@ -4,7 +4,7 @@ import sys
 import os
 import json
 
-sys.path.append(os.path.abspath('../../'))
+sys.path.append(os.path.abspath('../../src/'))
 from model import online_broker
 
 
