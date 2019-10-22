@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - timeout implementation for online broker
 - improved folder structure for server sub-project
 - refactored server sub-project code
+- refactored controller, now only one while loop in whole class
 
 ### Fixed
 - some test regressions due to folder structure change
