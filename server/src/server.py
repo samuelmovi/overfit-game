@@ -1,5 +1,3 @@
-import zmq_connector
-# import time
 import os
 
 
