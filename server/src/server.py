@@ -1,9 +1,6 @@
 import os
 
 
-HOST = '127.0.0.1'
-
-
 class PullPubServer:
 
 	def __init__(self):

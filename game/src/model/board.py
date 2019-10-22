@@ -3,22 +3,22 @@ from model import figure
 
 
 class Board:
-	columns = []
-	targets = []
+	columns = []		# list of column objects
+	targets = []		# list of tuples of target coordinates (position, height)
 	explosion_counter = 1
 	longest_column_count = 0
 	figure_count = 0
 
 	def __init__(self):
 		self.create_columns()
-		pass
+		self.update_counts()
 
 	def create_columns(self):
 		# reset and populate columns
 		self.columns.clear()
 		for n in range(7):
-			my_column = column.Column()
-			self.columns.append(my_column)
+			new_column = column.Column()
+			self.columns.append(new_column)
 
 	def add_row(self):
 		for i in range(7):
@@ -34,35 +34,34 @@ class Board:
 				longest = length
 		self.figure_count = total_count
 		self.longest_column_count = longest
-		
-	def all_targets(self, position, height):
-		self.targets.clear()
-		return self.acquire_targets(position, height)
 
 	def acquire_targets(self, position, height):
+		self.targets.clear()
+		
 		compatible = [(position, height)]
+		# get shape of figure @ coordinates
 		target_shape = self.columns[position].figures[height].shape
-
+		# add compatible adjacent figures to targets
 		if (height+1) < self.columns[position].occupancy():
 			if self.columns[position].figures[height+1].shape == target_shape:
 				if (position, height+1) not in self.targets:
 					compatible.append((position, height+1))
-		# explode on the left
+		# on the left
 		if position > 0 and self.columns[position-1].occupancy() >= (height + 1):
 			if self.columns[position - 1].figures[height].shape == target_shape:
 				if (position-1, height) not in self.targets:
 					compatible.append((position-1, height))
-		# explode on the right
+		# on the right
 		if position < 6 and height < self.columns[position+1].occupancy():
 			if self.columns[position + 1].figures[height].shape == target_shape:
 				if (position+1, height) not in self.targets:
 					compatible.append((position+1, height))
-		# explode on top
+		# on top
 		if height > 0:
 			if self.columns[position].figures[height-1].shape == target_shape:
 				if (position, height-1) not in self.targets:
 					compatible.append((position, height-1))
-		# check the list and add if missing
+		# check the list and add if missing, to avoid errors
 		for target in compatible:
 			if target not in self.targets:
 				self.targets.append(target)

@@ -22,9 +22,10 @@ class Player:
 	def move_player(self, direction):
 		if direction is 'left' and self.position > 0:
 			self.position -= 1
+			self.steps += 1
 		elif direction is 'right' and self.position < 6:
 			self.position += 1
-		self.steps += 1
+			self.steps += 1
 
 	def capture_figure(self, figure):
 		self.captured_figure = figure
@@ -33,29 +34,32 @@ class Player:
 
 	def action(self, columns):
 		# store player position in case it changes
-		position = self.position
-		active_column_occupancy = columns[position].occupancy()
+		player_position = self.position
+		active_column_occupancy = columns[player_position].occupancy()
+		# dictionary of coordinates for the ray to be drawn
 		ray_coords = {'position': 0, 'top': 0, 'x': 0, 'y': 0, 'c': 0}
 
 		if self.status == 'empty' and active_column_occupancy > 0:
 			self.status = 'capturing'
 			# print('[player] {} @ column #{}'.format(self.player.status, position))
-			x = position * 90 + 180
+			x = player_position * 90 + 180
 			y = 500
 			top = 500 - active_column_occupancy * 50
 			c = 1
-			ray_coords = {'position': position, 'top': top, 'x': x, 'y': y, 'c': c}
+			ray_coords = {'position': player_position, 'top': top, 'x': x, 'y': y, 'c': c}
 
 		elif self.status == 'full' and active_column_occupancy < 10:
 			self.status = 'returning'
 			# print('[player] {} @ column #{}'.format(self.player.status, position))
-			x = position * 90 + 180
+			x = player_position * 90 + 180
 			y = 475
 			top = 500 - active_column_occupancy * 50
 			c = 1
-			ray_coords = {'position': position, 'top': top, 'x': x, 'y': y, 'c': c}
+			ray_coords = {'position': player_position, 'top': top, 'x': x, 'y': y, 'c': c}
+		elif self.status in ('capturing', 'returning'):
+			print("[player] Patience, small grasshopper")
 		else:
-			print("[player] WEIRD FUCKING THING HAPPENNED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+			print("[player] WEIRD THING HAPPENNED!!!!!!!!!!!!!!!!!!")
 			print("[player] Either: player and column empty, or player and column full")
 
 		# print('[#] {} @ column #{}'.format(self.status, position+1))

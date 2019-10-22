@@ -9,12 +9,12 @@ class TestColumn(unittest.TestCase):
 
 	def __init__(self, *args, **kwargs):
 		super(TestColumn, self).__init__(*args, **kwargs)
-		pass
 
 	def test_occupancy(self):
-		print("[#] Testing method: Column.occupancy()")
-		my_column = column.Column()
-		self.assertEqual(my_column.occupancy(), len(my_column.figures))
+		# execute method
+		test_column = column.Column()
+		# assert expected outcome
+		self.assertEqual(test_column.occupancy(), len(test_column.figures))
 
 
 if __name__ == '__main__':

@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 2019-10-22
 ### Added
 - __init__ files to test folders to automate testing
+- test class for player
 
 ### Changed
 - renamed game.py to start.py
