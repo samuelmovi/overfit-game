@@ -51,7 +51,7 @@ class ZmqConnector:
 		print("[#] Starting authenticator...")
 		self.auth = ThreadAuthenticator(self.context)
 		self.auth.start()
-		self.auth.allow('127.0.0.1')
+		self.auth.allow(self.HOST)
 		# give authenticator access to approved clients' certificate directory
 		self.auth.configure_curve(domain='*', location=self.public_keys_dir)
 	

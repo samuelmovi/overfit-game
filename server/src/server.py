@@ -2,9 +2,12 @@ import os
 
 
 class PullPubServer:
+	
+	mq = None
 
-	def __init__(self):
-		self.mq = None
+	def __init__(self, connector=None):
+		if connector:
+			self.mq = connector
 	
 	def set_up(self):
 		self.mq.check_folder_structure()

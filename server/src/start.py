@@ -9,9 +9,9 @@ class Start:
         self.mq = None
     
     def server(self):
-        self.my_server = server.PullPubServer()
-        self.mq = zmq_connector.ZmqConnector()
-        self.my_server.mq = self.mq
+        # connector admits host ip in constructor
+        self.my_server = server.PullPubServer(zmq_connector.ZmqConnector())
+        # self.my_server.mq = self.mq
         
         self.my_server.set_up()
         self.my_server.loop()

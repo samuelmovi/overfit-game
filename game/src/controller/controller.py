@@ -46,10 +46,8 @@ class Controller:
         self.FPSCLOCK = pygame.time.Clock()
         pygame.display.set_caption('WeeriMeeris')
         
-    # TODO: refactor method for full resource folder injection
     @staticmethod
     def load_external_resources(my_view, resource_dir):
-        
         my_view.ball = pygame.image.load(os.path.join(resource_dir, 'ball.png'))
         my_view.triangle_full = pygame.image.load(os.path.join(resource_dir, 'triangle-pink-full.png'))
         my_view.triangle_empty = pygame.image.load(
@@ -70,12 +68,10 @@ class Controller:
             os.path.join(resource_dir, 'square-hole-red-empty.png'))
         my_view.player_full = pygame.image.load(os.path.join(resource_dir, 'player-full.png'))
         my_view.player_empty = pygame.image.load(os.path.join(resource_dir, 'player-empty.png'))
-        
         my_view.fire1 = pygame.image.load(os.path.join(resource_dir, 'fire1.png'))
         my_view.fire2 = pygame.image.load(os.path.join(resource_dir, 'fire2.png'))
         my_view.fire3 = pygame.image.load(os.path.join(resource_dir, 'fire3.png'))
-        
-        my_view.ray = pygame.image.load(os.path.join(resource_dir ,'ray-short.png'))
+        my_view.ray = pygame.image.load(os.path.join(resource_dir, 'ray-short.png'))
     
     # SCREENS
     def start_screen(self):
