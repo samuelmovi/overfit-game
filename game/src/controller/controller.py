@@ -40,69 +40,26 @@ class Controller:
         print('[#] Initiating Controller...')
         pygame.init()
         pygame.mixer.quit()
-        
-        self.my_view = view
-        self.my_view.set_up_fonts()
-        # self.load_external_resources(self.my_view, self.base_dir)
-    
-        self.player = player
-    
         self.FPSCLOCK = pygame.time.Clock()
         pygame.display.set_caption('WeeriMeeris')
         
-    @staticmethod
-    def load_external_resources(my_view, resource_dir):
-        my_view.ball = pygame.image.load(os.path.join(resource_dir, 'ball.png'))
-        my_view.triangle_full = pygame.image.load(os.path.join(resource_dir, 'triangle-pink-full.png'))
-        my_view.triangle_empty = pygame.image.load(
-            os.path.join(resource_dir, 'triangle-pink-empty.png'))
-        my_view.square_full = pygame.image.load(os.path.join(resource_dir, 'square-yellow-full.png'))
-        my_view.square_empty = pygame.image.load(os.path.join(resource_dir, 'square-yellow-empty.png'))
-        my_view.triangle_hole_complete = pygame.image.load(
-            os.path.join(resource_dir, 'triangle-hole-green-complete.png'))
-        my_view.triangle_hole_full = pygame.image.load(
-            os.path.join(resource_dir, 'triangle-hole-green-full.png'))
-        my_view.triangle_hole_empty = pygame.image.load(
-            os.path.join(resource_dir, 'triangle-hole-green-empty.png'))
-        my_view.square_hole_complete = pygame.image.load(
-            os.path.join(resource_dir, 'square-hole-red-complete.png'))
-        my_view.square_hole_full = pygame.image.load(
-            os.path.join(resource_dir, 'square-hole-red-full.png'))
-        my_view.square_hole_empty = pygame.image.load(
-            os.path.join(resource_dir, 'square-hole-red-empty.png'))
-        my_view.player_full = pygame.image.load(os.path.join(resource_dir, 'player-full.png'))
-        my_view.player_empty = pygame.image.load(os.path.join(resource_dir, 'player-empty.png'))
-        my_view.fire1 = pygame.image.load(os.path.join(resource_dir, 'fire1.png'))
-        my_view.fire2 = pygame.image.load(os.path.join(resource_dir, 'fire2.png'))
-        my_view.fire3 = pygame.image.load(os.path.join(resource_dir, 'fire3.png'))
-        my_view.ray = pygame.image.load(os.path.join(resource_dir, 'ray-short.png'))
-    
+        self.player = player
+        self.my_view = view
+        self.my_view.set_up_fonts()
+        
     def main_loop(self):
         inputs = None
         self.keyword = 'start'
-        # TODO: figure put how to use methods as dictionary values
-        event_listeners = {
-            'start': self.welcome_listener,
-            'game': self.game_listener,
-            'online_setup': self.online_setup_listener,
-            'settings': self.settings_listener,
-            "confirm_exit": self.confirm_exit_listener,
-            "confirm_leave": self.confirm_leave_listener,
-            "game_over": self.my_view.draw_game_over(),
-            "victory": self.victory_listener,
-            "find_online_match": self.find_match_listener()
-
-        }
 
         while not self.loop_finished:
+            # check if screen needs redrawing
             if self.draw_again:
                 inputs = self.draw(self.keyword)
                 
-            # event_listeners[self.keyword](inputs)
             if self.keyword == "start":
                 self.welcome_listener(inputs)
             elif self.keyword == "game":
-                self.game_listener()
+                self.game_handler()
             elif self.keyword == "online_setup":
                 self.online_setup_listener(inputs)
             elif self.keyword == "find_online_match":
@@ -117,6 +74,10 @@ class Controller:
                 self.game_over_listener()
             elif self.keyword == "victory":
                 self.victory_listener()
+
+            pygame.display.update()
+            self.FPSCLOCK.tick(self.FPS)
+            
         self.shutdown()
     
     def draw(self, keyword):
@@ -124,7 +85,7 @@ class Controller:
         if keyword == "start":
             inputs = self.my_view.draw_start_screen()
         elif keyword == "game":
-            self.game_handler()
+            pass
         elif keyword == "online_setup":
             inputs = self.my_view.draw_online_options_screen(self.player.name, self.HOST)
         elif self.keyword == "find_online_match":
@@ -214,6 +175,7 @@ class Controller:
                     print('[#] Finding online match...')
                     self.mq = zmq_connector.ZmqConnector(self.HOST)
                     self.broker = online_broker.OnlineBroker(self.player, self.mq)
+        self.my_view.refresh_input(input_boxes)
         
     def find_match_listener(self):
         for event in pygame.event.get():
@@ -252,6 +214,7 @@ class Controller:
                           .format(input_boxes[0].text, input_boxes[1].text))
             for instance in input_boxes:
                 instance.handle_event(event)
+        self.my_view.refresh_input(input_boxes)
     
     def confirm_exit_listener(self, inputs):
         yes_button, no_button = inputs
@@ -282,7 +245,8 @@ class Controller:
                     self.keyword = "start"
                     self.draw_again = True
                 elif no_button.rect.collidepoint((mouse_x, mouse_y)):
-                    return
+                    self.keyword = "game"
+                    self.draw_again = True
     
     def game_over_listener(self):
         for event in pygame.event.get():
@@ -443,7 +407,34 @@ class Controller:
         self.explosion_counter = 1
         self.rows_received = 0
         self.player.reset()
-    
+
+    @staticmethod
+    def load_external_resources(my_view, resource_dir):
+        my_view.ball = pygame.image.load(os.path.join(resource_dir, 'ball.png'))
+        my_view.triangle_full = pygame.image.load(os.path.join(resource_dir, 'triangle-pink-full.png'))
+        my_view.triangle_empty = pygame.image.load(
+            os.path.join(resource_dir, 'triangle-pink-empty.png'))
+        my_view.square_full = pygame.image.load(os.path.join(resource_dir, 'square-yellow-full.png'))
+        my_view.square_empty = pygame.image.load(os.path.join(resource_dir, 'square-yellow-empty.png'))
+        my_view.triangle_hole_complete = pygame.image.load(
+            os.path.join(resource_dir, 'triangle-hole-green-complete.png'))
+        my_view.triangle_hole_full = pygame.image.load(
+            os.path.join(resource_dir, 'triangle-hole-green-full.png'))
+        my_view.triangle_hole_empty = pygame.image.load(
+            os.path.join(resource_dir, 'triangle-hole-green-empty.png'))
+        my_view.square_hole_complete = pygame.image.load(
+            os.path.join(resource_dir, 'square-hole-red-complete.png'))
+        my_view.square_hole_full = pygame.image.load(
+            os.path.join(resource_dir, 'square-hole-red-full.png'))
+        my_view.square_hole_empty = pygame.image.load(
+            os.path.join(resource_dir, 'square-hole-red-empty.png'))
+        my_view.player_full = pygame.image.load(os.path.join(resource_dir, 'player-full.png'))
+        my_view.player_empty = pygame.image.load(os.path.join(resource_dir, 'player-empty.png'))
+        my_view.fire1 = pygame.image.load(os.path.join(resource_dir, 'fire1.png'))
+        my_view.fire2 = pygame.image.load(os.path.join(resource_dir, 'fire2.png'))
+        my_view.fire3 = pygame.image.load(os.path.join(resource_dir, 'fire3.png'))
+        my_view.ray = pygame.image.load(os.path.join(resource_dir, 'ray-short.png'))
+
     @staticmethod
     def shutdown():
         pygame.quit()
