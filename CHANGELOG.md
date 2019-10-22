@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - figure out way to spy on test classes
 - allow certs.py to create required folders if non-existing
-- add start script to server for dependency injection
+- add logic for client trying to connect to non-existent server
 
 ## 2019-10-22
 ### Added
