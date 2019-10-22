@@ -6,6 +6,7 @@ class Board:
 	columns = []
 	targets = []
 	explosion_counter = 1
+	longest_column_count = 0
 
 	def __init__(self):
 		self.create_columns()
@@ -21,7 +22,17 @@ class Board:
 	def add_row(self):
 		for i in range(7):
 			self.columns[i].figures.insert(0, figure.Figure())
-
+	
+	def check_longest_column(self):
+		total = 0
+		longest = 0
+		for c in self.columns:
+			length = c.occupancy()
+			total += length
+			if length > longest:
+				longest = length
+		self.longest_column_count = longest
+	
 	def all_targets(self, position, height):
 		self.targets.clear()
 		return self.acquire_targets(position, height)

@@ -9,8 +9,6 @@ class Player:
 	status = ''  # empty | full | | capturing | returning
 	online = ''  # '' | available | challenger | accepted | itson | playing | over
 	score = 0
-	total = 0
-	longest = 0
 	steps = 0
 	connected = False
 	ID = ''
@@ -72,8 +70,6 @@ class Player:
 		self.status = 'empty'
 		self.online = ''
 		self.score = 0
-		self.total = 0
-		self.longest = 0
 		self.steps = 0
 		self.connected = False
 
@@ -83,9 +79,7 @@ class Player:
 			'name': self.name,			# name chosen by player
 			'online': self.online,		# player's online status
 			'status': self.status,		# status of the game's character
-			'score': self.score,
-			'total': self.total,
-			'longest': self.longest}
+			'score': self.score}		# current game score
 		return stats
 
 

@@ -45,7 +45,7 @@ class Controller:
 		self.FPSCLOCK = pygame.time.Clock()
 		pygame.display.set_caption('WeeriMeeris')
 		
-	
+	# TODO: refactor method for full resource folder injection
 	@staticmethod
 	def load_external_resources(my_view, base_dir):
 		
@@ -78,10 +78,12 @@ class Controller:
 
 	# SCREENS
 	def start_screen(self):
+		# draw the start screen and get the buttons
 		single_player_button, online_multi_button, settings_button = self.my_view.draw_start_screen()
 
 		while True:
-			for event in pygame.event.get():  # event handling loop
+			# check for and handle events
+			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					self.shutdown()
 				elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
@@ -94,11 +96,12 @@ class Controller:
 						self.online_setup_screen()
 					elif settings_button.rect.collidepoint((mouse_x, mouse_y)):
 						self.settings_screen()
+			# update display with all changes drawn
 			pygame.display.update()
 			self.FPSCLOCK.tick(self.FPS)
 
 	def online_setup_screen(self):
-		print('[#] Showing Online Setup screen')
+		print('[#] Online Setup screen')
 		inputs, start_button = self.my_view.draw_online_options_screen(self.player.name, self.HOST)
 		while True:
 			# event handling loop
@@ -126,7 +129,7 @@ class Controller:
 			self.FPSCLOCK.tick(self.FPS)
 
 	def settings_screen(self):
-		print('[#] Showing settings screen')
+		print('[#] Settings screen')
 		inputs, save_button = self.my_view.draw_settings_screen(self.player.name, self.HOST)
 		while True:
 			# event handling loop
@@ -155,6 +158,7 @@ class Controller:
 			self.FPSCLOCK.tick(self.FPS)
 
 	def confirm_exit(self):
+		print('[#] Confirm exit')
 		yes_button, no_button = self.my_view.confirm_exit()
 		while True:
 			for event in pygame.event.get():  # event handling loop
@@ -172,6 +176,7 @@ class Controller:
 			self.FPSCLOCK.tick(self.FPS)
 
 	def confirm_leave_game(self):
+		print('[#] Confirm leave game')
 		yes_button, no_button = self.my_view.confirm_leave_game()
 		while True:
 			for event in pygame.event.get():  # event handling loop
@@ -220,12 +225,12 @@ class Controller:
 			self.FPSCLOCK.tick(self.FPS)
 
 	def capture_animation(self):
-		if self.my_view.animate_return(self.ray_coords) is False:
+		if self.my_view.animate_return(self.ray_coords) is False:		# else ???
 			# remove bottom figure from column and capture it
 			self.player.capture_figure(self.board.columns[self.ray_coords['position']].figures.pop(-1))
 
 	def return_animation(self):
-		if self.my_view.animate_return(self.ray_coords) is False:
+		if self.my_view.animate_return(self.ray_coords) is False:		# else ???
 			# after the ray has finished being drawn
 			# if column is empty add captured figure to column
 			if len(self.board.columns[self.ray_coords['position']].figures) == 0:
@@ -239,7 +244,9 @@ class Controller:
 				else:
 					# if bottom figure is not empty
 					# list adjacent compatible figures
-					self.targets = self.board.all_targets(self.player.position, self.board.columns[self.player.position].occupancy() - 1)
+					self.targets = self.board.all_targets(
+						self.player.position,
+						self.board.columns[self.player.position].occupancy() - 1)
 					self.all_targets_acquired = True
 					self.player.score += self.player.captured_figure.value
 					print('[#] All targets acquired: {} [{}]'.format(self.all_targets_acquired, len(self.targets)))
@@ -278,22 +285,13 @@ class Controller:
 					self.confirm_leave_game()
 
 	def update_player_stats(self):
-		# check to add new row to self
-		if self.player.steps > 15 or self.player.total < 15:
+		# add new row to self for every 15 moves
+		if self.player.steps > 15:
 			self.board.add_row()
 			self.player.steps = 0
-		# recounting stuff
-		total = 0
-		longest = 0
-		for c in self.board.columns:
-			length = c.occupancy()
-			total += length
-			if length > longest:
-				longest = length
-		self.player.total = total
-		self.player.longest = longest
-		# check endgame condition
-		if self.player.longest >= 10:
+		# recounting stuff on the board
+		self.board.check_longest_column()
+		if self.board.longest_column_count >= 10:
 			self.game_over()
 
 	# ONLINE FUNCTIONS

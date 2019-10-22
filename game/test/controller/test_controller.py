@@ -7,6 +7,7 @@ sys.path.append(os.path.abspath('../../src/'))
 from controller import controller
 
 
+# TODO: find way to patch-in a mock pygame.event
 class TestController(unittest.TestCase):
     
     test_ctrl = None
@@ -32,45 +33,63 @@ class TestController(unittest.TestCase):
         self.assertIsNotNone(self.test_ctrl.FPSCLOCK)
         self.assertEqual(mock_view, self.test_ctrl.my_view)
         self.assertEqual(mock_player, self.test_ctrl.player)
-
+    
     # def test_capture_animation(self):
+    #
     #     # set object state
     #
     #     # execute method
     #
     #     # assert expected outcome
+    #     # confirm calls to mock player, view and board
     #     pass
     #
     # def test_return_animation(self):
     #     # set object state
+    #     # set boolean return for self.my_view.animate_return(self.ray_coords)
+    #     # set size for self.board.columns[self.ray_coords['position']].figures
+    #     # set boolean return for self.board.columns[self.ray_coords['position']].figures[-1].fits(*)
+    #     # set boolean return for self.board.columns[self.ray_coords['position']].figures[-1].empty
     #
     #     # execute method
     #
     #     # assert expected outcome
+    #     # confirm calls to mock player, view and board
     #     pass
     #
     # def test_explode_all_targets(self):
     #     # set object state
-    #
+    #     # set controller.frame
     #     # execute method
     #
     #     # assert expected outcome
+    #     # call to controller.my_view.draw_explosion()
+    #     # call controller.board.eliminate_targets(self.targets)
+    #     # call to controller.targets.sort(lambda)
+    #     # value of controller.player.score
+    #     # value of controller.frame
     #     pass
     #
     # def test_check_player_events(self):
     #     # set object state
-    #
+    #     # mock pygame.event.get()
+    #     # mock inner class methods
     #     # execute method
     #
     #     # assert expected outcome
+    #     # call to controller.player.move_player
     #     pass
     #
     # def test_update_player_stats(self):
     #     # set object state
-    #
+    #     # set player state, total, longest
+    #     # mock controller.board.columns
     #     # execute method
     #
     #     # assert expected outcome
+    #     # calls to board.add_row()
+    #     # values of player state, total, longest
+    #     #
     #     pass
     #
     # def test_check_online_play(self):

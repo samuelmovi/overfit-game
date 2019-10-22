@@ -18,6 +18,7 @@ class TestStart(unittest.TestCase):
         pass
 
     def test_main(self):
+        pass
         # TODO: find way to import start.py from src/
         # # set object state
         # # execute method
