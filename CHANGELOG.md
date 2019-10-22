@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - figure out way to spy on test classes
 - allow certs.py to create required folders if non-existing
-- fix import error when using `python -m unittest` from project folder
+- add start script to server for dependency injection
 
 ## 2019-10-22
 ### Added
@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - moved some controller code into the models
 - timeout implementation for online broker
 - improved folder structure for server sub-project
+- refactored server sub-project code
 
 ### Fixed
 - some test regressions due to folder structure change
