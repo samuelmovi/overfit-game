@@ -3,8 +3,8 @@ import sys
 import time
 import json
 import os
-from pygame.locals import *
 from model import board, zmq_connector, online_broker
+from pygame.locals import *
 
     
 class Controller:
@@ -29,9 +29,12 @@ class Controller:
     player = None
     targets = []
     FPSCLOCK = None
-    # resource_dir = os.path.join(os.getcwd(), '../')
     base_dir = os.path.join(os.getcwd(), '../')
     
+    keyword = ""
+    draw_again = True
+    loop_finished = False
+
     def __init__(self, view, player):
         print('[#] Initiating Controller...')
         pygame.init()
@@ -73,8 +76,181 @@ class Controller:
         my_view.fire3 = pygame.image.load(os.path.join(resource_dir, 'fire3.png'))
         my_view.ray = pygame.image.load(os.path.join(resource_dir, 'ray-short.png'))
     
+    def main_loop(self):
+        inputs = None
+        self.keyword = 'start'
+        # TODO: figure put how to use methods as dictionary values
+        event_listeners = {
+            'start': self.welcome_listener,
+            'game': self.game_listener,
+            'online_setup': self.online_setup_listener,
+            'settings': self.settings_listener,
+            "confirm_exit": self.confirm_exit_listener,
+            "confirm_leave": self.confirm_leave_listener
+        }
+
+        while not self.loop_finished:
+            if self.draw_again:
+                inputs = self.draw(self.keyword)
+            # event_listeners[self.keyword](inputs)
+            if self.keyword == "start":
+                self.welcome_listener(inputs)
+            elif self.keyword == "game":
+                self.play()
+            elif self.keyword == "online_setup":
+                self.online_setup_listener(inputs)
+            elif self.keyword == "settings":
+                self.settings_listener(inputs)
+            elif self.keyword == "confirm_exit":
+                self.confirm_exit_listener(inputs)
+            elif self.keyword == "confirm_leave":
+                self.confirm_leave_listener(inputs)
+        self.shutdown()
+    
+    def draw(self, keyword):
+        inputs = None
+        if keyword == "start":
+            inputs = self.my_view.draw_start_screen()
+        elif keyword == "game":
+            self.game_handler()
+        elif keyword == "online_setup":
+            inputs = self.my_view.draw_online_options_screen(self.player.name, self.HOST)
+        elif keyword == "settings":
+            inputs = self.my_view.draw_settings_screen(self.player.name, self.HOST)
+        elif keyword == "confirm_exit":
+            inputs = self.my_view.confirm_exit()
+        elif keyword == "confirm_leave":
+            inputs = self.my_view.confirm_leave_game()
+        self.draw_again = False
+        return inputs
+       
+    # EVENT LISTENERS
+    def welcome_listener(self, inputs):
+        # check for and handle events
+        single_player_button, online_multi_button, settings_button = inputs
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.shutdown()
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                self.confirm_exit()
+            elif event.type == pygame.MOUSEBUTTONUP:
+                mouse_x, mouse_y = event.pos
+                if single_player_button.rect.collidepoint((mouse_x, mouse_y)):
+                    self.keyword = 'game'
+                    self.draw_again = True
+                    print('[#] Game START!')
+                    self.board = board.Board()
+                    print('[#] Opponent: {}'.format(self.opponent))
+                    
+                elif online_multi_button.rect.collidepoint((mouse_x, mouse_y)):
+                    self.keyword = 'online_setup'
+                    self.draw_again = True
+                elif settings_button.rect.collidepoint((mouse_x, mouse_y)):
+                    self.keyword = 'settings'
+                    self.draw_again = True
+    
+    def game_listener(self):
+        # event handling loop
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT or (event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE):
+                self.shutdown()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    self.player.move_player(self.LEFT)
+                elif event.key == pygame.K_RIGHT:
+                    self.player.move_player(self.RIGHT)
+                elif event.key == pygame.K_SPACE:
+                    self.ray_coords = self.player.action(self.board.columns)
+                elif event.key == pygame.K_ESCAPE:
+                    pygame.event.clear()
+                    self.keyword = "confirm_leave"
+                    self.draw_again = True
+    
+    def online_setup_listener(self, inputs):
+        input_boxes, start_button = inputs
+
+        for event in pygame.event.get():
+            # handle events in inputs first
+            for input_box in input_boxes:
+                input_box.handle_event(event)
+        
+            if event.type == pygame.QUIT:
+                self.loop_finished = True
+                self.shutdown()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.event.clear()
+                    self.keyword = "start"
+                    self.draw_again = True
+            elif event.type == pygame.MOUSEBUTTONUP:
+                mouse_x, mouse_y = event.pos
+                if start_button.rect.collidepoint((mouse_x, mouse_y)):
+                    if len(input_boxes[0].get_text()) > 0:
+                        self.HOST = input_boxes[0].get_text()
+                    if len(input_boxes[1].get_text()) > 0:
+                        self.player.name = input_boxes[1].get_text()
+                    self.find_online_match()
+    
+    def settings_listener(self, inputs):
+        input_boxes, save_button = inputs
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.shutdown()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.event.clear()
+                    self.keyword = "start"
+                    self.draw_again = True
+                elif event.key == pygame.K_RETURN:
+                    if len(input_boxes[0].get_text()) > 0:
+                        self.mq.HOST = input_boxes[0].get_text()
+                    if len(input_boxes[1].get_text()) > 0:
+                        self.player.name = input_boxes[1].get_text()
+            elif event.type == pygame.MOUSEBUTTONUP:
+                mouse_x, mouse_y = event.pos
+                if save_button.rect.collidepoint((mouse_x, mouse_y)):
+                    self.HOST = input_boxes[0].text
+                    self.player.name = input_boxes[1].text
+                    print("[#] Data updated\n\t> Host: {}\n\t> Player Name: {}"
+                          .format(input_boxes[0].text, input_boxes[1].text))
+            for instance in input_boxes:
+                instance.handle_event(event)
+    
+    def confirm_exit_listener(self, inputs):
+        yes_button, no_button = inputs
+        for event in pygame.event.get():  # event handling loop
+            if event.type == pygame.QUIT:
+                self.loop_finished = True
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                self.keyword = "start"
+                self.draw_again = True
+            elif event.type == pygame.MOUSEBUTTONUP:
+                mouse_x, mouse_y = event.pos
+                if yes_button.rect.collidepoint((mouse_x, mouse_y)):
+                    self.loop_finished = True
+                elif no_button.rect.collidepoint((mouse_x, mouse_y)):
+                    self.keyword = "start"
+                    self.draw_again = True
+    
+    def confirm_leave_listener(self, inputs):
+        yes_button, no_button = inputs
+
+        for event in pygame.event.get():  # event handling loop
+            if event.type == pygame.QUIT:
+                self.loop_finished = True
+            elif event.type == pygame.MOUSEBUTTONUP:
+                mouse_x, mouse_y = event.pos
+                if yes_button.rect.collidepoint((mouse_x, mouse_y)):
+                    self.reset_state()
+                    self.keyword = "start"
+                    self.draw_again = True
+                elif no_button.rect.collidepoint((mouse_x, mouse_y)):
+                    return
+    
     # SCREENS
-    def start_screen(self):
+    def welcome_screen(self):
         # draw the start screen and get the buttons
         single_player_button, online_multi_button, settings_button = self.my_view.draw_start_screen()
     
@@ -99,12 +275,12 @@ class Controller:
     
     def online_setup_screen(self):
         print('[#] Online Setup screen')
-        inputs, start_button = self.my_view.draw_online_options_screen(self.player.name, self.HOST)
+        input_boxes, start_button = self.my_view.draw_online_options_screen(self.player.name, self.HOST)
         while True:
             # event handling loop
             for event in pygame.event.get():
                 # handle events in inputs first
-                for input_box in inputs:
+                for input_box in input_boxes:
                     input_box.handle_event(event)
     
                 if event.type == pygame.QUIT:
@@ -112,16 +288,16 @@ class Controller:
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         pygame.event.clear()
-                        self.start_screen()
+                        self.welcome_screen()
                 elif event.type == pygame.MOUSEBUTTONUP:
                     mouse_x, mouse_y = event.pos
                     if start_button.rect.collidepoint((mouse_x, mouse_y)):
-                        if len(inputs[0].get_text()) > 0:
-                            self.HOST = inputs[0].get_text()
-                        if len(inputs[1].get_text()) > 0:
-                            self.player.name = inputs[1].get_text()
+                        if len(input_boxes[0].get_text()) > 0:
+                            self.HOST = input_boxes[0].get_text()
+                        if len(input_boxes[1].get_text()) > 0:
+                            self.player.name = input_boxes[1].get_text()
                         self.find_online_match()
-            self.my_view.refresh_input(inputs)
+            self.my_view.refresh_input(input_boxes)
             pygame.display.update()
             self.FPSCLOCK.tick(self.FPS)
     
@@ -136,7 +312,7 @@ class Controller:
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         pygame.event.clear()
-                        self.start_screen()
+                        self.welcome_screen()
                     elif event.key == pygame.K_RETURN:
                         if len(inputs[0].get_text()) > 0:
                             self.mq.HOST = inputs[0].get_text()
@@ -162,13 +338,13 @@ class Controller:
                 if event.type == pygame.QUIT:
                     self.shutdown()
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                    self.start_screen()
+                    self.welcome_screen()
                 elif event.type == pygame.MOUSEBUTTONUP:
                     mouse_x, mouse_y = event.pos
                     if yes_button.rect.collidepoint((mouse_x, mouse_y)):
                         self.shutdown()
                     elif no_button.rect.collidepoint((mouse_x, mouse_y)):
-                        self.start_screen()
+                        self.welcome_screen()
             pygame.display.update()
             self.FPSCLOCK.tick(self.FPS)
     
@@ -183,7 +359,7 @@ class Controller:
                     mouse_x, mouse_y = event.pos
                     if yes_button.rect.collidepoint((mouse_x, mouse_y)):
                         self.reset_state()
-                        self.start_screen()
+                        self.welcome_screen()
                     elif no_button.rect.collidepoint((mouse_x, mouse_y)):
                         return
                 """
@@ -196,13 +372,30 @@ class Controller:
             self.FPSCLOCK.tick(self.FPS)
     
     # GAMING FUNCTIONS
+    def game_handler(self):
+        self.game_listener()
+        self.update_player_stats()
+        self.board.update_counts()
+        self.my_view.update_game_screen(self.player, self.board)
+        self.check_online_play()
+    
+        # check for capture
+        if self.player.status == 'capturing':
+            self.capture_animation()
+        # check for return
+        elif self.player.status == 'returning':
+            self.return_animation()
+        # check for explosion
+        if self.all_targets_acquired is True:
+            self.explode_all_targets()
+        
     def play(self):
         print('[#] Game START!')
         self.board = board.Board()
         print('[#] Opponent: {}'.format(self.opponent))
     
         while True:
-            self.check_player_events()
+            self.game_listener()
             self.update_player_stats()
             self.board.update_counts()
             self.my_view.update_game_screen(self.player, self.board)
@@ -266,22 +459,6 @@ class Controller:
             self.player.score += self.board.eliminate_targets(self.targets)
             self.frame = 0
     
-    def check_player_events(self):
-        # event handling loop
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT or (event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE):
-                self.shutdown()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
-                    self.player.move_player(self.LEFT)
-                elif event.key == pygame.K_RIGHT:
-                    self.player.move_player(self.RIGHT)
-                elif event.key == pygame.K_SPACE:
-                    self.ray_coords = self.player.action(self.board.columns)
-                elif event.key == pygame.K_ESCAPE:
-                    pygame.event.clear()
-                    self.confirm_leave_game()
-    
     def update_player_stats(self):
         # add new row to self for every 15 moves
         if self.player.steps > 15:
@@ -308,7 +485,7 @@ class Controller:
                         pygame.event.clear()
                         self.broker = None
                         self.reset_state()
-                        self.start_screen()
+                        self.welcome_screen()
     
             opponent = self.broker.negotiate()
             if opponent is not None:
@@ -371,7 +548,7 @@ class Controller:
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     pygame.event.clear()
                     self.reset_state()
-                    self.start_screen()
+                    self.welcome_screen()
             pygame.display.update()
             self.FPSCLOCK.tick(self.FPS)
     
@@ -386,7 +563,7 @@ class Controller:
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     pygame.event.clear()
                     self.reset_state()
-                    self.start_screen()
+                    self.welcome_screen()
             pygame.display.update()
             self.FPSCLOCK.tick(self.FPS)
     

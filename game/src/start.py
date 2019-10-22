@@ -20,7 +20,7 @@ class Start:
 		# start controller
 		self.ctrl = controller.Controller(self.my_view, self.my_player)
 		self.ctrl.load_external_resources(self.ctrl.my_view, os.path.join(os.getcwd(), 'resources'))
-		self.ctrl.start_screen()
+		self.ctrl.welcome_screen()
 	
 
 if __name__ == '__main__':
