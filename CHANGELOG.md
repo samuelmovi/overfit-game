@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - figure out way to spy on test classes
 - allow certs.py to create required folders if non-existing
+- fix import error when using `python -m unittest` from project folder
+
+## 2019-10-22
+### Added
+- __init__ files to test folders to automate testing
+
+### Changed
+- renamed game.py to start.py
 
 ## 2019-10-19
 ### Changed
