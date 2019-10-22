@@ -9,6 +9,7 @@ import pygame
 
 class TestView(unittest.TestCase):
     base_dir = os.getcwd()
+    resource_folder = os.path.join(os.getcwd(), 'resources')
     
     def __init__(self, *args, **kwargs):
         super(TestView, self).__init__(*args, **kwargs)
@@ -61,7 +62,7 @@ class TestView(unittest.TestCase):
         ray_coords['x'] = 10
         ray_coords['y'] = 200
         ray_coords['c'] = c_value
-        controller.Controller.load_external_resources(self.test_view, os.path.join(os.getcwd(), '../'))
+        controller.Controller.load_external_resources(self.test_view, self.resource_folder)
         
         # execute method
         outcome = self.test_view.animate_capture(ray_coords)
@@ -85,7 +86,7 @@ class TestView(unittest.TestCase):
         ray_coords['x'] = 10
         ray_coords['y'] = 200
         ray_coords['c'] = c_value
-        controller.Controller.load_external_resources(self.test_view, os.path.join(os.getcwd(), '../'))
+        controller.Controller.load_external_resources(self.test_view, self.resource_folder)
     
         # execute method
         outcome = self.test_view.animate_return(ray_coords)

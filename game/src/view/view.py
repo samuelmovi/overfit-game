@@ -77,7 +77,7 @@ class View:
 
 		return single_player_button, online_multi_button, settings_button
 
-	def draw_game_board(self, player):
+	def draw_game_board(self, player, board):
 		self.screen.fill(self.BLACK)
 		# draw boundary lines
 		pygame.draw.line(self.screen, self.WHITE, (150, 0), (150, W_HEIGHT), 4)
@@ -100,14 +100,17 @@ class View:
 		player_total_title = button.MyButton(self.SMALLFONT, 'TOTAL', self.GREEN, self.BLACK)
 		player_total_title.set_coords(75, 145)
 		self.screen.blit(player_total_title.surface, player_total_title.rect)
-		player_total_title = button.MyButton(self.BIGFONT, format(player.total), self.GREEN, self.BLACK)
+		player_total_title = button.MyButton(self.BIGFONT, format(board.figure_count), self.GREEN, self.BLACK)
 		player_total_title.set_coords(75, 185)
 		self.screen.blit(player_total_title.surface, player_total_title.rect)
 		# draw occupancy of the most occupied column
 		player_longest_title = button.MyButton(self.SMALLFONT, 'LONGEST', self.YELLOW, self.BLACK)
 		player_longest_title.set_coords(75, 225)
 		self.screen.blit(player_longest_title.surface, player_longest_title.rect)
-		player_longest_title = button.MyButton(self.BIGFONT, format(player.longest), self.YELLOW, self.BLACK)
+		player_longest_title = button.MyButton(
+			self.BIGFONT, format(board.longest_column_count),
+			self.YELLOW,
+			self.BLACK)
 		player_longest_title.set_coords(75, 265)
 		self.screen.blit(player_longest_title.surface, player_longest_title.rect)
 
@@ -347,9 +350,9 @@ class View:
 
 		return yes_button, no_button
 
-	def update_game_screen(self, columns, player1):
-		self.draw_game_board(player1)
-		self.draw_figures(columns)
+	def update_game_screen(self, player1, board):
+		self.draw_game_board(player1, board)
+		self.draw_figures(board.columns)
 		self.draw_player(player1)
 
 

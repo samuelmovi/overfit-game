@@ -29,7 +29,8 @@ class Controller:
 	player = None
 	targets = []
 	FPSCLOCK = None
-	base_dir = os.getcwd()
+	# resource_dir = os.path.join(os.getcwd(), '../')
+	base_dir = os.path.join(os.getcwd(), '../')
 
 	def __init__(self, view, player):
 		print('[#] Initiating Controller...')
@@ -47,34 +48,34 @@ class Controller:
 		
 	# TODO: refactor method for full resource folder injection
 	@staticmethod
-	def load_external_resources(my_view, base_dir):
+	def load_external_resources(my_view, resource_dir):
 		
-		my_view.ball = pygame.image.load(os.path.join(base_dir, 'resources/ball.png'))
-		my_view.triangle_full = pygame.image.load(os.path.join(base_dir, 'resources/triangle-pink-full.png'))
+		my_view.ball = pygame.image.load(os.path.join(resource_dir, 'ball.png'))
+		my_view.triangle_full = pygame.image.load(os.path.join(resource_dir, 'triangle-pink-full.png'))
 		my_view.triangle_empty = pygame.image.load(
-			os.path.join(base_dir, 'resources/triangle-pink-empty.png'))
-		my_view.square_full = pygame.image.load(os.path.join(base_dir, 'resources/square-yellow-full.png'))
-		my_view.square_empty = pygame.image.load(os.path.join(base_dir, 'resources/square-yellow-empty.png'))
+			os.path.join(resource_dir, 'triangle-pink-empty.png'))
+		my_view.square_full = pygame.image.load(os.path.join(resource_dir, 'square-yellow-full.png'))
+		my_view.square_empty = pygame.image.load(os.path.join(resource_dir, 'square-yellow-empty.png'))
 		my_view.triangle_hole_complete = pygame.image.load(
-			os.path.join(base_dir, 'resources/triangle-hole-green-complete.png'))
+			os.path.join(resource_dir, 'triangle-hole-green-complete.png'))
 		my_view.triangle_hole_full = pygame.image.load(
-			os.path.join(base_dir, 'resources/triangle-hole-green-full.png'))
+			os.path.join(resource_dir, 'triangle-hole-green-full.png'))
 		my_view.triangle_hole_empty = pygame.image.load(
-			os.path.join(base_dir, 'resources/triangle-hole-green-empty.png'))
+			os.path.join(resource_dir, 'triangle-hole-green-empty.png'))
 		my_view.square_hole_complete = pygame.image.load(
-			os.path.join(base_dir, 'resources/square-hole-red-complete.png'))
+			os.path.join(resource_dir, 'square-hole-red-complete.png'))
 		my_view.square_hole_full = pygame.image.load(
-			os.path.join(base_dir, 'resources/square-hole-red-full.png'))
+			os.path.join(resource_dir, 'square-hole-red-full.png'))
 		my_view.square_hole_empty = pygame.image.load(
-			os.path.join(base_dir, 'resources/square-hole-red-empty.png'))
-		my_view.player_full = pygame.image.load(os.path.join(base_dir, 'resources/player-full.png'))
-		my_view.player_empty = pygame.image.load(os.path.join(base_dir, 'resources/player-empty.png'))
+			os.path.join(resource_dir, 'square-hole-red-empty.png'))
+		my_view.player_full = pygame.image.load(os.path.join(resource_dir, 'player-full.png'))
+		my_view.player_empty = pygame.image.load(os.path.join(resource_dir, 'player-empty.png'))
 		
-		my_view.fire1 = pygame.image.load(os.path.join(base_dir, 'resources/fire1.png'))
-		my_view.fire2 = pygame.image.load(os.path.join(base_dir, 'resources/fire2.png'))
-		my_view.fire3 = pygame.image.load(os.path.join(base_dir, 'resources/fire3.png'))
+		my_view.fire1 = pygame.image.load(os.path.join(resource_dir, 'fire1.png'))
+		my_view.fire2 = pygame.image.load(os.path.join(resource_dir, 'fire2.png'))
+		my_view.fire3 = pygame.image.load(os.path.join(resource_dir, 'fire3.png'))
 		
-		my_view.ray = pygame.image.load(os.path.join(base_dir,'resources/ray-short.png'))
+		my_view.ray = pygame.image.load(os.path.join(resource_dir ,'ray-short.png'))
 
 	# SCREENS
 	def start_screen(self):
@@ -207,7 +208,8 @@ class Controller:
 		while True:
 			self.check_player_events()
 			self.update_player_stats()
-			self.my_view.update_game_screen(self.board.columns, self.player)
+			self.board.update_counts()
+			self.my_view.update_game_screen(self.player, self.board)
 			self.check_online_play()
 
 			# check for capture
@@ -290,7 +292,7 @@ class Controller:
 			self.board.add_row()
 			self.player.steps = 0
 		# recounting stuff on the board
-		self.board.check_longest_column()
+		self.board.update_counts()
 		if self.board.longest_column_count >= 10:
 			self.game_over()
 
