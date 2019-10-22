@@ -321,15 +321,12 @@ class Controller:
 			# set text for wait-screen
 			if self.player.online == 'available':
 				text = 'Waiting for challengers'
-				# self.broker.timer += 1
+				# timer = time.process_time()
 			elif self.player.online == 'accepted':
 				text = 'Challenge has been accepted'
-				# self.broker.timer += 1
 			elif self.player.online == 'challenger':
 				text = 'Challenging available opponent'
-				# self.broker.timer += 1
 			elif self.player.online == 'itson':
-				# self.broker.timer += 1
 				text = 'It\'s F**king ON!!!'
 				# self.player.online = 'playing'
 

@@ -1,6 +1,7 @@
 import json
 import traceback
 import time
+import timeit
 
 
 class OnlineBroker:
@@ -33,7 +34,7 @@ class OnlineBroker:
 			traceback.print_exc()
 
 	def timeout(self):
-		if self.timer > 60:
+		if (timeit.default_timer() - self.timer) > 5:
 			return True
 		else:
 			return False
@@ -49,20 +50,20 @@ class OnlineBroker:
 				self.challenge_ap()
 			else:
 				self.set_player_available()
-			self.timer = 0
+			self.timer = timeit.default_timer()
 		elif self.player.online == 'available':
 			self.timer += 1
 			self.handle_challenger()
 		elif self.player.online == 'challenger':
-			self.timer += 1
+			self.timer = timeit.default_timer()
 			if self.check_challenge_response() is True:
 				self.itson()
 		elif self.player.online == 'accepted':
-			self.timer += 1
+			self.timer = timeit.default_timer()
 			if self.is_it_on() is True:
 				return self.opponent
 		elif self.player.online == 'itson':
-			self.timer += 1
+			self.timer = timeit.default_timer()
 			return self.opponent
 		
 		return None

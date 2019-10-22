@@ -82,16 +82,33 @@ class TestController(unittest.TestCase):
     #
     # def test_update_player_stats(self):
     #     # set object state
-    #     # set player state, total, longest
+    #     # set player state,
+    #     # set board total, longest
     #     # mock controller.board.columns
     #     # execute method
     #
     #     # assert expected outcome
     #     # calls to board.add_row()
-    #     # values of player state, total, longest
+    #     # values of player state
+    #     # values for board total, longest
     #     #
     #     pass
     #
+    # def test_find_online_match(self):
+    #     # beware of while true
+    #     # mock zmq connector, online broker, pygame.event.get()
+    #     # mock online broker negotiate, timeout
+    #     # set player state,
+    #     # set board total, longest
+    #     # mock controller.board.columns
+    #     # execute method
+    #
+    #     # assert expected outcome
+    #     # calls to board.add_row()
+    #     # values of player online
+    #     # values for board total, longest
+    #     #
+    #     pass    #
     # def test_check_online_play(self):
     #     # set object state
     #

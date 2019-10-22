@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - renamed game.py to start.py
 - moved some controller code into the models
+- timeout implementation for online broker
 
 ## 2019-10-19
 ### Changed
