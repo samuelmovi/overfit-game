@@ -106,20 +106,51 @@ class TestController(unittest.TestCase):
     #     # assert expected outcome
     #     # calls to board.add_row()
     #     # values of player online
-    #     # values for board total, longest
+    #     # values received for self.my_view.draw_wait_screen(text)
     #     #
     #     pass    #
     # def test_check_online_play(self):
     #     # set object state
+    #     # set value for self.player.connected
+    #     # set value for controller.send_counter
+    #     # mock view
+    #     # execute method
     #
+    #     # assert expected outcome
+    #     # call to mock view draw_opponent
+    #     pass
+    #
+    # def test_check_on_opponent(self):
+    #     # set object state
+    #     # mock mq sub_receive_multi()
+    #     # mock board add_row
+    #     # mock inner class method victory()
+    #     # value for opponent online, score
+    #     # set rows_received
     #     # execute method
     #
     #     # assert expected outcome
     #     pass
     #
-    # def test_check_on_opponent(self):
+    # def test_game_over(self):
     #     # set object state
+    #     # mock view draw_game_over
+    #     # mock pygame event.get(), display.update
+    #     # mock inner class method shutdown, reset_state, start_screen
+    #     # value for opponent online, score
+    #     # set rows_received
+    #     # execute method
     #
+    #     # assert expected outcome
+    #     pass
+    #
+    # def test_victory(self):
+    #     # set object state
+    #     # mock view draw_victory
+    #     # mock pygame event.get(), display.update
+    #     # mock inner class method shutdown, reset_state, start_screen
+    #     # value for opponent online, score
+    #     # set rows_received
     #     # execute method
     #
     #     # assert expected outcome

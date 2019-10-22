@@ -61,7 +61,7 @@ class TestView(unittest.TestCase):
         ray_coords['x'] = 10
         ray_coords['y'] = 200
         ray_coords['c'] = c_value
-        controller.Controller.load_external_resources(self.test_view, os.path.join(os.getcwd(), '../../'))
+        controller.Controller.load_external_resources(self.test_view, os.path.join(os.getcwd(), '../'))
         
         # execute method
         outcome = self.test_view.animate_capture(ray_coords)
@@ -85,7 +85,7 @@ class TestView(unittest.TestCase):
         ray_coords['x'] = 10
         ray_coords['y'] = 200
         ray_coords['c'] = c_value
-        controller.Controller.load_external_resources(self.test_view, os.path.join(os.getcwd(), '../../'))
+        controller.Controller.load_external_resources(self.test_view, os.path.join(os.getcwd(), '../'))
     
         # execute method
         outcome = self.test_view.animate_return(ray_coords)

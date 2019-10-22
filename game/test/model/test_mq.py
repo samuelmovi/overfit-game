@@ -30,7 +30,6 @@ class TestMQ(unittest.TestCase):
 	def test_check_folder_structure(self):
 		# set object state
 		self.test_mq = zmq_connector.ZmqConnector()
-		self.test_mq.base_dir = os.path.join(os.getcwd(), '../../')
 		# execute method
 		outcome = self.test_mq.check_folder_structure()
 		# assert expected outcome

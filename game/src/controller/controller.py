@@ -409,8 +409,9 @@ class Controller:
 		self.explosion_counter = 1
 		self.rows_received = 0
 		self.player.reset()
-
-	def shutdown(self):
+	
+	@staticmethod
+	def shutdown():
 		pygame.quit()
 		sys.exit()
 

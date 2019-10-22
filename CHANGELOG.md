@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - moved some controller code into the models
 - timeout implementation for online broker
 
+### Fixed
+- some test regressions due to folder structure change
+
 ## 2019-10-19
 ### Changed
 - new folder structure for game source files

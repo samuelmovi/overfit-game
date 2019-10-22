@@ -35,12 +35,12 @@ class ZmqConnector:
 	
 	def check_folder_structure(self):
 		print("[#] checking folder structure...")
-		keys_dir = os.path.join(self.base_dir, 'certs')
+		keys_dir = os.path.join(self.base_dir, '../certs')
 		self.public_keys_dir = os.path.join(keys_dir, 'public')    # has the public keys of allowed clients
 		self.secret_keys_dir = os.path.join(keys_dir, 'private')   # has the server's private cert
 
 		if not os.path.exists(keys_dir) and not os.path.exists(self.public_keys_dir) and not os.path.exists(self.secret_keys_dir):
-			print("[!!] Certificates folders are missing")
+			print("[!!] Certificates folders are missing: {}".format(keys_dir))
 			return False
 		else:
 			return True
