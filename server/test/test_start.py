@@ -20,7 +20,7 @@ class TestStart(unittest.TestCase):
         # assert expected outcome
         # server and mq are none
         self.assertIsNone(test_start.mq)
-        self.assertIsNone(test_start.server)
+        self.assertIsNone(test_start.my_server)
 
     # def test_server(self):
     #     # set object state
