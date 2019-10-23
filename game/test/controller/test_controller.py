@@ -61,102 +61,127 @@ class TestController(unittest.TestCase):
     #
     # def test_welcome_listener(self):
     #     # set object state
-    #
+    #     # inject mock inputs
+    #     # mock pygame.event.get
     #     # execute method
-    #
+    #     test_controller.welcome_listener(mock_inputs)
     #     # assert expected outcome
-    #
+    #     # value of keyword, draw again
+    #     # value of draw loop finished, board
     #     pass
     #
     # def test_game_listener(self):
     #     # set object state
-    #
+    #     # inject mock player
+    #     # mock pygame.event.get
     #     # execute method
-    #
+    #     test_controller.game_listener()
     #     # assert expected outcome
-    #
+    #     # value of keyword, draw again
+    #     # value of draw loop finished, board
     #     pass
     #
     # def test_online_setup_listener(self):
     #     # set object state
-    #
+    #     # inject mock inputs
+    #     # mock pygame.event.get
     #     # execute method
-    #
+    #     test_controller.online_setup_listener(mock_inputs)
     #     # assert expected outcome
-    #
+    #     # value of keyword, draw again
+    #     # value of draw loop finished, broker, mq
+    #     # calls to mock view
     #     pass
     #
     # def test_find_match_listener(self):
     #     # set object state
-    #
+    #     # mock pygame.event.get
     #     # execute method
-    #
+    #     test_controller.find_match_listener()
     #     # assert expected outcome
-    #
+    #     # value of keyword, draw again
+    #     # value of draw loop finished, broker, mq
+    #     # calls to mock view
     #     pass
     #
     # def test_settings_listener(self):
     #     # set object state
-    #
+    #     # inject mock inputs
+    #     # mock pygame.event.get
     #     # execute method
-    #
+    #     test_controller.settings_listener(mock_inputs)
     #     # assert expected outcome
-    #
+    #     # value of keyword, draw again
+    #     # value of draw loop finished, broker, mq
+    #     # calls to mock view
     #     pass
     #
     # def test_confirm_exit_listener(self):
     #     # set object state
-    #
+    #     # inject mock inputs
+    #     # mock pygame.event.get
     #     # execute method
-    #
+    #     test_controller.confirm_exit_listener(mock_inputs)
     #     # assert expected outcome
-    #
+    #     # value of keyword, draw again
+    #     # value of draw loop finished
     #     pass
     #
     # def test_confirm_leave_listener(self):
     #     # set object state
-    #
+    #     # inject mock inputs
+    #     # mock pygame.event.get
     #     # execute method
-    #
+    #     test_controller.confirm_leave_listener(mock_inputs)
     #     # assert expected outcome
-    #
+    #     # value of keyword, draw again
+    #     # value of draw loop finished
     #     pass
     #
     # def test_game_over_listener(self):
     #     # set object state
-    #
+    #     # mock pygame.event.get
     #     # execute method
-    #
+    #     test_controller.game_over_listener()
     #     # assert expected outcome
-    #
+    #     # value of keyword, draw again
+    #     # value of draw loop finished
     #     pass
     #
     # def test_victory_listener(self):
     #     # set object state
-    #
+    #     # mock inner method calls
     #     # execute method
-    #
+    #     test_controller.game_handler()
     #     # assert expected outcome
-    #
+    #     # value of keyword, draw again
+    #     # value of draw loop finished
     #     pass
     #
     # def test_game_handler(self):
     #     # set object state
-    #
+    #     # mock pygame.event.get
+    #     # inject mock view
+    #     # set player status: capturing, returning
+    #     # set all_targets_acquired boolean
     #     # execute method
-    #
+    #     test_controller.victory_listener()
     #     # assert expected outcome
-    #
+    #     # calls to inner methods
+    #     # calls to mock view
     #     pass
     #
     # def test_capture_animation(self):
-    #
     #     # set object state
-    #
+    #     # inject mock player
+    #     # inject mock view, board
+    #     # set value for ray_coords
     #     # execute method
-    #
+    #     test_controller.capture_animation()
     #     # assert expected outcome
-    #
+    #     # calls to inner methods
+    #     # call to mock objects methods
+    #     # changes to mock values
     #     pass
     #
     # def test_return_animation(self):
@@ -167,7 +192,7 @@ class TestController(unittest.TestCase):
     #     # set boolean return for self.board.columns[self.ray_coords['position']].figures[-1].empty
     #
     #     # execute method
-    #
+    #     test_controller.return_animation()
     #     # assert expected outcome
     #     # confirm calls to mock player, view and board
     #     pass
@@ -176,7 +201,7 @@ class TestController(unittest.TestCase):
     #     # set object state
     #     # set controller.frame
     #     # execute method
-    #
+    #     test_controller.explode_all_targets()
     #     # assert expected outcome
     #     # call to controller.my_view.draw_explosion()
     #     # call controller.board.eliminate_targets(self.targets)
@@ -192,7 +217,7 @@ class TestController(unittest.TestCase):
     #     # set board total, longest
     #     # mock controller.board.columns
     #     # execute method
-    #
+    #     test_controller.update_player_stats()
     #     # assert expected outcome
     #     # calls to board.add_row()
     #     # values of player state
@@ -208,7 +233,7 @@ class TestController(unittest.TestCase):
     #     # set board total, longest
     #     # mock controller.board.columns
     #     # execute method
-    #
+    #     test_controller.find_match()
     #     # assert expected outcome
     #     # calls to board.add_row()
     #     # values of player online
@@ -221,7 +246,7 @@ class TestController(unittest.TestCase):
     #     # set value for controller.send_counter
     #     # mock view
     #     # execute method
-    #
+    #     test_controller.check_online_play()
     #     # assert expected outcome
     #     # call to mock view draw_opponent
     #     pass
@@ -234,24 +259,29 @@ class TestController(unittest.TestCase):
     #     # value for opponent online, score
     #     # set rows_received
     #     # execute method
-    #
+    #     test_controller.check_on_opponent()
     #     # assert expected outcome
     #     pass
     #
     # def test_reset_state(self):
     #     # set object state
-    #
+    #     # inject mock mq, player
+    #     # set opponent
     #     # execute method
-    #
+    #     test_controller.load_external_resources
     #     # assert expected outcome
+    #     # values of opponent, send counter, explosion_counter, rows received,
+    #     # calls to mock object methods
     #     pass
     #
     # def test_load_external_resources(self):
     #     # set object state
-    #
+    #     # inject mock view
+    #     # maybe, mock pygame itself ???
     #     # execute method
-    #
+    #     test_controller.load_external_resources(mock_view, path)
     #     # assert expected outcome
+    #     # calls to mock object methods
     #     pass
     #
     
