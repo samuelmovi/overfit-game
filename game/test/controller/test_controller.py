@@ -34,6 +34,121 @@ class TestController(unittest.TestCase):
         self.assertEqual(mock_view, self.test_ctrl.my_view)
         self.assertEqual(mock_player, self.test_ctrl.player)
     
+    # def test_main_loop(self):
+    #     # set object state
+    #     # mock inner method calls
+    #     # set all keywords: start, game, online_setup, find_online_match, settings, confirm_exit, confirm_leave,
+    #     #     game_over, victory
+    #     # set loop_finished boolean side effects to limit looping
+    #     # set draw_again boolean
+    #     # execute method
+    #     test_controller.main_loop()
+    #     # assert expected outcome
+    #     # each keyword calls expected function
+    #     pass
+    #
+    # def test_draw(self):
+    #     # set object state
+    #     # inject mock view
+    #     # set all keywords: start, game, online_setup, find_online_match, settings, confirm_exit, confirm_leave,
+    #     game_over, victory
+    #     # execute method
+    #     inputs = test_controller.draw()
+    #     # assert expected outcome
+    #     # calls to mock view methods
+    #     # returned object
+    #     pass
+    #
+    # def test_welcome_listener(self):
+    #     # set object state
+    #
+    #     # execute method
+    #
+    #     # assert expected outcome
+    #
+    #     pass
+    #
+    # def test_game_listener(self):
+    #     # set object state
+    #
+    #     # execute method
+    #
+    #     # assert expected outcome
+    #
+    #     pass
+    #
+    # def test_online_setup_listener(self):
+    #     # set object state
+    #
+    #     # execute method
+    #
+    #     # assert expected outcome
+    #
+    #     pass
+    #
+    # def test_find_match_listener(self):
+    #     # set object state
+    #
+    #     # execute method
+    #
+    #     # assert expected outcome
+    #
+    #     pass
+    #
+    # def test_settings_listener(self):
+    #     # set object state
+    #
+    #     # execute method
+    #
+    #     # assert expected outcome
+    #
+    #     pass
+    #
+    # def test_confirm_exit_listener(self):
+    #     # set object state
+    #
+    #     # execute method
+    #
+    #     # assert expected outcome
+    #
+    #     pass
+    #
+    # def test_confirm_leave_listener(self):
+    #     # set object state
+    #
+    #     # execute method
+    #
+    #     # assert expected outcome
+    #
+    #     pass
+    #
+    # def test_game_over_listener(self):
+    #     # set object state
+    #
+    #     # execute method
+    #
+    #     # assert expected outcome
+    #
+    #     pass
+    #
+    # def test_victory_listener(self):
+    #     # set object state
+    #
+    #     # execute method
+    #
+    #     # assert expected outcome
+    #
+    #     pass
+    #
+    # def test_game_handler(self):
+    #     # set object state
+    #
+    #     # execute method
+    #
+    #     # assert expected outcome
+    #
+    #     pass
+    #
     # def test_capture_animation(self):
     #
     #     # set object state
@@ -41,7 +156,7 @@ class TestController(unittest.TestCase):
     #     # execute method
     #
     #     # assert expected outcome
-    #     # confirm calls to mock player, view and board
+    #
     #     pass
     #
     # def test_return_animation(self):
@@ -70,15 +185,6 @@ class TestController(unittest.TestCase):
     #     # value of controller.frame
     #     pass
     #
-    # def test_check_player_events(self):
-    #     # set object state
-    #     # mock pygame.event.get()
-    #     # mock inner class methods
-    #     # execute method
-    #
-    #     # assert expected outcome
-    #     # call to controller.player.move_player
-    #     pass
     #
     # def test_update_player_stats(self):
     #     # set object state
@@ -94,7 +200,7 @@ class TestController(unittest.TestCase):
     #     #
     #     pass
     #
-    # def test_find_online_match(self):
+    # def test_find_match(self):
     #     # beware of while true
     #     # mock zmq connector, online broker, pygame.event.get()
     #     # mock online broker negotiate, timeout
@@ -132,30 +238,6 @@ class TestController(unittest.TestCase):
     #     # assert expected outcome
     #     pass
     #
-    # def test_game_over(self):
-    #     # set object state
-    #     # mock view draw_game_over
-    #     # mock pygame event.get(), display.update
-    #     # mock inner class method shutdown, reset_state, start_screen
-    #     # value for opponent online, score
-    #     # set rows_received
-    #     # execute method
-    #
-    #     # assert expected outcome
-    #     pass
-    #
-    # def test_victory(self):
-    #     # set object state
-    #     # mock view draw_victory
-    #     # mock pygame event.get(), display.update
-    #     # mock inner class method shutdown, reset_state, start_screen
-    #     # value for opponent online, score
-    #     # set rows_received
-    #     # execute method
-    #
-    #     # assert expected outcome
-    #     pass
-    #
     # def test_reset_state(self):
     #     # set object state
     #
@@ -163,6 +245,15 @@ class TestController(unittest.TestCase):
     #
     #     # assert expected outcome
     #     pass
+    #
+    # def test_load_external_resources(self):
+    #     # set object state
+    #
+    #     # execute method
+    #
+    #     # assert expected outcome
+    #     pass
+    #
     
         
 if __name__ == '__main__':

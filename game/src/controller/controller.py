@@ -78,8 +78,6 @@ class Controller:
             pygame.display.update()
             self.FPSCLOCK.tick(self.FPS)
             
-        self.shutdown()
-    
     def draw(self, keyword):
         inputs = None
         if keyword == "start":
@@ -435,11 +433,6 @@ class Controller:
         my_view.fire2 = pygame.image.load(os.path.join(resource_dir, 'fire2.png'))
         my_view.fire3 = pygame.image.load(os.path.join(resource_dir, 'fire3.png'))
         my_view.ray = pygame.image.load(os.path.join(resource_dir, 'ray-short.png'))
-
-    @staticmethod
-    def shutdown():
-        pygame.quit()
-        sys.exit()
     
     
 if __name__ == '__main__':
