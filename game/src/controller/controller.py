@@ -293,8 +293,8 @@ class Controller:
             self.player.capture_figure(self.board.columns[self.ray_coords['position']].figures.pop(-1))
     
     def return_animation(self):
+        # after the ray has finished being drawn
         if self.my_view.animate_return(self.ray_coords) is False:		# else ???
-            # after the ray has finished being drawn
             # if column is empty add captured figure to column
             if len(self.board.columns[self.ray_coords['position']].figures) == 0:
                 self.board.columns[self.ray_coords['position']].figures.append(self.player.captured_figure)
@@ -307,6 +307,7 @@ class Controller:
                 else:
                     # if bottom figure is not empty
                     # list adjacent compatible figures
+                    self.targets.clear()
                     self.targets = self.board.acquire_targets(
                         self.player.position,
                         self.board.columns[self.player.position].occupancy() - 1)

@@ -36,7 +36,7 @@ class Board:
 		self.longest_column_count = longest
 
 	def acquire_targets(self, position, height):
-		self.targets.clear()
+		# self.targets.clear()
 		
 		compatible = [(position, height)]
 		# get shape of figure @ coordinates

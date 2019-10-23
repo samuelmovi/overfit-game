@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - allow certs.py to create required folders if non-existing
 - add logic for client trying to connect to non-existent server
 
+
+## 2019-10-23
+### Fixed
+- maximum recursion depth issue in controller's acquire targets method
+ 
+
 ## 2019-10-22
 ### Added
 - __init__ files to test folders to automate testing
@@ -21,6 +27,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - improved folder structure for server sub-project
 - refactored server sub-project code
 - refactored controller, now only one while loop in whole class
+
+### Broke
+- fatal regression in explosion, after controller refactoring
 
 ### Fixed
 - some test regressions due to folder structure change
