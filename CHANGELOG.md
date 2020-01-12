@@ -8,6 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - figure out way to spy on test classes
 - allow certs.py to create required folders if non-existing
 - add logic for client trying to connect to non-existent server
+- major server overhaul:
+    - server landing page
+    - server info and stats
+    - add sqlite server backend
+- client changes for new client
+    - only send data on state change
+
+
+## 2010-01-12
+### Changed
+- name of game package to client package
+- name of zmq_connector modules to zmq_client and zmq_server for differentiation
+- `PullPubServer` substituted by new `Server`
+
+### Added
+- Database class for database management (`db_connector.py`)
+- Added `models` module for player model
 
 
 ## 2019-10-23

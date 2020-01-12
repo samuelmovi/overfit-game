@@ -32,6 +32,10 @@ class ZmqConnector:
 		self.HOST = host
 		self.context = zmq.Context()
 		self.base_dir = os.getcwd()
+		self.check_folder_structure()
+		self.server_auth()
+		self.bind_pull(5555)
+		self.bind_pub(5556)
 	
 	def check_folder_structure(self):
 		print("[#] checking folder structure...")

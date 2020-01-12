@@ -5,6 +5,8 @@ OverFit Game is a fun arcade game, partly based on the PS3 game [Critter Crunch]
 - Python 3.5+
 - PyGame 1.9.6
 - PyZmq 18.0.1
+- SQLAlchemy 1.2.12
+- SQLite
 
 ## Installation
 Simply clone the repository to your desired destination.

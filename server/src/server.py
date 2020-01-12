@@ -1,6 +1,32 @@
 import os
 
 
+class Server:
+
+	def __init__(self, connector=None, db=None):
+		if connector and db:
+			self.mq = connector
+			self.db = db
+		else:
+			print("[!!] No connector or db??\n")
+			exit()
+	
+	def loop(self):
+		print("[#] starting loop...")
+		stop_me = False
+		while not stop_me:
+			try:
+				message = self.pull()
+				if message is not None:
+					print("[#] Message pulled:".format(message))
+					for part in message:
+						print("\t> {} /{}".format(part, type(part)))
+					print("\n[#] rePUBlishing Message...")
+					self.pub(message)
+			except KeyboardInterrupt:
+				stop_me = True
+	
+
 class PullPubServer:
 	
 	mq = None
