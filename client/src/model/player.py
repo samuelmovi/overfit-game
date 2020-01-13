@@ -6,8 +6,8 @@ class Player:
 	name = 'PLAYER 1'
 	position = None
 	captured_figure = None
-	status = ''  # empty | full | | capturing | returning
-	online = ''  # '' | available | challenger | accepted | itson | playing | over
+	status = ''  # Player's match: empty | full | | capturing | returning
+	online = ''  # Player's online status: connected | available | playing
 	score = 0
 	steps = 0
 	connected = False
@@ -83,7 +83,8 @@ class Player:
 			'name': self.name,			# name chosen by player
 			'online': self.online,		# player's online status
 			'status': self.status,		# status of the game's character
-			'score': self.score}		# current game score
+			'score': self.score,		# current game score
+		}
 		return stats
 
 

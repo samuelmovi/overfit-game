@@ -4,6 +4,19 @@ import time
 import timeit
 
 
+# Client message protocol:
+#
+# 1. ID: Player ID (random string created by online broker)
+# 2. ACTION: status, command, recipient.
+# 3. MATCH: relevant player match data
+
+
+# Server message protocol:
+#
+# 1. Recipient: Player ID of recipient, used for filtering
+# 2. ACTION: sender (SERVER or opponent player's ID), command (welcome, wait, ready, play)
+# 3. Data:
+
 class OnlineBroker:
 
 	mq = None
@@ -14,30 +27,49 @@ class OnlineBroker:
 	challenging = False
 	player_stats = {}
 
-	PUSH_PORT = '5555'
-	SUB_PORT = '5556'
-
 	timer = None
 
 	def __init__(self, player, zmq):
 		print("[broker] Initializing online game broker...")
 		self.mq = zmq
-		self.mq.check_folder_structure()
-		self.mq.client_auth()
-		self.mq.connect_push(self.PUSH_PORT)
-		self.mq.connect_sub(self.SUB_PORT)
+		self.mq.setup()
 		try:
 			self.player = player
-			self.player.connected = True
+			self.player.online = 'connected'
+			self.mq.filter_sub_socket(self.player.ID)	# filter sub responses to player ID
 		except Exception as e:
 			print("[broker!] Error starting online game: {}".format(e))
 			traceback.print_exc()
+	
+	def landing_page(self):
+		# send WELCOME command and get back the data to display in landing page
+		command = 'WELCOME'
+		message = [self.player.ID, [self.player.status, command, 'SERVER'], []]
+		self.mq.push_send_multi(message)
+		response = self.mq.sub_receive_multi()
+		return response
+	
+	def set_as_available(self):
+		# send AVAILABLE command to server and enter queue to be matched
+		command = 'AVAILABLE'
+		message = [self.player.ID, [self.player.status, command, 'SERVER'], []]
+		self.mq.push_send_multi(message)
+
+	def check_for_opponent(self):
+		# read from subscription and check
+		response = self.mq.sub_receive_multi()
+		if response:
+			# check for appropriate command
+			pass
+		else:
+			# keep trying
+			pass
 
 	def timeout(self):
-		if (timeit.default_timer() - self.timer) > 5:
-			return True
-		else:
-			return False
+			if (timeit.default_timer() - self.timer) > 5:
+				return True
+			else:
+				return False
 
 	def negotiate(self):
 		if self.player.online == '':
@@ -186,6 +218,7 @@ class OnlineBroker:
 		if current_stats != self.player_stats:
 			print('[broker] Updating opponent about player stats')
 			self.player_stats = current_stats
+			# new protocol: message = [self.player.ID, [self.player.status, command, 'SERVER'], json.dumps(self.player_stats)]
 			message = [self.opponent['sender'], json.dumps(self.player_stats)]
 			for i in range(len(message)):
 				message[i] = message[i].encode()
@@ -194,3 +227,7 @@ class OnlineBroker:
 
 if __name__ == '__main__':
 	pass
+
+	# 1. Player ID (random string created by online broker)
+	# 2. status, command, recipient.
+	# 3. relevant player match data

@@ -14,6 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - add sqlite server backend
 - client changes for new client
     - only send data on state change
+    - manage zmq client auth failing 
+
+
+## 2020-01-13
+### Changed
+- removed unused code form zmq connector modules, only relevant methods left in client and server
 
 
 ## 2010-01-12
