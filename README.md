@@ -111,12 +111,12 @@ To balance things out, and so it's fun, a new row of figures is added to a playe
 The online gaming protocol is built using ZeroMQ (through PyZmq), for the transport layer and for authentication, using ZMQ's custom ED22519 certificates.
 
 ### Server
-The server script binds to 2 ports
+The server script binds to 2 ports:
 
 - Port 5555: PULL 
 - Port 5556: PUB
 
-All messages received are then republished to port 5556.
+Server receives messages from a PULL, processes them, and publishes them.
 
 ### Client
 The client connects to 2 ports:
@@ -125,10 +125,24 @@ The client connects to 2 ports:
 - Port 5556: SUB
 
 ### Protocol
-Messages are multipart:
 
-- ID string, to identify the recipient.
-- Json string with the client's player state.
+There are client messages, and server messages. All of them have 3 parts.
+
+Client message [sent by client to communicate with server]:
+- Sender: player ID (unique 10-character random string)
+- Info (json): 
+    - client status: PLAYING,OVER, or ''
+    - command: WELCOME, FIND, QUIT 
+    - recipient: `SERVER` or player ID
+- Payload (json): match and player data
+
+Server message [published by server]:
+- Recipient: player ID 
+- Info (json): 
+    - sender: `SERVER` or player ID
+    - command: WELCOME, WAIT, READY, PLAY
+- Payload (json): forwarded payload 
+
 
 After initial connection, player looks for available players [APs], by filtering its subscription with 'XXX'. If an AP is found, then the handshake protocol starts. Otherwise, the client announces itself as available [ID set to 'XXX', player's online value set to 'available'] and waits for challengers 
 

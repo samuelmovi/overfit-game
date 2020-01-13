@@ -1,7 +1,6 @@
-import zmq_connector
-from controller import Controller
 from db_connector import Db
-from server import Server
+from server import PullPubServer
+import zmq_server
 
 
 class Start:
@@ -11,21 +10,11 @@ class Start:
         self.db = Db()
         
         # create ZMQ connector
-        self.mq = zmq_connector.ZmqConnector()
+        self.mq = zmq_server.ZmqConnector()
         
         # start server
-        self.server = Server(self.mq, self.db)
-        
-        # start controller
-        # self.controller = Controller(self.mq)
-
-    # def server(self):
-    #     # connector admits host ip in constructor
-    #     self.my_server = server.PullPubServer(zmq_connector.ZmqConnector())
-    #     # self.my_server.mq = self.mq
-    #
-    #     self.set_up()
-    #     self.my_server.loop()
+        self.server = PullPubServer(self.mq, self.db)
+        self.server.loop()
 
 
 if __name__ == '__main__':

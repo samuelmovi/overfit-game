@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 2020-01-13
 ### Changed
 - removed unused code form zmq connector modules, only relevant methods left in client and server
-
+- some modification to README for new changes, more to do
 
 ## 2010-01-12
 ### Changed

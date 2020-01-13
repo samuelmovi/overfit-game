@@ -1,42 +1,43 @@
-import sqlite3
-from sqlite3 import Error
-import sqlalchemy as sql
-
-"""
-Defining the player model
-
-create table if not exist overfit_player (
-     active  integer,   # 0 or 1
-     available integer, # 0 or 1
-     playing integer,   # 0 or 1
-     top_score integer )
-
-"""
-
-PLAYER_MODEL = 'create table if not exist overfit_player (' \
-               'active  integer, ' \
-               'available integer, ' \
-               'playing integer, ' \
-               'top_score integer )'
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine, MetaData
+from sqlalchemy import Table,  Column, Integer, String, Boolean
+from models import Player, Match
 
 
 class Db:
     
     def __init__(self):
         try:
-            self.db = sql.create_engine('sqlite://overfit-server.db', echo=True)
-            meta = sql.MetaData()
-            player = sql.Table('players', meta,
-                               sql.Column('active', sql.Boolean),
-                               sql.Column('playing', sql.Boolean),
-                               sql.Column('available', sql.Boolean),
-                               sql.Column('top_score', sql.Integer),
+            self.engine = create_engine('sqlite://overfit-server.db', echo=True)
+            Session = sessionmaker(bind=self.engine)
+            self.session = Session()
+            
+        except Exception as e:
+            print(f'[!!] Error opening database: {e}')
+    
+    def load_matches(self):
+        return self.session.query(Match).order_by(Match.top_score)
+    
+    def save_player(self, new_player):
+        self.session.add(new_player)
+        self.session.commit()
+    
+
+"""
+
+self.db = create_engine('sqlite://overfit-server.db', echo=True)
+            meta = MetaData()
+            player = Table('players', meta,
+                               Column('active', Boolean),
+                               Column('playing', Boolean),
+                               Column('available', Boolean),
+                               Column('top_score', Integer),
                                )
             meta.create_all(self.db)
             
             self.db.execute(PLAYER_MODEL)
-        except Error as e:
-            print(f'[!!] Error opening database: {e}')
+
+"""
 
 
 if __name__ == '__main__':

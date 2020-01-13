@@ -1,75 +1,77 @@
 import os
+import json
+from models import Player, Match
 
 
-class Server:
+# Server message protocol:
+#
+# 1. Recipient: Player ID of recipient, used for filtering
+# 2. ACTION: sender (SERVER or opponent player's ID), command (welcome, wait, ready, play)
+# 3. Data: forwarded payload
+
+
+class PullPubServer:
+	
+	active_players = []		# id values for all active players
+	available_players = []
 
 	def __init__(self, connector=None, db=None):
 		if connector and db:
 			self.mq = connector
+			self.mq.setup()
 			self.db = db
 		else:
 			print("[!!] No connector or db??\n")
 			exit()
-	
+		
 	def loop(self):
 		print("[#] starting loop...")
 		stop_me = False
 		while not stop_me:
 			try:
-				message = self.pull()
-				if message is not None:
-					print("[#] Message pulled:".format(message))
-					for part in message:
-						print("\t> {} /{}".format(part, type(part)))
-					print("\n[#] rePUBlishing Message...")
-					self.pub(message)
-			except KeyboardInterrupt:
-				stop_me = True
-	
-
-class PullPubServer:
-	
-	mq = None
-
-	def __init__(self, connector=None):
-		if connector:
-			self.mq = connector
-	
-	def set_up(self):
-		self.mq.check_folder_structure()
-		self.mq.server_auth()
-		self.connect_pull()
-		self.connect_pub()
-
-	def connect_pull(self):
-		print("[#] Creating PULLER...")
-		self.mq.bind_pull(5555)
-
-	def connect_pub(self):
-		print("[#] Creating PUBLISHER...")
-		self.mq.bind_pub(5556)
-
-	def pull(self):
-		# print("[#] Reading multipart messages from PULL socket...")
-		message = self.mq.pull_receive_multi()
-		return message
-
-	def pub(self, message):
-		print("[#] Sending multi-message PUB:")
-		self.mq.pub_send_multi(message)
-
-	def loop(self):
-		print("[#] starting loop...")
-		stop_me = False
-		while not stop_me:
-			try:
-				message = self.pull()
-				if message is not None:
-					print("[#] Message pulled:".format(message))
-					for part in message:
-						print("\t> {} /{}".format(part, type(part)))
-					print("\n[#] rePUBlishing Message...")
-					self.pub(message)
+				message = self.mq.pull_receive_multi()
+				sender = message[0]
+				info = message[1]
+				payload = message[2]
+				new_message = []
+				# check player is active
+				if sender not in self.active_players:
+					# create new player
+					new_player = Player(token=sender)
+					self.db.save_player(new_player)
+					# add player id to active_players
+					self.active_players.append(new_player.token)
+					
+					# send data to new player
+					recipient = new_player.token
+					new_message.append(recipient)
+					info = {'command': 'WELCOME', 'sender': 'SERVER'}
+					new_message.append(json.dumps(info))
+					# prepare landing page data
+					payload = self.db.load_matches()
+					new_message.append(json.dumps(payload))
+					
+					self.mq.pub_send_multi(message)
+				else:
+					# check status
+					if info['status'] == 'PLAYING':
+						# if playing, reformat and resend
+						# add recipient to new message
+						new_message.append(info['recipient'])
+						# add action to new message
+						new_action = {'sender': message[0], 'command': 'PLAY'}
+						new_message.append(json.dumps(new_action))
+						# add match data
+						new_message.append(payload)
+						self.mq.pub_send_multi(new_message)
+					elif info['status'] == 'OVER':
+						# capture match data and create new db entry
+						pass
+					elif info['status'] == 'QUIT':
+						# remove player id from active_players
+						pass
+					else:
+						pass
 			except KeyboardInterrupt:
 				stop_me = True
 		os._exit(0)

@@ -10,12 +10,8 @@ class ZmqConnector:
 	auth = None
 	public_keys_dir = None
 	secret_keys_dir = None
-	pusher = None
 	puller = None
 	publisher = None
-	subscriber = None
-	requester = None
-	replier = None
 
 	HOST = ''
 
@@ -32,7 +28,7 @@ class ZmqConnector:
 	#
 	# 1. Recipient: Player ID of recipient, used for filtering
 	# 2. ACTION: sender (SERVER or opponent player's ID), command (welcome, wait, ready, play)
-	# 3. Data:
+	# 3. Data: forwarded payload
 	
 	def __init__(self, host='127.0.0.1'):
 		print("[zmq] Initializing ZMQ client object...")
@@ -123,7 +119,7 @@ class ZmqConnector:
 	# GENERIC FUNCTIONS
 	def disconnect(self):
 		print("[zmq] Disconnecting client...")
-		for socket in (self.pusher, self.publisher, self.puller, self.subscriber, self.replier, self.requester):
+		for socket in (self.publisher, self.puller):
 			if socket is not None:
 				socket.close()
 		self.context.term()

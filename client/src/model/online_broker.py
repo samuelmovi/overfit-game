@@ -44,14 +44,16 @@ class OnlineBroker:
 	def landing_page(self):
 		# send WELCOME command and get back the data to display in landing page
 		command = 'WELCOME'
-		message = [self.player.ID, [self.player.status, command, 'SERVER'], []]
+		message = [self.player.ID,
+					json.dumps({'status': self.player.status, 'command': command, 'sender': 'SERVER'}),
+					json.dumps(dict())]
 		self.mq.push_send_multi(message)
 		response = self.mq.sub_receive_multi()
 		return response
 	
 	def set_as_available(self):
 		# send AVAILABLE command to server and enter queue to be matched
-		command = 'AVAILABLE'
+		command = 'FIND'
 		message = [self.player.ID, [self.player.status, command, 'SERVER'], []]
 		self.mq.push_send_multi(message)
 
@@ -116,37 +118,70 @@ class OnlineBroker:
 			return False
 
 	def set_player_available(self):
-		print('[broker] Setting player available...')
-		self.mq.filter_sub_socket(self.player.ID)
-		message = ['XXX', json.dumps(self.player.get_stats())]
-		for i in range(len(message)):
-			message[i] = message[i].encode()
-		if self.mq.push_send_multi(message) is True:
-			self.player.online = 'available'
-			return True
-		else:
-			self.player.online = ''
-			return False
-			
-	def check_for_challenger(self):
-		print("[broker] Resending message as available...")
-		message = ['XXX', json.dumps(self.player.get_stats())]
-		for i in range(len(message)):
-			message[i] = message[i].encode()
-		self.mq.push_send_multi(message)
-		time.sleep(0.5)
-		print('[broker] Checking for challengers...')
-		# check for responses
+		new_message = []
+		sender = self.player.ID
+		new_message.append(sender)
+		info = {'status': 'AVAILABLE', 'command': 'FIND', 'recipient': 'SERVER'}
+		new_message.append(info)
+		payload = dict()
+		new_message.append(payload)
+		self.mq.push_send_multi(new_message)
+		
+		# print('[broker] Setting player available...')
+		# self.mq.filter_sub_socket(self.player.ID)
+		# message = ['XXX', json.dumps(self.player.get_stats())]
+		# for i in range(len(message)):
+		# 	message[i] = message[i].encode()
+		# if self.mq.push_send_multi(message) is True:
+		# 	self.player.online = 'available'
+		# 	return True
+		# else:
+		# 	self.player.online = ''
+		# 	return False
+	
+	def check_messages(self):
+		# read from subcription
+		# look for READY command from SERVER
 		message = self.mq.sub_receive_multi()
-		if message is not None:
-			print("[broker] Got 1 message: {}".format(message))
-			opponent = json.loads(message[1].decode())
-			if opponent['online'] == 'challenger':
-				print("[broker] Got 1 challenger!")
-				return opponent
-		else:
-			# print("[broker] problem checking for challenger")
-			return None
+		if message:
+			info = json.loads(message[1])
+			if info['command'] == 'WAIT':
+				# do nothing, keep waiting in queue
+				pass
+			# elif info['command'] == 'READY':
+			# 	pass
+			elif info['command'] == 'PLAY':
+				# start online game
+				pass
+			
+	# def check_for_challenger(self):
+	# 	# read from subcription
+	# 	# look for READY command from SERVER
+	# 	message = self.mq.sub_receive_multi()
+	# 	if message:
+	# 		info = json.loads(message[1])
+	# 		if info['command'] == 'WAIT':
+	# 			pass
+	# 		elif info['command'] == 'READY':
+	# 			pass
+	# 	print("[broker] Resending message as available...")
+	# 	message = ['XXX', json.dumps(self.player.get_stats())]
+	# 	for i in range(len(message)):
+	# 		message[i] = message[i].encode()
+	# 	self.mq.push_send_multi(message)
+	# 	time.sleep(0.5)
+	# 	print('[broker] Checking for challengers...')
+	# 	# check for responses
+	# 	message = self.mq.sub_receive_multi()
+	# 	if message is not None:
+	# 		print("[broker] Got 1 message: {}".format(message))
+	# 		opponent = json.loads(message[1].decode())
+	# 		if opponent['online'] == 'challenger':
+	# 			print("[broker] Got 1 challenger!")
+	# 			return opponent
+	# 	else:
+	# 		# print("[broker] problem checking for challenger")
+	# 		return None
 
 	def handle_challenger(self,):
 		opponent = self.check_for_challenger()
