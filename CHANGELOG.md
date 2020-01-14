@@ -11,11 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - major server overhaul:
     - server landing page
     - server info and stats
-    - add sqlite server backend
+    - add sqlite server backend with sqlalchemy
 - client changes for new client
     - only send data on state change
     - manage zmq client auth failing 
-
+    - new draw landing screen method in view
+- redo test for server and client
 
 ## 2020-01-13
 ### Changed

@@ -42,11 +42,8 @@ class PullPubServer:
 				new_message = []
 				# check player is active
 				if sender not in self.online_players:
-					# create new player
-					new_player = Player(token=sender)
-					self.db.save_player(new_player)
 					# add player id to active_players
-					self.online_players.append(new_player.token)
+					self.online_players.append(sender)
 				else:
 					# check status
 					if info['status'] == 'WELCOME':

@@ -350,19 +350,15 @@ class Controller:
             self.keyword = "game"
             self.draw_again = True
             # self.play()
-        text = ""
-        # set text for wait-screen
-        if self.player.online == 'available':
-            text = 'Waiting for challengers'
-            # timer = time.process_time()
-        elif self.player.online == 'accepted':
-            text = 'Challenge has been accepted'
-        elif self.player.online == 'challenger':
-            text = 'Challenging available opponent'
-        elif self.player.online == 'itson':
-            text = 'It\'s F**king ON!!!'
-            # self.player.online = 'playing'
-        self.txt_msg = text
+        else:
+            text = "waiting message goes here"
+            # set text for wait-screen
+            if self.player.online == 'available':
+                text = 'Waiting for challengers'
+                # timer = time.process_time()
+            elif self.player.online == 'ready':
+                text = 'Get ready to start'
+            self.txt_msg = text
     
     def check_online_play(self):
         if self.player.connected is True:
@@ -378,16 +374,17 @@ class Controller:
     def check_on_opponent(self):
         message = self.mq.sub_receive_multi()
         if message is not None:
-            print("[#] Opponent update: {}".format(message))
-            self.opponent = json.loads(message[1].decode())
-        if self.opponent['online'] == 'over':
-            self.keyword = "victory"
-            self.draw_again = True
-        elif self.opponent['online'] == 'playing':
-            if self.rows_received * 20 < int(self.opponent['score']):
-                print('[#] Received row')
-                self.board.add_row()
-                self.rows_received += 1
+            info = json.loads(message[1])
+            payload = json.loads(message[2])
+            if info['status'] == 'OVER':
+                # i won!
+                self.keyword = "victory"
+                self.draw_again = True
+            elif info['status'] == 'PLAYING':
+                if self.rows_received * 20 < int(payload['score']):
+                    print('[#] Received row')
+                    self.board.add_row()
+                    self.rows_received += 1
     
     def reset_state(self):
         if self.mq is not None:

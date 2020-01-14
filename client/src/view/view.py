@@ -171,7 +171,12 @@ class View:
 		self.screen.blit(save_button.surface, save_button.rect)
 
 		return inputs, save_button
-
+	
+	def draw_landing_screen(self, data):
+		# take the data and display it
+		# layout: server ip on top, historical of matches, find match button, leave server button
+		pass
+	
 	def draw_wait_screen(self, text='  WAITING FOR AVAILABLE ONLINE PLAYER  '):
 		banner = button.MyButton(self.BIGFONT, text, self.GREEN, self.BLACK)
 		banner.set_coords(W_WIDTH/2, 200)

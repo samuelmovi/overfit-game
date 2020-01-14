@@ -7,15 +7,15 @@ import timeit
 # Client message protocol:
 #
 # 1. ID: Player ID (random string created by online broker)
-# 2. ACTION: status, command, recipient.
+# 2. ACTION: status, recipient.
 # 3. MATCH: relevant player match data
 
 
 # Server message protocol:
 #
 # 1. Recipient: Player ID of recipient, used for filtering
-# 2. ACTION: sender (SERVER or opponent player's ID), command (welcome, wait, ready, play)
-# 3. Data:
+# 2. ACTION: sender (SERVER or opponent player's ID), command (welcome, wait, ready, play, winner)
+# 3. Data: forwarded payload, or empty dictionary
 
 class OnlineBroker:
 
@@ -36,7 +36,7 @@ class OnlineBroker:
 		try:
 			self.player = player
 			self.player.online = 'connected'
-			self.mq.filter_sub_socket(self.player.ID)	# filter sub responses to player ID
+			self.mq.filter_sub_socket(self.player.ID)		# filter sub responses to player ID
 		except Exception as e:
 			print("[broker!] Error starting online game: {}".format(e))
 			traceback.print_exc()
@@ -71,7 +71,7 @@ class OnlineBroker:
 		# read from subscription and check
 		response = self.mq.sub_receive_multi()
 		if response:
-			# check for appropriate command
+			# check for READY status
 			info = response[1]
 			if info['sender'] == 'SERVER' and info['status'] == 'READY':
 				self.player.online = 'ready'
@@ -82,11 +82,13 @@ class OnlineBroker:
 		# read from subscription and check
 		response = self.mq.sub_receive_multi()
 		if response:
-			# check for appropriate command
+			# check for PLAY status
 			info = response[1]
-			if info['sender'] == 'SERVER' and info['status'] == 'PLAY':
-				# start game
-			pass
+			if info['status'] == 'PLAY':
+				# return opponent's id
+				return info['sender']
+			else:
+				return None
 
 	def timeout(self):
 			if (timeit.default_timer() - self.timer) > 5:
@@ -94,7 +96,7 @@ class OnlineBroker:
 			else:
 				return False
 
-	def negotiate(self):
+	def negotiate_match(self):
 		if self.player.online == '':
 			self.set_player_available()
 			self.timer = timeit.default_timer()
@@ -103,27 +105,12 @@ class OnlineBroker:
 			self.check_for_ready()
 		elif self.player.online == 'ready':
 			self.timer = timeit.default_timer()
-			self.check_for_play()
-		elif self.player.online == 'play':
-			# start match
-			return True
+			opponent = self.check_for_play()
+			if opponent:
+				return opponent
+			else:
+				return None
 		return None
-
-
-	def check_messages(self):
-		# read from subcription
-		# look for READY command from SERVER
-		message = self.mq.sub_receive_multi()
-		if message:
-			info = json.loads(message[1])
-			if info['command'] == 'WAIT':
-				# do nothing, keep waiting in queue
-				pass
-			# elif info['command'] == 'READY':
-			# 	pass
-			elif info['command'] == 'PLAY':
-				# start online game
-				pass
 	
 	# during game
 	def update_player_stats(self):
@@ -131,7 +118,6 @@ class OnlineBroker:
 		if current_stats != self.player_stats:
 			print('[broker] Updating opponent about player stats')
 			self.player_stats = current_stats
-			# new protocol: message = [self.player.ID, [self.player.status, command, 'SERVER'], json.dumps(self.player_stats)]
 			message = [self.opponent['sender'], json.dumps(self.player_stats)]
 			for i in range(len(message)):
 				message[i] = message[i].encode()
