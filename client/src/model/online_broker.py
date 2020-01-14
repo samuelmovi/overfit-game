@@ -90,14 +90,14 @@ class OnlineBroker:
 			else:
 				return None
 
-	def timeout(self):
-			if (timeit.default_timer() - self.timer) > 5:
-				return True
-			else:
-				return False
+	# def timeout(self):
+	# 		if (timeit.default_timer() - self.timer) > 5:
+	# 			return True
+	# 		else:
+	# 			return False
 
 	def negotiate_match(self):
-		if self.player.online == '':
+		if self.player.online == 'connected':
 			self.set_player_available()
 			self.timer = timeit.default_timer()
 		elif self.player.online == 'available':
@@ -108,8 +108,6 @@ class OnlineBroker:
 			opponent = self.check_for_play()
 			if opponent:
 				return opponent
-			else:
-				return None
 		return None
 	
 	# during game

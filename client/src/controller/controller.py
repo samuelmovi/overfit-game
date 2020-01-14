@@ -3,7 +3,7 @@ import sys
 import time
 import json
 import os
-from model import board, zmq_connector, online_broker
+from model import board, zmq_client, online_broker
 from pygame.locals import *
 
     
@@ -62,6 +62,10 @@ class Controller:
                 self.game_handler()
             elif self.keyword == "online_setup":
                 self.online_setup_listener(inputs)
+            elif self.keyword == "connect_online":
+                # connect with server
+                # display landing page
+                pass
             elif self.keyword == "find_online_match":
                 self.find_match()
             elif self.keyword == "settings":
@@ -171,7 +175,7 @@ class Controller:
                     self.keyword = "find_online_match"
                     self.draw_again = True
                     print('[#] Finding online match...')
-                    self.mq = zmq_connector.ZmqConnector(self.HOST)
+                    self.mq = zmq_client.ZmqConnector(self.HOST)
                     self.broker = online_broker.OnlineBroker(self.player, self.mq)
         self.my_view.refresh_input(input_boxes)
         
@@ -269,9 +273,13 @@ class Controller:
     # GAMING FUNCTIONS
     
     def game_handler(self):
+        # check for user input and execute commands
         self.game_listener()
+        # update player stats to accommodate for changes due to executed commands
         self.update_player_stats()
+        # update board model top display changes
         self.board.update_counts()
+        # paint changes to view
         self.my_view.update_game_screen(self.player, self.board)
         self.check_online_play()
     
@@ -343,13 +351,12 @@ class Controller:
     
     # ONLINE FUNCTIONS
     def find_match(self):
-        opponent = self.broker.negotiate()
+        opponent = self.broker.negotiate_match()
         if opponent is not None:
             self.player.online = 'playing'
             self.opponent = opponent
             self.keyword = "game"
             self.draw_again = True
-            # self.play()
         else:
             text = "waiting message goes here"
             # set text for wait-screen

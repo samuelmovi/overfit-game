@@ -44,9 +44,8 @@ class ZmqConnector:
 			self.bind_pub()
 	
 	def check_folder_structure(self):
-		print("[#] checking folder structure...")
-		keys_dir = os.path.join(os.getcwd(), 'certs')
-
+		keys_dir = os.path.join(os.getcwd(), '../certs')
+		print(f"[#] checking folder structure: {keys_dir}")
 		self.public_keys_dir = os.path.join(keys_dir, 'public')  # has the public keys of registered clients
 		self.secret_keys_dir = os.path.join(keys_dir, 'private') 	# has the server's private cert
 

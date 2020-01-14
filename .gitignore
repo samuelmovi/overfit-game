@@ -2,3 +2,4 @@
 .idea/*
 *.key
 *.key_secret
+**/*.db

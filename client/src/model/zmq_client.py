@@ -47,8 +47,8 @@ class ZmqConnector:
 			self.connect_sub()		# where we get our packets
 	
 	def check_folder_structure(self):
-		print("[#] checking folder structure...")
-		keys_dir = os.path.join(self.base_dir, 'certs')
+		keys_dir = os.path.join(self.base_dir, '../certs')
+		print(f"[#] checking folder structure: {keys_dir}")
 		self.secret_keys_dir = os.path.join(keys_dir, 'private')   # has the client's private key
 		self.public_keys_dir = os.path.join(keys_dir, 'public')   # has the server's public key
 

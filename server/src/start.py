@@ -1,4 +1,4 @@
-from db_connector import Db
+from db_controller import Db
 from server import PullPubServer
 import zmq_server
 
