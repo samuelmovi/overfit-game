@@ -106,6 +106,7 @@ class ZmqConnector:
 		message.append(recipient.encode())
 		message.append(json.dumps(info).encode())
 		message.append(json.dumps(payload).encode())
+		print(f'[#] sending message: {message}')
 		self.pub_send_multi(message)
 		
 	def pub_send_multi(self, message):

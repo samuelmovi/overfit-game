@@ -15,6 +15,9 @@ class Match(Base):
     loser = Column(String(25), nullable=False)
     timestamp = Column(String(30), nullable=False)
     
+    def as_dict(self):
+        return {c.name: str(getattr(self, c.name)) for c in self.__table__.columns}
+    
     def __repr__(self):
         return f'<Match(id={self.id}, winner={self.winner}, loser={self.loser}, timestamp={self.timestamp}'
 
@@ -37,7 +40,10 @@ class Db:
             print(f'[!!] Error opening database: {e}')
     
     def load_matches(self):
-        return self.session.query(Match).limit(10).order_by('timestamp')
+        query = self.session.query(Match).limit(10)
+        matches = query.all()
+        print(f"[db] all matches {type(matches)}: {matches}")
+        return matches
     
     def save_match(self, winner, loser):
         new_match = Match(winner=winner, loser=loser, timestamp=str(datetime.datetime.now()))

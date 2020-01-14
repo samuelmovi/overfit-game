@@ -49,7 +49,7 @@ class Controller:
         
     def main_loop(self):
         inputs = None
-        self.keyword = 'start'
+        self.keyword = "start"
 
         while not self.loop_finished:
             # check if screen needs redrawing
@@ -69,14 +69,16 @@ class Controller:
                     self.broker = online_broker.OnlineBroker(self.player, self.mq)
                 except Exception as e:
                     print("[!contr!] Error while getting messages: {}".format(e))
-                    self.keyword = 'start'
+                    self.keyword = "start"
+                    self.draw_again = True
                 response = self.broker.landing_page()
                 if response:
                     # display landing page
                     pass
                 else:
                     print("[!!!] Couldn't fetch landing page data")
-                    self.keyword = 'start'
+                    self.keyword = "start"
+                    self.draw_again = True
             elif self.keyword == "find_online_match":
                 print('[#] Finding online match...')
                 self.find_match()

@@ -1,7 +1,7 @@
 import os
 import json
 import datetime
-
+from db_controller import Match
 
 # Server message protocol:
 #
@@ -37,11 +37,11 @@ class PullPubServer:
 			try:
 				message = self.mq.pull_receive_multi()
 				if message:
-					sender = message[0]
-					info = message[1]
-					payload = message[2]
-					print(f"[@] Got message - {datetime.datetime.now()}\n\tFrom: {sender} / Status: {info['status']}")
-					new_message = []
+					print(f'[@] New message:\n\tFrom: {message}')
+					sender = message[0].decode()
+					info = json.loads(message[1])
+					payload = json.loads(message[2])
+					
 					# check player is active
 					if sender not in self.online_players:
 						# add player id to active_players
@@ -51,7 +51,8 @@ class PullPubServer:
 						if info['status'] == 'WELCOME':
 							# send landing page info
 							new_info = {'command': 'WELCOME', 'sender': 'SERVER'}
-							self.mq.send(sender, new_info, payload)
+							new_payload = self.db.load_matches()
+							self.mq.send(sender, new_info, new_payload)
 						elif info['status'] == 'AVAILABLE':
 							# check for available players to match client with
 							if len(self.available_players):

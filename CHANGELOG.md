@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - server landing page
     - server info and stats
     - add sqlite server backend with sqlalchemy
+    - create dummy match data in db
 - client changes for new client
     - only send data on state change
     - manage zmq client auth failing 
