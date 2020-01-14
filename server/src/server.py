@@ -12,9 +12,15 @@ from models import Player, Match
 
 class PullPubServer:
 	
-	active_players = []		# id values for all active players
-	available_players = []
-
+	online_players = []			# list of id values for all online players
+	available_players = []		# list of id values for all online players waiting for a match
+	matches = []
+	# list of ongoing matches:
+	# { 'player_1_id': 'status'},
+	#   'player_2_id': 'status'},
+	# }
+	# values for status: playing, won, lost
+	
 	def __init__(self, connector=None, db=None):
 		if connector and db:
 			self.mq = connector
@@ -35,14 +41,14 @@ class PullPubServer:
 				payload = message[2]
 				new_message = []
 				# check player is active
-				if sender not in self.active_players:
+				if sender not in self.online_players:
 					# create new player
 					new_player = Player(token=sender)
 					self.db.save_player(new_player)
 					# add player id to active_players
-					self.active_players.append(new_player.token)
+					self.online_players.append(new_player.token)
 					
-					# send data to new player
+					# send response to new player
 					recipient = new_player.token
 					new_message.append(recipient)
 					info = {'command': 'WELCOME', 'sender': 'SERVER'}
@@ -64,12 +70,55 @@ class PullPubServer:
 						# add match data
 						new_message.append(payload)
 						self.mq.pub_send_multi(new_message)
-					elif info['status'] == 'OVER':
+					elif info['status'] == 'WAITING':
+						# ignore ???
+						continue
+					elif info['status'] == 'READY':
+						# find corresponding match and set client as ready
+						# TODO: this code doesn't look efficient, should be improved
+						for match in self.matches:
+							if sender in match.keys():
+								match[sender] = 'READY'
+								# check if both are ready
+								c = 0
+								for key in match.keys():
+									if match[key] == 'READY':
+										c += 1
+								if c == 2:
+									# both are ready, send command PLAY
+									for player in match.keys():
+										new_message = list()
+										new_message.append(player)
+										new_info = {'sender': 'SERVER', 'command': 'PLAY'}
+										new_message.append(json.dumps(new_info))
+										self.mq.pub_send_multi(new_message)
+								else:
+									continue
+					elif info['status'] == 'OVER':		# someone lost
+						# find match of sender
+						loser = sender
+						winner = None
+						for match in self.matches:
+							if loser in match.keys():
+								# set loser
+								match[loser] = 'LOSER'
+								# inform other client
+							for key in match.keys():
+								if key != loser:
+									winner = key
+									match[winner] = 'WINNER'
 						# capture match data and create new db entry
-						pass
-					elif info['status'] == 'QUIT':
-						# remove player id from active_players
-						pass
+						self.db.save_match(winner, loser)
+						# forward message to winner
+						new_message = list()
+						new_info = {'sender': 'SERVER', 'command': 'OVER'}		# OVER commands signals victory
+						new_message.append(json.dumps(new_info))
+						self.mq.pub_send_multi(new_message)
+						continue
+					elif info['status'] == 'QUIT':		# player disconnecting
+						# remove player id from online_players
+						self.online_players.pop(sender)
+						continue
 					else:
 						pass
 			except KeyboardInterrupt:

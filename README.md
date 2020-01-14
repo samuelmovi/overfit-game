@@ -126,31 +126,41 @@ The client connects to 2 ports:
 
 ### Protocol
 
-There are client messages, and server messages. All of them have 3 parts.
+- CLIENT clicks button `Find match` on landing page screen and sends SERVER a message with command `FIND`
+- Upon receipt SERVER checks `available_players`:
+    - If none are found it adds player ID to `available_players` and responds to CLIENT with `WAIT`
+    - If an available player is found SERVER send both of them a `READY` message.
+- Both CLIENTS must respond (could be time sensitive failover) with `READY` client status
+- SERVER responds to both after last client has acknowledged with command `PLAY`
+- CLIENTS will set their status as `PLAYING` and start their match
 
-Client message [sent by client to communicate with server]:
+
+### Packets
+
+There are client messages, and server messages.
+
+All of them have 3 parts.
+
+#### Client message 
+
+Sent by client to communicate with server:
+
 - Sender: player ID (unique 10-character random string)
 - Info (json): 
-    - client status: PLAYING,OVER, or ''
+    - client status: AVAILABLE, WAITING, READY, PLAYING, OVER
     - command: WELCOME, FIND, QUIT 
     - recipient: `SERVER` or player ID
 - Payload (json): match and player data
 
-Server message [published by server]:
+#### Server message 
+
+Published by server:
+
 - Recipient: player ID 
 - Info (json): 
     - sender: `SERVER` or player ID
-    - command: WELCOME, WAIT, READY, PLAY
+    - command: WELCOME, WAIT, READY, PLAY, WINNER
 - Payload (json): forwarded payload 
-
-
-After initial connection, player looks for available players [APs], by filtering its subscription with 'XXX'. If an AP is found, then the handshake protocol starts. Otherwise, the client announces itself as available [ID set to 'XXX', player's online value set to 'available'] and waits for challengers 
-
-The handshake protocol works as follows:
-- New client gets AP message ['XXX'], extracts 'ID' value form json and send 'challenger' message
-- AP receives 'challenger' message, and send back 'accepted' message
-- when new client receives the 'accepted' message send 'itson' message, adds delay and starts game
-- When AP receives 'itson' message starts game
 
 
 ## Contributing

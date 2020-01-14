@@ -1,7 +1,8 @@
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine, MetaData
-from sqlalchemy import Table,  Column, Integer, String, Boolean
+# from sqlalchemy import Table,  Column, Integer, String, Boolean
 from models import Player, Match
+import datetime
 
 
 class Db:
@@ -20,6 +21,11 @@ class Db:
     
     def save_player(self, new_player):
         self.session.add(new_player)
+        self.session.commit()
+    
+    def save_match(self, winner, loser):
+        new_match = Match(winner=winner, loser=loser, timestamp=str(datetime.datetime.now()))
+        self.session.add(new_match)
         self.session.commit()
     
 
