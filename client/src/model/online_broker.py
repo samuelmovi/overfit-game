@@ -32,38 +32,32 @@ class OnlineBroker:
 	def __init__(self, player, zmq):
 		print("[broker] Initializing online game broker...")
 		self.mq = zmq
-		self.mq.setup()
+		self.player = player
+		self.player.online = 'connected'
 		try:
-			self.player = player
-			self.player.online = 'connected'
+			self.mq.setup()
 			self.mq.filter_sub_socket(self.player.ID)		# filter sub responses to player ID
 		except Exception as e:
-			print("[broker!] Error starting online game: {}".format(e))
-			traceback.print_exc()
+			print(f"[broker!] Error initiating OnlineBroker: {e}")
+			# traceback.print_exc()
 	
 	def landing_page(self):
+		print("[#] Retrieving landing page data...")
 		# send WELCOME command and get back the data to display in landing page
-		message = []
-		sender = self.player.ID
-		message.append(sender)
 		info = {'status': 'WELCOME', 'recipient': 'SERVER'}
-		message.append(json.dumps(info))
-		message.append(json.dumps(dict()))
-		self.mq.push_send_multi(message)
-		# maybe a little wait
-		response = self.mq.sub_receive_multi()
-		return response
+		try:
+			self.mq.send(self.player.ID, info, {})
+			# maybe a little wait
+			response = self.mq.sub_receive_multi()
+			return response
+		except Exception as e:
+			print(f"[broker!] Error landing_page: {e}")
+		return None
 	
 	def set_player_available(self):
 		self.player.online = 'available'
-		new_message = []
-		sender = self.player.ID
-		new_message.append(sender)
 		info = {'status': 'AVAILABLE', 'command': 'FIND', 'sender': 'SERVER'}
-		new_message.append(json.dumps(info))
-		payload = dict() 	# empty payload, for compliance
-		new_message.append(json.dumps(payload))
-		self.mq.push_send_multi(new_message)
+		self.mq.send(self.player.ID, info, {})
 		# go to landing page
 		self.landing_page()
 
@@ -112,6 +106,7 @@ class OnlineBroker:
 	
 	# during game
 	def update_player_stats(self):
+		# TODO: this will have to change
 		current_stats = self.player.get_stats()
 		if current_stats != self.player_stats:
 			print('[broker] Updating opponent about player stats')

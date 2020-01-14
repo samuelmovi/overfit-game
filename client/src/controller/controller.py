@@ -64,9 +64,21 @@ class Controller:
                 self.online_setup_listener(inputs)
             elif self.keyword == "connect_online":
                 # connect with server
-                # display landing page
-                pass
+                try:
+                    self.mq = zmq_client.ZmqConnector(self.HOST)
+                    self.broker = online_broker.OnlineBroker(self.player, self.mq)
+                except Exception as e:
+                    print("[!contr!] Error while getting messages: {}".format(e))
+                    self.keyword = 'start'
+                response = self.broker.landing_page()
+                if response:
+                    # display landing page
+                    pass
+                else:
+                    print("[!!!] Couldn't fetch landing page data")
+                    self.keyword = 'start'
             elif self.keyword == "find_online_match":
+                print('[#] Finding online match...')
                 self.find_match()
             elif self.keyword == "settings":
                 self.settings_listener(inputs)
@@ -172,11 +184,8 @@ class Controller:
                         self.HOST = input_boxes[0].get_text()
                     if len(input_boxes[1].get_text()) > 0:
                         self.player.name = input_boxes[1].get_text()
-                    self.keyword = "find_online_match"
+                    self.keyword = "connect_online"
                     self.draw_again = True
-                    print('[#] Finding online match...')
-                    self.mq = zmq_client.ZmqConnector(self.HOST)
-                    self.broker = online_broker.OnlineBroker(self.player, self.mq)
         self.my_view.refresh_input(input_boxes)
         
     def find_match_listener(self):

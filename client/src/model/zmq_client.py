@@ -3,7 +3,7 @@ import zmq.auth
 from zmq.auth.thread import ThreadAuthenticator
 import os
 import traceback
-
+import json
 
 class ZmqConnector:
 	context = None
@@ -35,7 +35,14 @@ class ZmqConnector:
 		print("[zmq] Initializing ZMQ client object...")
 		self.HOST = host
 		self.context = zmq.Context()
-		
+	
+	def send(self, sender, info, payload):
+		message = list()
+		message.append(sender.encode())
+		message.append(json.dumps(info).encode())
+		message.append(json.dumps(payload).encode())
+		self.push_send_multi(message)
+	
 	def setup(self):
 		self.base_dir = os.getcwd()
 		if not self.check_folder_structure():
@@ -79,14 +86,14 @@ class ZmqConnector:
 			self.pusher.send_multipart(message)
 			print("[zmq] Multi-Message sent :{}".format(message))
 		except TypeError as e:
-			print("[!zmq!] TypeError while sending message: {}".format(e))
-			print(traceback.format_exc())
+			print("[!zmq!] TypeError push_send_multi: {}".format(e))
+			# print(traceback.format_exc())
 		except ValueError as e:
-			print("[!zmq!] ValueError while sending message: {}".format(e))
-			print(traceback.format_exc())
+			print("[!zmq!] ValueError push_send_multi: {}".format(e))
+			# print(traceback.format_exc())
 		except zmq.ZMQError as e:
-			print("[!zmq!] ZMQError while sending message: {}".format(e))
-			print(traceback.format_exc())
+			print("[!zmq!] ZMQError push_send_multi: {}".format(e))
+			# print(traceback.format_exc())
 			
 	def connect_sub(self, port=5556):
 		print("[zmq] Connecting SUB socket: {}/{}".format(self.HOST, port))
@@ -103,12 +110,12 @@ class ZmqConnector:
 			#     print("\t> {} /{}".format(part, type(part)))
 			return message
 		except zmq.Again as a:
-			print("[!zmq!] Error while getting messages: {}".format(a))
-			print(traceback.format_exc())
+			print("[!zmq!] sub_receive_multi zmq.Again: {}".format(a))
+			# print(traceback.format_exc())
 			return None
 		except zmq.ZMQError as e:
-			print("[!zmq!] Error while getting messages: {}".format(e))
-			print(traceback.format_exc())
+			print("[!zmq!] sub_receive_multi ZMQError: {}".format(e))
+			# print(traceback.format_exc())
 			return None
 
 	# SUBSCRIPTION FILTERS

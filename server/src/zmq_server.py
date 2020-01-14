@@ -3,7 +3,7 @@ import zmq.auth
 from zmq.auth.thread import ThreadAuthenticator
 import os
 import traceback
-
+import json
 
 class ZmqConnector:
 	context = None
@@ -101,6 +101,13 @@ class ZmqConnector:
 		self.publisher.curve_server = True  # must come before bind
 		self.publisher.bind("tcp://*:{}".format(port))
 
+	def send(self, recipient, info, payload):
+		message = list()
+		message.append(recipient.encode())
+		message.append(json.dumps(info).encode())
+		message.append(json.dumps(payload).encode())
+		self.pub_send_multi(message)
+		
 	def pub_send_multi(self, message):
 		try:
 			self.publisher.send_multipart(message)

@@ -1,5 +1,6 @@
 import os
 import json
+import datetime
 
 
 # Server message protocol:
@@ -39,6 +40,7 @@ class PullPubServer:
 					sender = message[0]
 					info = message[1]
 					payload = message[2]
+					print(f"[@] Got message - {datetime.datetime.now()}\n\tFrom: {sender} / Status: {info['status']}")
 					new_message = []
 					# check player is active
 					if sender not in self.online_players:
@@ -48,35 +50,21 @@ class PullPubServer:
 						# check status
 						if info['status'] == 'WELCOME':
 							# send landing page info
-							recipient = sender
-							new_message.append(recipient)
 							new_info = {'command': 'WELCOME', 'sender': 'SERVER'}
-							new_message.append(json.dumps(new_info))
-							# prepare landing page data
-							payload = self.db.load_matches()
-							new_message.append(json.dumps(payload))
-							self.mq.pub_send_multi(message)
+							self.mq.send(sender, new_info, payload)
 						elif info['status'] == 'AVAILABLE':
 							# check for available players to match client with
 							if len(self.available_players):
 								# send ready signal to both players
 								for id in (self.available_players.pop(), sender):
-									new_message = list()
-									new_message.append(id)
 									new_info = {'sender': 'SERVER', 'command': 'READY'}
-									new_message.append(json.dumps(new_info))
-									new_message.append(json.dumps(dict()))
-									self.mq.pub_send_multi(new_message)
+									self.mq.send(id, new_info, {})
 							else:
 								# add to available_players
 								self.available_players.append(sender)
 								# respond
-								new_message = list()
-								new_message.append(sender)
 								new_info = {'sender': 'SERVER', 'command': 'WAIT'}
-								new_message.append(json.dumps(new_info))
-								new_message.append(json.dumps(dict()))
-								self.mq.pub_send_multi(new_message)
+								self.mq.send(sender, new_info, {})
 						
 						elif info['status'] == 'READY':
 							# find corresponding match and set client as ready
@@ -93,31 +81,18 @@ class PullPubServer:
 										# both are ready, send command PLAY
 										players = match.keys()
 										# inform one player
-										new_message = list()
-										new_message.append(players[0])
 										new_info = {'sender': players[1], 'command': 'PLAY'}
-										new_message.append(json.dumps(new_info))
-										self.mq.pub_send_multi(new_message)
+										self.mq.send(players[0], new_info, {})
 										# inform the other
-										new_message = list()
-										new_message.append(players[1])
 										new_info = {'sender': players[0], 'command': 'PLAY'}
-										new_message.append(json.dumps(new_info))
-										self.mq.pub_send_multi(new_message)
+										self.mq.send(players[1], new_info, {})
 									else:
 										continue
 										
 						elif info['status'] == 'PLAYING':
 							# if playing, reformat and resend
-							# add recipient to new message
-							new_message = list()
-							new_message.append(info['recipient'])
-							# add action to new message
-							new_action = {'sender': message[0], 'command': 'PLAY'}
-							new_message.append(json.dumps(new_action))
-							# add match data
-							new_message.append(payload)
-							self.mq.pub_send_multi(new_message)
+							info = {'sender': message[0], 'command': 'PLAY'}
+							self.mq.send(info['recipient'], info, {})
 						
 						elif info['status'] == 'OVER':		# someone lost
 							# find match of sender
@@ -135,10 +110,8 @@ class PullPubServer:
 							# capture match data and create new db entry
 							self.db.save_match(winner, loser)
 							# forward message to winner
-							new_message = list()
 							new_info = {'sender': 'SERVER', 'command': 'OVER'}		# OVER commands signals victory
-							new_message.append(json.dumps(new_info))
-							self.mq.pub_send_multi(new_message)
+							self.mq.send(winner, new_info, payload)
 							continue
 						elif info['status'] == 'QUIT':		# player disconnecting
 							# remove player id from online_players
