@@ -147,8 +147,7 @@ Sent by client to communicate with server:
 
 - Sender: player ID (unique 10-character random string)
 - Info (json): 
-    - client status: AVAILABLE, WAITING, READY, PLAYING, OVER
-    - command: WELCOME, FIND, QUIT 
+    - client status: WELCOME, AVAILABLE, READY, PLAYING, OVER, QUIT 
     - recipient: `SERVER` or player ID
 - Payload (json): match and player data
 

@@ -7,7 +7,7 @@ class Player:
 	position = None
 	captured_figure = None
 	status = ''  # Player's match: empty | full | | capturing | returning
-	online = ''  # Player's online status: connected | available | playing
+	online = ''  # Player's online status: connected | available | ready | playing
 	score = 0
 	steps = 0
 	connected = False
