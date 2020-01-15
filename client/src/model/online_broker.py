@@ -33,13 +33,6 @@ class OnlineBroker:
 		print("[broker] Initializing online game broker...")
 		self.mq = zmq
 		self.player = player
-		self.player.online = 'connected'
-		try:
-			self.mq.setup()
-			self.mq.filter_sub_socket(self.player.ID)		# filter sub responses to player ID
-		except Exception as e:
-			print(f"[broker!] Error initiating OnlineBroker: {e}")
-			# traceback.print_exc()
 	
 	def landing_page(self):
 		print("[#] Retrieving landing page data...")
@@ -48,6 +41,7 @@ class OnlineBroker:
 		try:
 			self.mq.send(self.player.ID, info, {})
 			# maybe a little wait
+			time.sleep(1)
 			response = self.mq.sub_receive_multi()
 			return response
 		except Exception as e:

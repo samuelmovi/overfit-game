@@ -5,6 +5,7 @@ import os
 import traceback
 import json
 
+
 class ZmqConnector:
 	context = None
 	auth = None
@@ -31,10 +32,20 @@ class ZmqConnector:
 	# 2. ACTION: sender (SERVER or opponent player's ID), command (welcome, wait, ready, play)
 	# 3. Data:
 	
-	def __init__(self, host='127.0.0.1'):
+	def start(self, host, topic):
 		print("[zmq] Initializing ZMQ client object...")
 		self.HOST = host
 		self.context = zmq.Context()
+		
+		self.base_dir = os.getcwd()
+		if not self.check_folder_structure():
+			print("[!!] Problem with cert folder structure\n")
+			return None
+		else:
+			self.client_auth()
+			self.connect_push()  	# where we send our packets
+			self.connect_sub()  	# where we get our packets
+			self.filter_sub_socket(topic)
 	
 	def send(self, sender, info, payload):
 		message = list()
@@ -42,17 +53,7 @@ class ZmqConnector:
 		message.append(json.dumps(info).encode())
 		message.append(json.dumps(payload).encode())
 		self.push_send_multi(message)
-	
-	def setup(self):
-		self.base_dir = os.getcwd()
-		if not self.check_folder_structure():
-			print("[!!] Problem with cert folder structure\n")
-			return None
-		else:
-			self.client_auth()
-			self.connect_push()		# where we send our packets
-			self.connect_sub()		# where we get our packets
-	
+
 	def check_folder_structure(self):
 		keys_dir = os.path.join(self.base_dir, '../certs')
 		print(f"[#] checking folder structure: {keys_dir}")
@@ -104,7 +105,7 @@ class ZmqConnector:
 		try:
 			# print("[zmq] Reading multipart messages from socket...")
 			# message = socket.recv_multipart(flags=zmq.DONTWAIT)
-			message = self.subscriber.recv_multipart(flags=zmq.NOBLOCK)
+			message = self.subscriber.recv_multipart(flags=zmq.DONTWAIT)
 			# print("[zmq] Multi-Part Message received: ")
 			# for part in message:
 			#     print("\t> {} /{}".format(part, type(part)))
@@ -121,11 +122,11 @@ class ZmqConnector:
 	# SUBSCRIPTION FILTERS
 	def filter_sub_socket(self, filter_string):
 		print(f"[zmq] Filtering SUBscription: {filter_string}")
-		self.subscriber.setsockopt_string(zmq.SUBSCRIBE, filter_string)
+		self.subscriber.setsockopt(zmq.SUBSCRIBE, filter_string.encode())
 
 	def unfilter_sub_socket(self, filter_string):
 		print("[zmq] Unfiltering SUBscription: {}".format(filter_string))
-		self.subscriber.setsockopt_string(zmq.UNSUBSCRIBE, filter_string)
+		self.subscriber.setsockopt(zmq.UNSUBSCRIBE, filter_string)
 
 	# GENERIC FUNCTIONS
 	def disconnect(self):

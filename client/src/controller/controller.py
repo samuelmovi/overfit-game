@@ -36,8 +36,11 @@ class Controller:
     loop_finished = False
     txt_msg = ""
 
-    def __init__(self, view, player):
+    def __init__(self, view, player, mq, broker):
         print('[#] Initiating Controller...')
+        self.mq = mq
+        self.broker = broker
+        
         pygame.init()
         pygame.mixer.quit()
         self.FPSCLOCK = pygame.time.Clock()
@@ -65,18 +68,18 @@ class Controller:
             elif self.keyword == "connect_online":
                 # connect with server
                 try:
-                    self.mq = zmq_client.ZmqConnector(self.HOST)
-                    self.broker = online_broker.OnlineBroker(self.player, self.mq)
+                    self.mq.start(self.HOST, self.player.ID)
                 except Exception as e:
-                    print("[!contr!] Error while getting messages: {}".format(e))
-                    self.keyword = "start"
+                    print(f"[main_loop] Error connect_online: {e}")
+                    self.keyword = "online_setup"
                     self.draw_again = True
+                time.sleep(0.5)
                 response = self.broker.landing_page()
                 if response:
                     # display landing page
-                    pass
+                    print(f"[@] Got Response: {response}")
                 else:
-                    print("[!!!] Couldn't fetch landing page data")
+                    print(f"[!!!] Response is {response}")
                     self.keyword = "start"
                     self.draw_again = True
             elif self.keyword == "find_online_match":

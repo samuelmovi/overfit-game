@@ -5,6 +5,7 @@ import os
 import traceback
 import json
 
+
 class ZmqConnector:
 	context = None
 	auth = None
@@ -102,10 +103,11 @@ class ZmqConnector:
 		self.publisher.bind("tcp://*:{}".format(port))
 
 	def send(self, recipient, info, payload):
+		# payload must be sent with correct encoding
 		message = list()
 		message.append(recipient.encode())
 		message.append(json.dumps(info).encode())
-		message.append(json.dumps(payload).encode())
+		message.append(payload)
 		print(f'[#] sending message: {message}')
 		self.pub_send_multi(message)
 		

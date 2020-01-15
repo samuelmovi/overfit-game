@@ -35,9 +35,19 @@ class Db:
             # self.engine = create_engine('sqlite://overfit-server.db', echo=True)
             Session = sessionmaker(bind=engine)
             self.session = Session()
-            
+            self.populate_db()
         except Exception as e:
             print(f'[!!] Error opening database: {e}')
+    
+    def populate_db(self):
+        query = self.session.query(Match).limit(10)
+        matches = query.all()
+        if len(matches) == 0:
+            new_match = Match(winner='winner1', loser='loser1', timestamp=str(datetime.datetime.now()))
+            self.session.add(new_match)
+            new_match = Match(winner='winner2', loser='loser2', timestamp=str(datetime.datetime.now()))
+            self.session.add(new_match)
+            self.session.commit()
     
     def load_matches(self):
         query = self.session.query(Match).limit(10)

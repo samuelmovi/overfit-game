@@ -52,7 +52,7 @@ class PullPubServer:
 							# send landing page info
 							new_info = {'command': 'WELCOME', 'sender': 'SERVER'}
 							new_payload = self.db.load_matches()
-							self.mq.send(sender, new_info, new_payload)
+							self.mq.send(sender, new_info, str(new_payload).encode())
 						elif info['status'] == 'AVAILABLE':
 							# check for available players to match client with
 							if len(self.available_players):

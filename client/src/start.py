@@ -1,25 +1,32 @@
 from controller import controller
-from model import player
+from model import player, zmq_client, online_broker
 from view import view
 import os
 import sys
 import pygame
 
+
 class Start:
 	
 	def __init__(self):
-		self.my_player = None
-		self.my_view = None
+		self.player = None
+		self.view = None
 		self.ctrl = None
+		self.mq = None
+		self.broker = None
 		
 	def game(self):
-		self.my_player = player.Player()
+		self.player = player.Player()
 		
 		# start view
-		self.my_view = view.View()
+		self.view = view.View()
+		
+		# online objects
+		self.mq = zmq_client.ZmqConnector()
+		self.broker = online_broker.OnlineBroker(self.player, self.mq)
 		
 		# start controller
-		self.ctrl = controller.Controller(self.my_view, self.my_player)
+		self.ctrl = controller.Controller(self.view, self.player, self.mq, self.broker)
 		self.ctrl.load_external_resources(self.ctrl.my_view, os.path.join(os.getcwd(), '../resources'))
 		self.ctrl.main_loop()
 		pygame.quit()
