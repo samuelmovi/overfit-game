@@ -16,7 +16,7 @@ class Match(Base):
     timestamp = Column(String(30), nullable=False)
 
     def __str__(self):
-        return f'<Match(id={self.id}, winner={self.winner}, loser={self.loser}, timestamp={self.timestamp}>'
+        return f'[{self.timestamp[0:10]}] Winner: {self.winner} / Loser: {self.loser}'
 
     def __repr__(self):
         return f'<Match(id={self.id}, winner={self.winner}, loser={self.loser}, timestamp={self.timestamp}>'

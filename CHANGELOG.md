@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - add event listener while connecting
     - add event listener while finding matches
 - redo unittests for server and client
-
+- fix AttributeError: 'NoneType' object has no attribute 'negotiate_match' after pressing ESC from finding_match screen
 
 ## 2010-01-15
 ### Fixed

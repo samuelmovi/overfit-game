@@ -191,7 +191,7 @@ class View:
 			text = f"[{key}] {match_data[key]}\n"
 			match = self.SMALLFONT.render(text, 1, self.GREEN, self.GREY)
 			match_rect = match.get_rect()
-			match_rect.center = (W_WIDTH / 2 - 100, height)
+			match_rect.center = (W_WIDTH / 2, height)
 			height += 20
 			matches.append((match, match_rect))
 		
