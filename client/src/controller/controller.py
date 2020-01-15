@@ -92,15 +92,9 @@ class Controller:
                             self.keyword = "start"
                             self.draw_again = True
             elif self.keyword == "landing_page":
-                if self.landing_data:
-                    match_data = json.loads(self.landing_data[2])
-                    # print(f'[@] Sending match data {type(match_data)} [{len(match_data)}: {match_data}')
-                    self.view.draw_landing_screen(self.HOST, self.player.name, match_data)
-                    self.landing_data = None
-                # else:
-                #     print("[!!!] Landing page keyword triggered without landing data")
+                self.landing_listener(inputs)
             elif self.keyword == "find_online_match":
-                print('[#] Finding online match...')
+                self.find_match_listener()
                 self.find_match()
             elif self.keyword == "settings":
                 self.settings_listener(inputs)
@@ -124,6 +118,9 @@ class Controller:
             pass
         elif keyword == "online_setup":
             inputs = self.view.draw_online_options_screen(self.player.name, self.HOST)
+        elif self.keyword == "landing_page":
+            match_data = json.loads(self.landing_data[2])
+            inputs = self.view.draw_landing_screen(self.HOST, self.player.name, match_data)
         elif self.keyword == "find_online_match":
             self.view.draw_wait_screen(self.txt_msg)
         elif keyword == "settings":
@@ -209,7 +206,23 @@ class Controller:
                     self.keyword = "connect_online"
                     self.draw_again = True
         self.view.refresh_input(input_boxes)
-        
+    
+    def landing_listener(self, inputs):
+        find_match_button = inputs
+    
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.loop_finished = True
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                # should ask for confirmation to leave server
+                self.keyword = "landing_page"
+                self.draw_again = True
+            elif event.type == pygame.MOUSEBUTTONUP:
+                mouse_x, mouse_y = event.pos
+                if find_match_button.rect.collidepoint((mouse_x, mouse_y)):
+                    self.keyword = 'find_online_match'
+                    self.draw_again = True
+    
     def find_match_listener(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE):
@@ -219,7 +232,7 @@ class Controller:
                     pygame.event.clear()
                     self.broker = None
                     self.reset_state()
-                    self.keyword = "start"
+                    self.keyword = "landing_page"
                     self.draw_again = True
     
     def settings_listener(self, inputs):
@@ -393,9 +406,10 @@ class Controller:
             # set text for wait-screen
             if self.player.online == 'available':
                 text = 'Waiting for challengers'
-                # timer = time.process_time()
+                self.draw_again = True
             elif self.player.online == 'ready':
                 text = 'Get ready to start'
+                self.draw_again = True
             self.txt_msg = text
     
     def check_online_play(self):

@@ -8,13 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - figure out way to spy on test classes
 - allow certs.py to create required folders if non-existing
 - add logic for client trying to connect to non-existent server
-- server:
-    - fix landing page view
-- client changes for new client
+- client changes for new revision:
     - only send data on state change
     - manage zmq client auth failing 
-    - add event listener while connecting,
-    - add event listener for landing page
+    - add event listener while connecting
+    - add event listener while finding matches
 - redo unittests for server and client
 
 
@@ -26,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - view landing page code
 - method to add dummy data to db if empty
+- event listener for landing page
 
 ## 2020-01-13
 ### Changed

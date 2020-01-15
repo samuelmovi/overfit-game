@@ -204,6 +204,8 @@ class View:
 		for match in matches:
 			self.screen.blit(match[0], match[1])
 		self.screen.blit(find_match_button.surface, find_match_button.rect)
+		
+		return find_match_button
 	
 	def draw_wait_screen(self, text='  WAITING FOR AVAILABLE ONLINE PLAYER  '):
 		banner = button.MyButton(self.BIGFONT, text, self.GREEN, self.BLACK)
