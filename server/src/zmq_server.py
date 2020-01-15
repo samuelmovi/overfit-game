@@ -103,11 +103,10 @@ class ZmqConnector:
 		self.publisher.bind("tcp://*:{}".format(port))
 
 	def send(self, recipient, info, payload):
-		# payload must be sent with correct encoding
 		message = list()
 		message.append(recipient.encode())
 		message.append(json.dumps(info).encode())
-		message.append(payload)
+		message.append(json.dumps(payload).encode())
 		print(f'[#] sending message: {message}')
 		self.pub_send_multi(message)
 		

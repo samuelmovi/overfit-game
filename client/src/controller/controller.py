@@ -91,19 +91,14 @@ class Controller:
                             print(f"[!!!] Response is {response}")
                             self.keyword = "start"
                             self.draw_again = True
-                # response = self.broker.landing_page()
-                # if response:
-                #     # display landing page
-                #     print(f"[@] Got Response: {response}")
-                # else:
-                #     print(f"[!!!] Response is {response}")
-                #     self.keyword = "start"
-                #     self.draw_again = True
             elif self.keyword == "landing_page":
                 if self.landing_data:
-                    self.view.draw_landing_screen(self.HOST, self.player.name, self.landing_data[2])
-                else:
-                    print("[!!!] Landing page keyword triggered without landing data")
+                    match_data = json.loads(self.landing_data[2])
+                    # print(f'[@] Sending match data {type(match_data)} [{len(match_data)}: {match_data}')
+                    self.view.draw_landing_screen(self.HOST, self.player.name, match_data)
+                    self.landing_data = None
+                # else:
+                #     print("[!!!] Landing page keyword triggered without landing data")
             elif self.keyword == "find_online_match":
                 print('[#] Finding online match...')
                 self.find_match()

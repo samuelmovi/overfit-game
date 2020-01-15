@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - client changes for new client
     - only send data on state change
     - manage zmq client auth failing 
+    - add event listener while connecting,
+    - add event listener for landing page
 - redo unittests for server and client
 
 

@@ -14,12 +14,12 @@ class Match(Base):
     winner = Column(String(25), nullable=False)
     loser = Column(String(25), nullable=False)
     timestamp = Column(String(30), nullable=False)
-    
-    def as_dict(self):
-        return {c.name: str(getattr(self, c.name)) for c in self.__table__.columns}
-    
+
+    def __str__(self):
+        return f'<Match(id={self.id}, winner={self.winner}, loser={self.loser}, timestamp={self.timestamp}>'
+
     def __repr__(self):
-        return f'<Match(id={self.id}, winner={self.winner}, loser={self.loser}, timestamp={self.timestamp}'
+        return f'<Match(id={self.id}, winner={self.winner}, loser={self.loser}, timestamp={self.timestamp}>'
 
 
 Base.metadata.create_all(engine)
@@ -52,7 +52,10 @@ class Db:
         query = self.session.query(Match).limit(10)
         matches = query.all()
         print(f"[db] all matches {type(matches)}: {matches}")
-        return matches
+        results = dict()
+        for match in matches:
+            results[match.id] = match.__str__()
+        return results
     
     def save_match(self, winner, loser):
         new_match = Match(winner=winner, loser=loser, timestamp=str(datetime.datetime.now()))

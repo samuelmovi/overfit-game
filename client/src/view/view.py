@@ -172,28 +172,37 @@ class View:
 
 		return inputs, save_button
 	
-	def draw_landing_screen(self, host, player_name, data):
+	def draw_landing_screen(self, host, player_name, match_data):
 		# take the data and display it
-		# layout: server ip on top, historical of matches, find match button, leave server button
+		# layout: banner(ip & message), player name, match list, find match button
+		# find match button, leave server button
 		banner = self.BIGFONT.render(f'   {host}: LANDING PAGE   ', 1, self.BLACK, self.GREEN)
 		banner_rect = banner.get_rect()
-		banner_rect.center = (W_WIDTH / 2, 100)
+		banner_rect.center = (W_WIDTH / 2, 50)
 		
 		name = self.SMALLFONT.render(f'Player Name: {player_name}', 1, self.GREEN, self.GREY)
 		name_rect = name.get_rect()
-		name_rect.center = (W_WIDTH / 2 - 100, 225)
+		name_rect.center = (W_WIDTH / 2, 100)
 		
-		for match in data:
-			name = self.SMALLFONT.render(str(match), 1, self.GREEN, self.GREY)
-			name_rect = name.get_rect()
-			name_rect.center = (W_WIDTH / 2 - 100, 225)
+		print(f"[V] Match data: {match_data}")
+		matches = []		# list of view elements, with match info string
+		height = 150
+		for key in match_data.keys():
+			text = f"[{key}] {match_data[key]}\n"
+			match = self.SMALLFONT.render(text, 1, self.GREEN, self.GREY)
+			match_rect = match.get_rect()
+			match_rect.center = (W_WIDTH / 2 - 100, height)
+			height += 20
+			matches.append((match, match_rect))
 		
 		find_match_button = button.MyButton(self.MEDIUMFONT, 'Find Match', self.RED, self.YELLOW)
-		find_match_button.set_coords(W_WIDTH / 2, W_HEIGHT / 2 + 50)
+		find_match_button.set_coords(W_WIDTH / 2, W_HEIGHT - 50)
 		
 		self.screen.fill(self.BLACK)
 		self.screen.blit(banner, banner_rect)
 		self.screen.blit(name, name_rect)
+		for match in matches:
+			self.screen.blit(match[0], match[1])
 		self.screen.blit(find_match_button.surface, find_match_button.rect)
 	
 	def draw_wait_screen(self, text='  WAITING FOR AVAILABLE ONLINE PLAYER  '):
