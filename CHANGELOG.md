@@ -8,16 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - figure out way to spy on test classes
 - allow certs.py to create required folders if non-existing
 - add logic for client trying to connect to non-existent server
-- major server overhaul:
-    - server landing page
-    - server info and stats
-    - add sqlite server backend with sqlalchemy
-    - create dummy match data in db
+- server:
+    - fix landing page view
 - client changes for new client
     - only send data on state change
     - manage zmq client auth failing 
-    - new draw landing screen method in view
-- redo test for server and client
+- redo unittests for server and client
+
+
+## 2010-01-15
+### Fixed
+- Client and server communicating correctly
+- sqlalchemy backend working
+
+### Added
+- view landing page code
+- method to add dummy data to db if empty
 
 ## 2020-01-13
 ### Changed

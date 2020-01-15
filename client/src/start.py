@@ -27,7 +27,7 @@ class Start:
 		
 		# start controller
 		self.ctrl = controller.Controller(self.view, self.player, self.mq, self.broker)
-		self.ctrl.load_external_resources(self.ctrl.my_view, os.path.join(os.getcwd(), '../resources'))
+		self.ctrl.load_external_resources(self.ctrl.view, os.path.join(os.getcwd(), '../resources'))
 		self.ctrl.main_loop()
 		pygame.quit()
 		sys.exit()

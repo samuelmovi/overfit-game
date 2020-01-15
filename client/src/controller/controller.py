@@ -25,7 +25,9 @@ class Controller:
     mq = None
     HOST = '127.0.0.1'
     
-    my_view = None
+    landing_data = None     # hold match data sent by server for display on landing page
+    
+    view = None
     player = None
     targets = []
     FPSCLOCK = None
@@ -47,8 +49,8 @@ class Controller:
         pygame.display.set_caption('WeeriMeeris')
         
         self.player = player
-        self.my_view = view
-        self.my_view.set_up_fonts()
+        self.view = view
+        self.view.set_up_fonts()
         
     def main_loop(self):
         inputs = None
@@ -74,14 +76,34 @@ class Controller:
                     self.keyword = "online_setup"
                     self.draw_again = True
                 time.sleep(0.5)
-                response = self.broker.landing_page()
-                if response:
-                    # display landing page
-                    print(f"[@] Got Response: {response}")
+                for i in range(5):
+                    response = self.broker.landing_page()
+                    if response:
+                        # display landing page
+                        print(f"[@] Got Response: {response}")
+                        self.landing_data = response
+                        self.keyword = "landing_page"
+                        self.draw_again = True
+                        break
+                    else:
+                        time.sleep(0.1)
+                        if i == 4:
+                            print(f"[!!!] Response is {response}")
+                            self.keyword = "start"
+                            self.draw_again = True
+                # response = self.broker.landing_page()
+                # if response:
+                #     # display landing page
+                #     print(f"[@] Got Response: {response}")
+                # else:
+                #     print(f"[!!!] Response is {response}")
+                #     self.keyword = "start"
+                #     self.draw_again = True
+            elif self.keyword == "landing_page":
+                if self.landing_data:
+                    self.view.draw_landing_screen(self.HOST, self.player.name, self.landing_data[2])
                 else:
-                    print(f"[!!!] Response is {response}")
-                    self.keyword = "start"
-                    self.draw_again = True
+                    print("[!!!] Landing page keyword triggered without landing data")
             elif self.keyword == "find_online_match":
                 print('[#] Finding online match...')
                 self.find_match()
@@ -102,23 +124,23 @@ class Controller:
     def draw(self, keyword):
         inputs = None
         if keyword == "start":
-            inputs = self.my_view.draw_start_screen()
+            inputs = self.view.draw_start_screen()
         elif keyword == "game":
             pass
         elif keyword == "online_setup":
-            inputs = self.my_view.draw_online_options_screen(self.player.name, self.HOST)
+            inputs = self.view.draw_online_options_screen(self.player.name, self.HOST)
         elif self.keyword == "find_online_match":
-            self.my_view.draw_wait_screen(self.txt_msg)
+            self.view.draw_wait_screen(self.txt_msg)
         elif keyword == "settings":
-            inputs = self.my_view.draw_settings_screen(self.player.name, self.HOST)
+            inputs = self.view.draw_settings_screen(self.player.name, self.HOST)
         elif keyword == "confirm_exit":
-            inputs = self.my_view.confirm_exit()
+            inputs = self.view.confirm_exit()
         elif keyword == "confirm_leave":
-            inputs = self.my_view.confirm_leave_game()
+            inputs = self.view.confirm_leave_game()
         elif self.keyword == "game_over":
-            self.my_view.draw_game_over()
+            self.view.draw_game_over()
         elif self.keyword == "victory":
-            self.my_view.draw_victory()
+            self.view.draw_victory()
 
         self.draw_again = False
         return inputs
@@ -191,7 +213,7 @@ class Controller:
                         self.player.name = input_boxes[1].get_text()
                     self.keyword = "connect_online"
                     self.draw_again = True
-        self.my_view.refresh_input(input_boxes)
+        self.view.refresh_input(input_boxes)
         
     def find_match_listener(self):
         for event in pygame.event.get():
@@ -230,7 +252,7 @@ class Controller:
                           .format(input_boxes[0].text, input_boxes[1].text))
             for instance in input_boxes:
                 instance.handle_event(event)
-        self.my_view.refresh_input(input_boxes)
+        self.view.refresh_input(input_boxes)
     
     def confirm_exit_listener(self, inputs):
         yes_button, no_button = inputs
@@ -294,7 +316,7 @@ class Controller:
         # update board model top display changes
         self.board.update_counts()
         # paint changes to view
-        self.my_view.update_game_screen(self.player, self.board)
+        self.view.update_game_screen(self.player, self.board)
         self.check_online_play()
     
         # check for capture
@@ -308,13 +330,13 @@ class Controller:
             self.explode_all_targets()
     
     def capture_animation(self):
-        if self.my_view.animate_return(self.ray_coords) is False:		# else ???
+        if self.view.animate_return(self.ray_coords) is False:		# else ???
             # remove bottom figure from column and capture it
             self.player.capture_figure(self.board.columns[self.ray_coords['position']].figures.pop(-1))
     
     def return_animation(self):
         # after the ray has finished being drawn
-        if self.my_view.animate_return(self.ray_coords) is False:		# else ???
+        if self.view.animate_return(self.ray_coords) is False:		# else ???
             # if column is empty add captured figure to column
             if len(self.board.columns[self.ray_coords['position']].figures) == 0:
                 self.board.columns[self.ray_coords['position']].figures.append(self.player.captured_figure)
@@ -344,7 +366,7 @@ class Controller:
     
     def explode_all_targets(self):
         if self.frame < 16:
-            self.my_view.draw_explosion(self.targets, self.frame)
+            self.view.draw_explosion(self.targets, self.frame)
             self.frame += 1
         else:
             # sorting targets by height, to avoid IndexOutOfBoundsError
@@ -390,7 +412,7 @@ class Controller:
                 self.broker.update_player_stats()
             self.send_counter += 1
             # draw opponents score board
-            self.my_view.draw_opponent(self.opponent)
+            self.view.draw_opponent(self.opponent)
     
     def check_on_opponent(self):
         message = self.mq.sub_receive_multi()

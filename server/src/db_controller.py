@@ -32,7 +32,6 @@ class Db:
     
     def __init__(self):
         try:
-            # self.engine = create_engine('sqlite://overfit-server.db', echo=True)
             Session = sessionmaker(bind=engine)
             self.session = Session()
             self.populate_db()

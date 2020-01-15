@@ -129,7 +129,7 @@ class View:
 		name_rect.center = (W_WIDTH / 2 - 100, 225)
 		name_input = input_box.InputBox(W_WIDTH / 2 + 25, 210, 150, 30, player_name)
 
-		start_multi_button = button.MyButton(self.MEDIUMFONT, 'Online Multiplayer', self.RED, self.YELLOW)
+		start_multi_button = button.MyButton(self.MEDIUMFONT, 'Connect To Server', self.RED, self.YELLOW)
 		start_multi_button.set_coords(W_WIDTH / 2, W_HEIGHT / 2 + 50)
 
 		inputs = (host_input, name_input)
@@ -172,10 +172,29 @@ class View:
 
 		return inputs, save_button
 	
-	def draw_landing_screen(self, data):
+	def draw_landing_screen(self, host, player_name, data):
 		# take the data and display it
 		# layout: server ip on top, historical of matches, find match button, leave server button
-		pass
+		banner = self.BIGFONT.render(f'   {host}: LANDING PAGE   ', 1, self.BLACK, self.GREEN)
+		banner_rect = banner.get_rect()
+		banner_rect.center = (W_WIDTH / 2, 100)
+		
+		name = self.SMALLFONT.render(f'Player Name: {player_name}', 1, self.GREEN, self.GREY)
+		name_rect = name.get_rect()
+		name_rect.center = (W_WIDTH / 2 - 100, 225)
+		
+		for match in data:
+			name = self.SMALLFONT.render(str(match), 1, self.GREEN, self.GREY)
+			name_rect = name.get_rect()
+			name_rect.center = (W_WIDTH / 2 - 100, 225)
+		
+		find_match_button = button.MyButton(self.MEDIUMFONT, 'Find Match', self.RED, self.YELLOW)
+		find_match_button.set_coords(W_WIDTH / 2, W_HEIGHT / 2 + 50)
+		
+		self.screen.fill(self.BLACK)
+		self.screen.blit(banner, banner_rect)
+		self.screen.blit(name, name_rect)
+		self.screen.blit(find_match_button.surface, find_match_button.rect)
 	
 	def draw_wait_screen(self, text='  WAITING FOR AVAILABLE ONLINE PLAYER  '):
 		banner = button.MyButton(self.BIGFONT, text, self.GREEN, self.BLACK)
