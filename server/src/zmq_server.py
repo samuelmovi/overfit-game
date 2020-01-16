@@ -107,13 +107,13 @@ class ZmqConnector:
 		message.append(recipient.encode())
 		message.append(json.dumps(info).encode())
 		message.append(json.dumps(payload).encode())
-		print(f'[#] sending message: {message}')
+		print(f'[zmq] sending message: {message}')
 		self.pub_send_multi(message)
 		
 	def pub_send_multi(self, message):
 		try:
 			self.publisher.send_multipart(message)
-			print("[zmq] Multi-Message sent :{}".format(message))
+			# print("[zmq] Multi-Message sent :{}".format(message))
 		except TypeError as e:
 			print("[!zmq!] TypeError while sending message: {}".format(e))
 			print(traceback.format_exc())

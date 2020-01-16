@@ -45,6 +45,11 @@ class PullPubServer:
 					if sender not in self.online_players:
 						# add player id to active_players
 						self.online_players.append(sender)
+						# send directly to landing
+						# send landing page info
+						new_info = {'status': 'WELCOME', 'sender': 'SERVER'}
+						match_data = self.db.load_matches()
+						self.mq.send(sender, new_info, match_data)
 					else:
 						# check status
 						if info['status'] == 'WELCOME':
@@ -115,7 +120,7 @@ class PullPubServer:
 							continue
 						elif info['status'] == 'QUIT':		# player disconnecting
 							# remove player id from online_players
-							self.online_players.pop(sender)
+							self.online_players.remove(sender)
 							continue
 						else:
 							pass

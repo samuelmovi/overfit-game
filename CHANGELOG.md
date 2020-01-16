@@ -14,12 +14,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - add event listener while connecting
     - add event listener while finding matches
 - redo unittests for server and client
-- fix AttributeError: 'NoneType' object has no attribute 'negotiate_match' after pressing ESC from finding_match screen
+- on successful save of settings data, go to start page
+- on QUIT message sent to server when returning to online_setup screen
 
 ## 2020-01-16
+### Changed
+- send landing data by default to client not on online_players
+
 ### Fixed
 - Server using outdated message protocol
 - client forgot to load json data before using
+- crash after pressing ESC twice on waiting screen
 
 ## 2020-01-15
 ### Fixed

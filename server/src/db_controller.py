@@ -4,7 +4,7 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy import create_engine
 
 Base = declarative_base()
-engine = create_engine('sqlite:///../overfit-server.db', echo=True)
+engine = create_engine('sqlite:///../overfit-server.db', echo=False)
 
 
 class Match(Base):

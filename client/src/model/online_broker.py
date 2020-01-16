@@ -73,18 +73,12 @@ class OnlineBroker:
 		response = self.mq.sub_receive_multi()
 		if response:
 			# check for PLAY status
-			info = response[1]
+			info = json.loads(response[1])
 			if info['status'] == 'PLAY':
 				# return opponent's id
 				return info['sender']
 			else:
 				return None
-
-	# def timeout(self):
-	# 		if (timeit.default_timer() - self.timer) > 5:
-	# 			return True
-	# 		else:
-	# 			return False
 
 	def negotiate_match(self):
 		if self.player.online == 'connected':
@@ -100,6 +94,16 @@ class OnlineBroker:
 				return opponent
 		return None
 	
+	def quit(self):
+		if self.mq is not None:
+			# disconnect from server with QUIT message
+			sender = self.player.ID
+			info = {'status': 'QUIT', 'recipient': 'SERVER'}
+			self.mq.send(sender, info, {})
+			time.sleep(0.1)
+			# close sockets
+			self.mq.disconnect()
+	
 	# during game
 	def update_player_stats(self):
 		# TODO: this will have to change
@@ -111,7 +115,7 @@ class OnlineBroker:
 			for i in range(len(message)):
 				message[i] = message[i].encode()
 			self.mq.push_send_multi(message)
-
+	
 
 if __name__ == '__main__':
 	pass

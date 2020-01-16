@@ -207,7 +207,7 @@ class View:
 		
 		return find_match_button
 	
-	def draw_wait_screen(self, text='WAIT SCREEN PLACEHOLDER TEXT'):
+	def draw_wait_screen(self, text='WAITING FOR A CHALLENGER'):
 		banner = self.BIGFONT.render(text, 1, self.BLACK, self.GREEN)
 		banner_rect = banner.get_rect()
 		banner_rect.center = (W_WIDTH / 2, 200)

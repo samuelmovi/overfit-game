@@ -224,8 +224,10 @@ class Controller:
                 self.loop_finished = True
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 # should ask for confirmation to leave server
-                self.keyword = "landing_page"
+                self.keyword = "online_setup"
                 self.draw_again = True
+                # disconnect from server
+                self.broker.quit()
             elif event.type == pygame.MOUSEBUTTONUP:
                 mouse_x, mouse_y = event.pos
                 if find_match_button.rect.collidepoint((mouse_x, mouse_y)):
@@ -239,8 +241,6 @@ class Controller:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     pygame.event.clear()
-                    self.broker = None
-                    self.reset_state()
                     self.keyword = "landing_page"
                     self.draw_again = True
     
@@ -310,7 +310,7 @@ class Controller:
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 pygame.event.clear()
                 self.reset_state()
-                self.keyword = "start"
+                self.keyword = "landing_page"
                 self.draw_again = True
     
     def victory_listener(self):
@@ -449,15 +449,23 @@ class Controller:
     
     def reset_state(self):
         if self.mq is not None:
-            self.player.online = 'over'
-            print('[player] {}'.format(self.player.online))
-            if self.opponent is not None:
-                message = [self.opponent['sender'], json.dumps(self.player.get_stats())]
-                for i in range(len(message)):
-                    message[i] = message[i].encode()
-                self.mq.push_send_multi(message)
-            time.sleep(1)
+            # disconnect from server with QUIT message
+            sender = self.player.ID
+            info = {'status': 'QUIT', 'recipient': 'SERVER'}
+            self.mq.send(sender, info, {})
+            time.sleep(0.1)
+            # close sockets
             self.mq.disconnect()
+            
+            # self.player.online = 'over'
+            # print('[player] {}'.format(self.player.online))
+            # if self.opponent is not None:
+            #     message = [self.opponent['sender'], json.dumps(self.player.get_stats())]
+            #     for i in range(len(message)):
+            #         message[i] = message[i].encode()
+            #     self.mq.push_send_multi(message)
+            # time.sleep(1)
+            # self.mq.disconnect()
     
         self.opponent = None
         self.send_counter = 0
