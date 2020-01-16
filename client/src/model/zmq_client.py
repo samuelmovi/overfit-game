@@ -110,7 +110,7 @@ class ZmqConnector:
 		except zmq.Again as a:
 			# print("[!zmq!] sub_receive_multi zmq.Again: {}".format(a))
 			# print(traceback.format_exc())
-			print("[@] No messages received")
+			# print("[@] No messages received")
 			return None
 		except zmq.ZMQError as e:
 			print("[!zmq!] sub_receive_multi ZMQError: {}".format(e))

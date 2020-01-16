@@ -270,6 +270,7 @@ class View:
 		self.screen.blit(image, (player.position*90+175, 525))
 
 	def draw_opponent(self, opponent):
+		print(f'[V] Drawing opponent: {opponent}')
 		# draw opponent name
 		player_name = button.MyButton(self.MEDIUMFONT, opponent['name'], self.WHITE, self.GREY)
 		player_name.set_coords(75, 325)

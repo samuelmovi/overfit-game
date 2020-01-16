@@ -10,7 +10,7 @@ class Player:
 	online = ''  # Player's online status: '' | connected | available | ready | playing
 	score = 0
 	steps = 0
-	connected = False
+	# connected = False
 	ID = ''		# random string to id player, requires reboot to change
 
 	def __init__(self):

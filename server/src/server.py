@@ -94,13 +94,13 @@ class PullPubServer:
 										if match[key] == 'READY':
 											c += 1
 									if c == 2:
-										# both are ready, send command PLAY
+										# both are ready, send command START
 										players = list(match.keys())
 										# inform one player
-										new_info = {'sender': players[1], 'status': 'PLAY'}
+										new_info = {'sender': players[1], 'status': 'START'}
 										self.mq.send(players[0], new_info, {})
 										# inform the other
-										new_info = {'sender': players[0], 'status': 'PLAY'}
+										new_info = {'sender': players[0], 'status': 'START'}
 										self.mq.send(players[1], new_info, {})
 									else:
 										# continue
@@ -108,7 +108,7 @@ class PullPubServer:
 						elif info['status'] == 'PLAYING':
 							# if playing, reformat and resend
 							recipient = info['recipient']
-							new_info = {'sender': sender, 'status': 'PLAY'}
+							new_info = {'sender': sender, 'status': 'PLAYING'}
 							self.mq.send(recipient, new_info, payload)
 						elif info['status'] == 'OVER':		# someone lost
 							# find match of sender

@@ -43,7 +43,9 @@ class Controller:
     # online variables
     HOST = '127.0.0.1'
     landing_data = None     # hold match data sent by server for display on landing page
-    opponent = {'id': '', 'name': '', 'status': '', 'score': 0, 'total': 0, 'longest': 0}       # dict of opponent
+    match_state = {'id': '', 'name': '', 'status': '', 'score': 0, 'total': 0, 'longest': 0}
+    opponent_state = {'id': '', 'name': '', 'status': '', 'score': 0, 'total': 0, 'longest': 0}
+    opponent = None      # id of opponent
     # info
     send_counter = 0    # used to delay checking queues
     
@@ -425,14 +427,15 @@ class Controller:
     # ONLINE FUNCTIONS
     def find_match(self):
         opponent = self.broker.negotiate_match()
-        if opponent is not None:
+        if opponent:
             self.player.online = 'playing'
-            self.opponent['id'] = opponent
+            self.opponent = opponent
             self.keyword = "game"
             self.draw_again = True
             print('[#] Game START!')
-            self.board = board.Board()
             print(f'[#] Opponent: {self.opponent}')
+            self.board = board.Board()
+            # self.player.connected = True
         else:
             text = "waiting message goes here"
             # set text for wait-screen
@@ -442,56 +445,53 @@ class Controller:
             elif self.player.online == 'ready':
                 text = 'Get ready to start'
                 self.draw_again = True
-                self.player.connected = True
+                # self.player.connected = True
             self.txt_msg = text
     
     def check_online_play(self):
-        if self.player.connected is True:
-            # send  message every 10 frames, read every 20
-            # if self.send_counter > 10:
-            #     self.send_counter = 0
-            #     self.check_on_opponent()
-            #     self.update_player_stats()
-            # self.send_counter += 1
-            # draw opponents score board
+        if self.opponent:
             self.check_on_opponent()
             self.update_player_stats()
-            self.view.draw_opponent(self.opponent)
+            # draw opponents score board
+            # self.view.draw_opponent(self.opponent_state)
 
     def check_on_opponent(self):
+        # check for messages from opponent and update info
         message = self.mq.sub_receive_multi()
         if message:
             info = json.loads(message[1])
-            self.opponent = json.loads(message[2])
+            self.opponent_state = json.loads(message[2])
             if info['status'] == 'OVER':
                 # i won!
                 self.keyword = "victory"
                 self.draw_again = True
             elif info['status'] == 'PLAYING':
-                if self.rows_received * 20 < int(self.opponent['score']):
+                self.view.draw_opponent(self.opponent_state)
+                if self.rows_received * 20 < int(self.opponent_state['score']):
                     print('[#] Received row')
                     self.board.add_row()
                     self.rows_received += 1
 
     def update_player_stats(self):
+        # check for changes in player stats, and inform server
         current_stats = self.player.get_stats()
         if current_stats != self.player_stats:
             print('[C] Updating opponent about player stats')
             self.player_stats = current_stats
             # send new stats to opponent
             sender = self.player.ID
-            info = {'status': 'PLAYING', 'recipient': self.opponent['id']}
-            update = {'id': '',
-                      'name': self.player.name,
-                      'status': self.player.status,
-                      'score': self.player.score,
-                      'total': self.board.figure_count,
-                      'longest': self.board.longest_column_count,
-                      }
-            self.mq.send(sender, info, update)
+            info = {'status': 'PLAYING', 'recipient': self.opponent}
+            self.match_state = {'id': sender,
+                                'name': self.player.name,
+                                'status': self.player.status,
+                                'score': self.player.score,
+                                'total': self.board.figure_count,
+                                'longest': self.board.longest_column_count,
+                                }
+            self.mq.send(sender, info, self.match_state)
     
     def reset_state(self):
-        if self.mq is not None:
+        if self.mq:
             # disconnect from server with QUIT message
             sender = self.player.ID
             info = {'status': 'QUIT', 'recipient': 'SERVER'}
@@ -500,7 +500,8 @@ class Controller:
             # close sockets
             self.mq.disconnect()
 
-        self.opponent = {'id': '', 'name': '', 'status': '', 'score': 0, 'total': 0, 'longest': 0}
+        self.opponent = None
+        self.opponent_state = {'id': '', 'name': '', 'status': '', 'score': 0, 'total': 0, 'longest': 0}
         self.send_counter = 0
         self.explosion_counter = 1
         self.rows_received = 0
