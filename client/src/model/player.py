@@ -79,9 +79,7 @@ class Player:
 
 	def get_stats(self):
 		stats = {
-			'sender': self.ID,			# random string that identifies player in server
 			'name': self.name,			# name chosen by player
-			'online': self.online,		# player's online status
 			'status': self.status,		# status of the game's character
 			'score': self.score,		# current game score
 		}

@@ -103,13 +103,13 @@ class PullPubServer:
 										new_info = {'sender': players[0], 'status': 'PLAY'}
 										self.mq.send(players[1], new_info, {})
 									else:
-										continue
-										
+										# continue
+										break
 						elif info['status'] == 'PLAYING':
 							# if playing, reformat and resend
-							info = {'sender': message[0], 'status': 'PLAY'}
-							self.mq.send(info['recipient'], info, {})
-						
+							recipient = info['recipient']
+							new_info = {'sender': sender, 'status': 'PLAY'}
+							self.mq.send(recipient, new_info, payload)
 						elif info['status'] == 'OVER':		# someone lost
 							# find match of sender
 							loser = sender
@@ -135,7 +135,7 @@ class PullPubServer:
 							print(f"[#] User '{sender}' removed from online players")
 							continue
 						else:
-							pass
+							print(f"[!!] unknown player status: {info['status']}")
 						
 			except KeyboardInterrupt:
 				finished = True

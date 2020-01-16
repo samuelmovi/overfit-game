@@ -16,13 +16,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - check that client in available_players aren't expired
 - after successful handshake clients crash trying to start game, board is null
 - go to landing page when leaving online game
-- match payload not working right
+- opponent's info not displaying on board
 
 ## 2020-01-16
 ### Added
 - when returning to online_setup screen send QUIT message and WELCOME message to server
 - add event listener while connecting
 - add event listener while finding matches
+- new opponent dictionary specification
     
 ### Changed
 - send landing data by default to client not on online_players

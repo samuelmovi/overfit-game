@@ -97,16 +97,27 @@ class OnlineBroker:
 			self.mq.disconnect()
 	
 	# during game
-	def update_player_stats(self):
-		# TODO: this will have to change
-		current_stats = self.player.get_stats()
-		if current_stats != self.player_stats:
-			print('[broker] Updating opponent about player stats')
-			self.player_stats = current_stats
-			message = [self.opponent['sender'], json.dumps(self.player_stats)]
-			for i in range(len(message)):
-				message[i] = message[i].encode()
-			self.mq.push_send_multi(message)
+	# def update_player_stats(self):
+	# 	current_stats = self.player.get_stats()
+	# 	if current_stats != self.player_stats:
+	# 		print('[broker] Updating opponent about player stats')
+	# 		self.player_stats = current_stats
+	# 		# send new stats to opponent
+	# 		sender = self.player.ID
+	# 		info = {'status': 'PLAYING', 'recipient': self.opponent}
+	# 		payload = self.player_stats
+	# 		# get match status
+	# 		payload = dict()
+	# 		payload['name'] = self.player.name
+	# 		payload['status'] = self.player.status
+	# 		payload['score'] = self.player.score
+	# 		payload['total'] = self.board
+	# 		payload['longest_column'] = self.board.longest_column_count
+	# 		self.mq.send(sender, info, payload)
+	# 		# message = [self.opponent['sender'], json.dumps(self.player_stats)]
+	# 		# for i in range(len(message)):
+	# 		# 	message[i] = message[i].encode()
+	# 		# self.mq.push_send_multi(message)
 	
 
 if __name__ == '__main__':
