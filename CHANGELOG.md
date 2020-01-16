@@ -14,9 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - redo unittests for server and client
 - on successful save of settings data, go to start page
 - check that client in available_players aren't expired
-- after successful handshake clients crash trying to start game, board is null
 - go to landing page when leaving online game
-- opponent's info not displaying on board
 
 ## 2020-01-16
 ### Added
@@ -34,7 +32,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - client forgot to load json data before using
 - crash after pressing ESC twice on waiting screen
 - setting player.online as necessary for proper match negotiating
-- order of methods in loop for "find_online_mach", listener is last now.
+- order of methods in loop for "find_online_mach", listener is last now
+- opponent's info not displaying on board
+- multiplayer online game working well
 
 ## 2020-01-15
 ### Fixed
