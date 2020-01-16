@@ -357,6 +357,9 @@ class Controller:
 
         # paint changes to view
         self.view.update_game_screen(self.player, self.board)
+        
+        if self.opponent:
+            self.view.draw_opponent(self.opponent_state)
     
         # check for capture
         if self.player.status == 'capturing':
@@ -466,7 +469,7 @@ class Controller:
                 self.keyword = "victory"
                 self.draw_again = True
             elif info['status'] == 'PLAYING':
-                self.view.draw_opponent(self.opponent_state)
+                # self.view.draw_opponent(self.opponent_state)
                 if self.rows_received * 20 < int(self.opponent_state['score']):
                     print('[#] Received row')
                     self.board.add_row()
@@ -480,6 +483,7 @@ class Controller:
             self.player_stats = current_stats
             # send new stats to opponent
             sender = self.player.ID
+            info = {'status': 'PLAYING', 'recipient': self.opponent}
             info = {'status': 'PLAYING', 'recipient': self.opponent}
             self.match_state = {'id': sender,
                                 'name': self.player.name,
@@ -536,4 +540,4 @@ class Controller:
     
     
 if __name__ == '__main__':
-    pass
+    pas
