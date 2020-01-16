@@ -4,6 +4,7 @@ from zmq.auth.thread import ThreadAuthenticator
 import os
 import traceback
 import json
+import datetime
 
 
 class ZmqConnector:
@@ -85,7 +86,7 @@ class ZmqConnector:
 	def push_send_multi(self, message):
 		try:
 			self.pusher.send_multipart(message)
-			print("[zmq] Multi-Message sent :{}".format(message))
+			print(f"[zmq] Message sent :\n\t{datetime.datetime.now()}- {message}")
 		except TypeError as e:
 			print("[!zmq!] TypeError push_send_multi: {}".format(e))
 			# print(traceback.format_exc())
@@ -104,6 +105,7 @@ class ZmqConnector:
 	def sub_receive_multi(self):
 		try:
 			message = self.subscriber.recv_multipart(flags=zmq.DONTWAIT)
+			print(f"[zmq] Message received :\n\t{datetime.datetime.now()}- {message}")
 			return message
 		except zmq.Again as a:
 			# print("[!zmq!] sub_receive_multi zmq.Again: {}".format(a))

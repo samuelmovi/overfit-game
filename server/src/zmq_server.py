@@ -4,6 +4,7 @@ from zmq.auth.thread import ThreadAuthenticator
 import os
 import traceback
 import json
+import datetime
 
 
 class ZmqConnector:
@@ -78,11 +79,8 @@ class ZmqConnector:
 
 	def pull_receive_multi(self):
 		try:
-			# print("[zmq] Reading multipart messages from socket...")
 			message = self.puller.recv_multipart(flags=zmq.DONTWAIT)
-			# print("[zmq] Multi-Part Message received: ")
-			# for part in message:
-			#     print("\t> {} /{}".format(part, type(part)))
+			print(f"[zmq] Received :\n\t{datetime.datetime.now()}- {message}")
 			return message
 		except zmq.Again as a:
 			# print("[!zmq!] Error while getting messages: {}".format(a))
@@ -113,7 +111,7 @@ class ZmqConnector:
 	def pub_send_multi(self, message):
 		try:
 			self.publisher.send_multipart(message)
-			# print("[zmq] Multi-Message sent :{}".format(message))
+			print(f"[zmq] Sent :\n\t{datetime.datetime.now()}- {message}")
 		except TypeError as e:
 			print("[!zmq!] TypeError while sending message: {}".format(e))
 			print(traceback.format_exc())

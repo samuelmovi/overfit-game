@@ -1,5 +1,6 @@
 import pygame
 import sys
+import datetime
 import time
 import json
 import os
@@ -79,6 +80,7 @@ class Controller:
                 # connect with server
                 try:
                     self.mq.start(self.HOST, self.player.ID)
+                    self.player.online = "connected"
                 except Exception as e:
                     print(f"[main_loop] Error connect_online: {e}")
                     self.keyword = "online_setup"
@@ -91,7 +93,7 @@ class Controller:
                     response = self.broker.landing_page()
                     if response:
                         # display landing page
-                        print(f"[@] Got Response: {response}")
+                        # print(f"[@] Got Response: {response}")
                         self.landing_data = response
                         self.keyword = "landing_page"
                         self.draw_again = True
@@ -231,11 +233,13 @@ class Controller:
                 self.draw_again = True
                 # disconnect from server
                 self.broker.quit()
+                self.player.online = ''
             elif event.type == pygame.MOUSEBUTTONUP:
                 mouse_x, mouse_y = event.pos
                 if find_match_button.rect.collidepoint((mouse_x, mouse_y)):
                     self.keyword = 'find_online_match'
                     self.draw_again = True
+                    self.player.online = 'available'
     
     def find_match_listener(self):
         for event in pygame.event.get():
@@ -246,6 +250,7 @@ class Controller:
                     pygame.event.clear()
                     self.keyword = "landing_page"
                     self.draw_again = True
+                    self.player.online = 'connected'
                     # send welcome message
                     info = {'status': 'WELCOME', 'recipient': 'SERVER'}
                     self.mq.send(self.player.ID, info, {})
@@ -448,6 +453,7 @@ class Controller:
     def check_on_opponent(self):
         message = self.mq.sub_receive_multi()
         if message is not None:
+            print(f"[zmq] Message received :\n\t{datetime.datetime.now()}- {message}")
             info = json.loads(message[1])
             payload = json.loads(message[2])
             if info['status'] == 'OVER':
@@ -469,16 +475,6 @@ class Controller:
             time.sleep(0.1)
             # close sockets
             self.mq.disconnect()
-            
-            # self.player.online = 'over'
-            # print('[player] {}'.format(self.player.online))
-            # if self.opponent is not None:
-            #     message = [self.opponent['sender'], json.dumps(self.player.get_stats())]
-            #     for i in range(len(message)):
-            #         message[i] = message[i].encode()
-            #     self.mq.push_send_multi(message)
-            # time.sleep(1)
-            # self.mq.disconnect()
     
         self.opponent = None
         self.send_counter = 0

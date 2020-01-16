@@ -65,11 +65,13 @@ class PullPubServer:
 						elif info['status'] == 'AVAILABLE':
 							# check for available players to match client with
 							if len(self.available_players) > 0:
+								print("[#] Pairing up available players...")
 								# send ready signal to both players
 								for client in (self.available_players.pop(), sender):
 									new_info = {'sender': 'SERVER', 'status': 'READY'}
 									self.mq.send(client, new_info, {})
 							else:
+								print("[#] No other players available...")
 								# add to available_players
 								self.available_players.append(sender)
 								print(f"[#] Adding '{sender}' to available players")

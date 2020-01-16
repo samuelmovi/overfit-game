@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - add event listener while finding matches
 - redo unittests for server and client
 - on successful save of settings data, go to start page
+- check that client in available_players are really there
+- fix available message not being sent until after
 
 ## 2020-01-16
 ### Added
@@ -22,11 +24,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - send landing data by default to client not on online_players
+- new formatting to message printouts with timestamp
 
 ### Fixed
 - Server using outdated message protocol
 - client forgot to load json data before using
 - crash after pressing ESC twice on waiting screen
+- setting player.online as necessary for proper match negotiating
 
 ## 2020-01-15
 ### Fixed

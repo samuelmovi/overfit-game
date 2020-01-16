@@ -51,7 +51,7 @@ class Db:
     def load_matches(self):
         query = self.session.query(Match).limit(10)
         matches = query.all()
-        print(f"[db] all matches {type(matches)}: {matches}")
+        # print(f"[db] all matches {type(matches)}: {matches}")
         results = dict()
         for match in matches:
             results[match.id] = match.__str__()

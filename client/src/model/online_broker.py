@@ -87,6 +87,8 @@ class OnlineBroker:
 			opponent = self.check_for_play()
 			if opponent:
 				return opponent
+		else:
+			print(f"[!!!] Player online status: {self.player.online}")
 		return None
 	
 	def quit(self):
