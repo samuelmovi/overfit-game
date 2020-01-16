@@ -8,36 +8,43 @@ from pygame.locals import *
 
     
 class Controller:
+    
+    # constants
     RIGHT = 'right'
     LEFT = 'left'
-    FPS = 30  # frames per second to update the screen
+    FPSCLOCK = None
+    FPS = 30  # frames per second to update the screen, and execute code
     AP_Q = 'ap_q'
-    opponent = None  # used to store the opponents dictionaries
-    send_counter = 0  # used to delay checking queues
-    explosion_counter = 1
-    rows_received = 1
-    ray_coords = {}
+    
+    # variables
     frame = 0  # to keep track of frames during explosion animations
-    all_targets_acquired = False
-    player_stats = {}  # dictionary for the players own stats
+    base_dir = os.path.join(os.getcwd(), '../')
+    keyword = ""  # stores value used to control flow inside main_loop
+    draw_again = True
+    loop_finished = False
+    txt_msg = ""  # hold string to be displayed on waiting screens
+
+    # model instances
     board = None
     broker = None
     mq = None
-    HOST = '127.0.0.1'
-    
-    landing_data = None     # hold match data sent by server for display on landing page
-    
     view = None
     player = None
-    targets = []
-    FPSCLOCK = None
-    base_dir = os.path.join(os.getcwd(), '../')
     
-    keyword = ""
-    draw_again = True
-    loop_finished = False
-    txt_msg = ""
-
+    # gameplay variables
+    explosion_counter = 1
+    rows_received = 1
+    ray_coords = {}
+    targets = []        # list of figures to be destroyed during gameplay
+    all_targets_acquired = False
+    player_stats = {}  # dictionary for the players own stats
+    
+    # online variables
+    HOST = '127.0.0.1'
+    landing_data = None     # hold match data sent by server for display on landing page
+    opponent = None  # used to store the opponents dictionaries
+    send_counter = 0  # used to delay checking queues
+    
     def __init__(self, view, player, mq, broker):
         print('[#] Initiating Controller...')
         self.mq = mq
