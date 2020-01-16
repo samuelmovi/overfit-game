@@ -13,12 +13,8 @@ class PullPubServer:
 	
 	online_players = []			# list of id values for all online players
 	available_players = []		# list of id values for all online players waiting for a match
-	matches = []
-	# list of ongoing matches:
-	# { 'player_1_id': 'status'},
-	#   'player_2_id': 'status'},
-	# }
-	# values for status: playing, won, lost
+	matches = []				# list of ongoing matches: [ {'player_1_id': 'playing/won/lost', 'player_2_id':
+	# 'playing/won/lost'} ]
 	
 	def __init__(self, connector=None, db=None):
 		if connector and db:
@@ -66,10 +62,17 @@ class PullPubServer:
 							# check for available players to match client with
 							if len(self.available_players) > 0:
 								print("[#] Pairing up available players...")
+								player_1 = self.available_players.pop()
+								player_2 = sender
 								# send ready signal to both players
-								for client in (self.available_players.pop(), sender):
+								for client in (player_1, player_2):
 									new_info = {'sender': 'SERVER', 'status': 'READY'}
 									self.mq.send(client, new_info, {})
+								# add match to matches
+								match = dict()
+								match[player_1] = 'playing'
+								match[player_2] = 'playing'
+								self.matches.append(match)
 							else:
 								print("[#] No other players available...")
 								# add to available_players
@@ -78,10 +81,10 @@ class PullPubServer:
 								# respond
 								new_info = {'sender': 'SERVER', 'status': 'WAIT'}
 								self.mq.send(sender, new_info, {})
-						
 						elif info['status'] == 'READY':
 							# find corresponding match and set client as ready
 							# TODO: this code doesn't look efficient, should be improved
+							# send PLAY messages, with each other as sender
 							for match in self.matches:
 								if sender in match.keys():
 									match[sender] = 'READY'
@@ -92,7 +95,7 @@ class PullPubServer:
 											c += 1
 									if c == 2:
 										# both are ready, send command PLAY
-										players = match.keys()
+										players = list(match.keys())
 										# inform one player
 										new_info = {'sender': players[1], 'status': 'PLAY'}
 										self.mq.send(players[0], new_info, {})
