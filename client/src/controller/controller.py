@@ -66,6 +66,7 @@ class Controller:
         while not self.loop_finished:
             # check if screen needs redrawing
             if self.draw_again:
+                # draw screen based on keyword value, return input objects, if any
                 inputs = self.draw(self.keyword)
                 
             if self.keyword == "start":
@@ -82,7 +83,7 @@ class Controller:
                     print(f"[main_loop] Error connect_online: {e}")
                     self.keyword = "online_setup"
                     self.draw_again = True
-                time.sleep(0.5)
+                time.sleep(0.1)
                 for i in range(5):
                     response = self.broker.landing_page()
                     if response:
@@ -91,12 +92,13 @@ class Controller:
                         self.landing_data = response
                         self.keyword = "landing_page"
                         self.draw_again = True
+                        self.player.online = "connected"
                         break
                     else:
-                        time.sleep(0.1)
+                        time.sleep(0.01)
                         if i == 4:
                             print(f"[!!!] Response is {response}")
-                            self.keyword = "start"
+                            self.keyword = "online_setup"
                             self.draw_again = True
             elif self.keyword == "landing_page":
                 self.landing_listener(inputs)
@@ -129,7 +131,7 @@ class Controller:
             match_data = json.loads(self.landing_data[2])
             inputs = self.view.draw_landing_screen(self.HOST, self.player.name, match_data)
         elif self.keyword == "find_online_match":
-            self.view.draw_wait_screen(self.txt_msg)
+            self.view.draw_wait_screen()
         elif keyword == "settings":
             inputs = self.view.draw_settings_screen(self.player.name, self.HOST)
         elif keyword == "confirm_exit":

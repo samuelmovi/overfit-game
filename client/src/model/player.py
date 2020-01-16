@@ -6,12 +6,12 @@ class Player:
 	name = 'PLAYER 1'
 	position = None
 	captured_figure = None
-	status = ''  # Player's match: empty | full | | capturing | returning
-	online = ''  # Player's online status: connected | available | ready | playing
+	status = ''  # Player's character gameplay status: empty | full | | capturing | returning
+	online = ''  # Player's online status: '' | connected | available | ready | playing
 	score = 0
 	steps = 0
 	connected = False
-	ID = ''
+	ID = ''		# random string to id player, requires reboot to change
 
 	def __init__(self):
 		self.position = 3  # starts in middle of 7 columns

@@ -1,7 +1,6 @@
 import os
 import json
-import datetime
-from db_controller import Match
+import time
 
 # Server message protocol:
 #
@@ -50,7 +49,7 @@ class PullPubServer:
 						# check status
 						if info['status'] == 'WELCOME':
 							# send landing page info
-							new_info = {'command': 'WELCOME', 'sender': 'SERVER'}
+							new_info = {'status': 'WELCOME', 'sender': 'SERVER'}
 							match_data = self.db.load_matches()
 							self.mq.send(sender, new_info, match_data)
 						elif info['status'] == 'AVAILABLE':
@@ -58,13 +57,13 @@ class PullPubServer:
 							if len(self.available_players):
 								# send ready signal to both players
 								for id in (self.available_players.pop(), sender):
-									new_info = {'sender': 'SERVER', 'command': 'READY'}
+									new_info = {'sender': 'SERVER', 'status': 'READY'}
 									self.mq.send(id, new_info, {})
 							else:
 								# add to available_players
 								self.available_players.append(sender)
 								# respond
-								new_info = {'sender': 'SERVER', 'command': 'WAIT'}
+								new_info = {'sender': 'SERVER', 'status': 'WAIT'}
 								self.mq.send(sender, new_info, {})
 						
 						elif info['status'] == 'READY':
@@ -82,17 +81,17 @@ class PullPubServer:
 										# both are ready, send command PLAY
 										players = match.keys()
 										# inform one player
-										new_info = {'sender': players[1], 'command': 'PLAY'}
+										new_info = {'sender': players[1], 'status': 'PLAY'}
 										self.mq.send(players[0], new_info, {})
 										# inform the other
-										new_info = {'sender': players[0], 'command': 'PLAY'}
+										new_info = {'sender': players[0], 'status': 'PLAY'}
 										self.mq.send(players[1], new_info, {})
 									else:
 										continue
 										
 						elif info['status'] == 'PLAYING':
 							# if playing, reformat and resend
-							info = {'sender': message[0], 'command': 'PLAY'}
+							info = {'sender': message[0], 'status': 'PLAY'}
 							self.mq.send(info['recipient'], info, {})
 						
 						elif info['status'] == 'OVER':		# someone lost
@@ -111,7 +110,7 @@ class PullPubServer:
 							# capture match data and create new db entry
 							self.db.save_match(winner, loser)
 							# forward message to winner
-							new_info = {'sender': 'SERVER', 'command': 'OVER'}		# OVER commands signals victory
+							new_info = {'sender': 'SERVER', 'status': 'OVER'}		# OVER commands signals victory
 							self.mq.send(winner, new_info, payload)
 							continue
 						elif info['status'] == 'QUIT':		# player disconnecting
@@ -123,6 +122,7 @@ class PullPubServer:
 						
 			except KeyboardInterrupt:
 				finished = True
+			time.sleep(0.001)
 		os._exit(0)
 
 

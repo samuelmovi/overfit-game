@@ -16,7 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - redo unittests for server and client
 - fix AttributeError: 'NoneType' object has no attribute 'negotiate_match' after pressing ESC from finding_match screen
 
-## 2010-01-15
+## 2020-01-16
+### Fixed
+- Server using outdated message protocol
+- client forgot to load json data before using
+
+## 2020-01-15
 ### Fixed
 - Client and server communicating correctly
 - sqlalchemy backend working

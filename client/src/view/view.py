@@ -184,7 +184,7 @@ class View:
 		name_rect = name.get_rect()
 		name_rect.center = (W_WIDTH / 2, 100)
 		
-		print(f"[V] Match data: {match_data}")
+		# print(f"[V] Match data: {match_data}")
 		matches = []		# list of view elements, with match info string
 		height = 150
 		for key in match_data.keys():
@@ -207,16 +207,18 @@ class View:
 		
 		return find_match_button
 	
-	def draw_wait_screen(self, text='  WAITING FOR AVAILABLE ONLINE PLAYER  '):
-		banner = button.MyButton(self.BIGFONT, text, self.GREEN, self.BLACK)
-		banner.set_coords(W_WIDTH/2, 200)
-
-		dots = button.MyButton(self.BIGFONT, '...', self.GREEN, self.BLACK)
-		dots.set_coords(W_WIDTH/2, 300)
-
+	def draw_wait_screen(self, text='WAIT SCREEN PLACEHOLDER TEXT'):
+		banner = self.BIGFONT.render(text, 1, self.BLACK, self.GREEN)
+		banner_rect = banner.get_rect()
+		banner_rect.center = (W_WIDTH / 2, 200)
+		
+		dots = self.BIGFONT.render('...', 1, self.BLACK, self.GREEN)
+		dots_rect = dots.get_rect()
+		dots_rect.center = (W_WIDTH / 2, 300)
+		
 		self.screen.fill(self.BLACK)
-		self.screen.blit(banner.surface, banner.rect)
-		self.screen.blit(dots.surface, dots.rect)
+		self.screen.blit(banner, banner_rect)
+		self.screen.blit(dots, dots_rect)
 
 	def refresh_input(self, inputs):
 		for instance in inputs:

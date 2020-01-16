@@ -27,7 +27,7 @@ class OnlineBroker:
 	challenging = False
 	player_stats = {}
 
-	timer = None
+	# timer = None
 
 	def __init__(self, player, zmq):
 		print("[broker] Initializing online game broker...")
@@ -50,7 +50,7 @@ class OnlineBroker:
 	
 	def set_player_available(self):
 		self.player.online = 'available'
-		info = {'status': 'AVAILABLE', 'command': 'FIND', 'sender': 'SERVER'}
+		info = {'status': 'AVAILABLE', 'recipient': 'SERVER'}
 		self.mq.send(self.player.ID, info, {})
 		# go to landing page
 		self.landing_page()
@@ -60,9 +60,11 @@ class OnlineBroker:
 		response = self.mq.sub_receive_multi()
 		if response:
 			# check for READY status
-			info = response[1]
+			info = json.loads(response[1])
 			if info['sender'] == 'SERVER' and info['status'] == 'READY':
 				self.player.online = 'ready'
+				info = {'status': 'READY', 'recipient': 'SERVER'}
+				self.mq.send(self.player.ID, info, {})
 				# respond ready
 			pass
 	
@@ -87,12 +89,12 @@ class OnlineBroker:
 	def negotiate_match(self):
 		if self.player.online == 'connected':
 			self.set_player_available()
-			self.timer = timeit.default_timer()
+			# #self.timer = timeit.default_timer()
 		elif self.player.online == 'available':
-			self.timer += 1
+			# self.timer += 1
 			self.check_for_ready()
 		elif self.player.online == 'ready':
-			self.timer = timeit.default_timer()
+			# self.timer = timeit.default_timer()
 			opponent = self.check_for_play()
 			if opponent:
 				return opponent
