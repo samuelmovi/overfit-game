@@ -36,7 +36,7 @@ class PullPubServer:
 			try:
 				message = self.mq.pull_receive_multi()
 				if message:
-					print(f'[@] New message:\n\tFrom: {message}')
+					# print(f'[@] New message:\n\tFrom: {message}')
 					sender = message[0].decode()
 					info = json.loads(message[1])
 					payload = json.loads(message[2])

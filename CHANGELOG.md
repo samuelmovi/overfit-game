@@ -11,17 +11,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - client changes for new revision:
     - only send data on state change
     - manage zmq client auth failing 
-    - add event listener while connecting
-    - add event listener while finding matches
 - redo unittests for server and client
 - on successful save of settings data, go to start page
-- check that client in available_players are really there
-- fix available message not being sent until after
+- check that client in available_players aren't expired
+- READY messages sent by server not being read by clients
+- going from waiting screen to landing page, cause welcome and available messages !!
 
 ## 2020-01-16
 ### Added
 - when returning to online_setup screen send QUIT message and WELCOME message to server
-
+- add event listener while connecting
+- add event listener while finding matches
+    
 ### Changed
 - send landing data by default to client not on online_players
 - new formatting to message printouts with timestamp
@@ -31,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - client forgot to load json data before using
 - crash after pressing ESC twice on waiting screen
 - setting player.online as necessary for proper match negotiating
+- order of methods in loop for "find_online_mach", listener is last now.
 
 ## 2020-01-15
 ### Fixed

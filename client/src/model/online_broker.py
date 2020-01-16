@@ -35,7 +35,7 @@ class OnlineBroker:
 		self.player = player
 	
 	def landing_page(self):
-		print("[#] Retrieving landing page data...")
+		# print("[#] Retrieving landing page data...")
 		try:
 			response = self.mq.sub_receive_multi()
 			return response
@@ -58,10 +58,8 @@ class OnlineBroker:
 			info = json.loads(response[1])
 			if info['sender'] == 'SERVER' and info['status'] == 'READY':
 				self.player.online = 'ready'
-				info = {'status': 'READY', 'recipient': 'SERVER'}
-				self.mq.send(self.player.ID, info, {})
-				# respond ready
-			pass
+				my_info = {'status': 'READY', 'recipient': 'SERVER'}
+				self.mq.send(self.player.ID, my_info, {})
 	
 	def check_for_play(self):
 		# read from subscription and check
@@ -78,12 +76,9 @@ class OnlineBroker:
 	def negotiate_match(self):
 		if self.player.online == 'connected':
 			self.set_player_available()
-			# #self.timer = timeit.default_timer()
 		elif self.player.online == 'available':
-			# self.timer += 1
 			self.check_for_ready()
 		elif self.player.online == 'ready':
-			# self.timer = timeit.default_timer()
 			opponent = self.check_for_play()
 			if opponent:
 				return opponent

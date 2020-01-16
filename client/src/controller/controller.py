@@ -102,14 +102,14 @@ class Controller:
                     else:
                         time.sleep(0.01)
                         if i == 4:
-                            print(f"[!!!] Response is {response}")
+                            print("[!!!] Response timeout")
                             self.keyword = "online_setup"
                             self.draw_again = True
             elif self.keyword == "landing_page":
                 self.landing_listener(inputs)
             elif self.keyword == "find_online_match":
-                self.find_match_listener()
                 self.find_match()
+                self.find_match_listener()
             elif self.keyword == "settings":
                 self.settings_listener(inputs)
             elif self.keyword == "confirm_exit":
@@ -239,7 +239,6 @@ class Controller:
                 if find_match_button.rect.collidepoint((mouse_x, mouse_y)):
                     self.keyword = 'find_online_match'
                     self.draw_again = True
-                    self.player.online = 'available'
     
     def find_match_listener(self):
         for event in pygame.event.get():
@@ -248,17 +247,17 @@ class Controller:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     pygame.event.clear()
+                    # back to landing page
                     self.keyword = "landing_page"
                     self.draw_again = True
                     self.player.online = 'connected'
                     # send welcome message
                     info = {'status': 'WELCOME', 'recipient': 'SERVER'}
                     self.mq.send(self.player.ID, info, {})
+                    print("[C] Retrieving landing page data...")
                     for i in range(5):
                         response = self.broker.landing_page()
                         if response:
-                            # display landing page
-                            print(f"[@] Got Response: {response}")
                             self.landing_data = response
                             break
     
