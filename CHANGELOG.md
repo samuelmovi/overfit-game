@@ -15,9 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - add event listener while finding matches
 - redo unittests for server and client
 - on successful save of settings data, go to start page
-- on QUIT message sent to server when returning to online_setup screen
 
 ## 2020-01-16
+### Added
+- when returning to online_setup screen send QUIT message and WELCOME message to server
+
 ### Changed
 - send landing data by default to client not on online_players
 

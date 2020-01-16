@@ -45,6 +45,7 @@ class PullPubServer:
 					if sender not in self.online_players:
 						# add player id to active_players
 						self.online_players.append(sender)
+						print(f"[#] User '{sender}' added to online_players")
 						# send directly to landing
 						# send landing page info
 						new_info = {'status': 'WELCOME', 'sender': 'SERVER'}
@@ -53,20 +54,25 @@ class PullPubServer:
 					else:
 						# check status
 						if info['status'] == 'WELCOME':
+							# if sender in available players, remove
+							if sender in self.available_players:
+								self.available_players.remove(sender)
+								print(f"[#] User '{sender}' removed from available players")
 							# send landing page info
 							new_info = {'status': 'WELCOME', 'sender': 'SERVER'}
 							match_data = self.db.load_matches()
 							self.mq.send(sender, new_info, match_data)
 						elif info['status'] == 'AVAILABLE':
 							# check for available players to match client with
-							if len(self.available_players):
+							if len(self.available_players) > 0:
 								# send ready signal to both players
-								for id in (self.available_players.pop(), sender):
+								for client in (self.available_players.pop(), sender):
 									new_info = {'sender': 'SERVER', 'status': 'READY'}
-									self.mq.send(id, new_info, {})
+									self.mq.send(client, new_info, {})
 							else:
 								# add to available_players
 								self.available_players.append(sender)
+								print(f"[#] Adding '{sender}' to available players")
 								# respond
 								new_info = {'sender': 'SERVER', 'status': 'WAIT'}
 								self.mq.send(sender, new_info, {})
@@ -121,6 +127,7 @@ class PullPubServer:
 						elif info['status'] == 'QUIT':		# player disconnecting
 							# remove player id from online_players
 							self.online_players.remove(sender)
+							print(f"[#] User '{sender}' removed from online players")
 							continue
 						else:
 							pass
@@ -128,8 +135,9 @@ class PullPubServer:
 			except KeyboardInterrupt:
 				finished = True
 			time.sleep(0.001)
-		os._exit(0)
-
+		# os._exit(0)
+		exit()
+		
 
 if __name__ == '__main__':
 	pass

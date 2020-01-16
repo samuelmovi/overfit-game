@@ -84,6 +84,9 @@ class Controller:
                     self.keyword = "online_setup"
                     self.draw_again = True
                 time.sleep(0.1)
+                # send welcome message
+                info = {'status': 'WELCOME', 'recipient': 'SERVER'}
+                self.mq.send(self.player.ID, info, {})
                 for i in range(5):
                     response = self.broker.landing_page()
                     if response:
@@ -243,6 +246,16 @@ class Controller:
                     pygame.event.clear()
                     self.keyword = "landing_page"
                     self.draw_again = True
+                    # send welcome message
+                    info = {'status': 'WELCOME', 'recipient': 'SERVER'}
+                    self.mq.send(self.player.ID, info, {})
+                    for i in range(5):
+                        response = self.broker.landing_page()
+                        if response:
+                            # display landing page
+                            print(f"[@] Got Response: {response}")
+                            self.landing_data = response
+                            break
     
     def settings_listener(self, inputs):
         input_boxes, save_button = inputs

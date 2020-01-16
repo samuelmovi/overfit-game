@@ -103,16 +103,12 @@ class ZmqConnector:
 
 	def sub_receive_multi(self):
 		try:
-			# print("[zmq] Reading multipart messages from socket...")
-			# message = socket.recv_multipart(flags=zmq.DONTWAIT)
 			message = self.subscriber.recv_multipart(flags=zmq.DONTWAIT)
-			# print("[zmq] Multi-Part Message received: ")
-			# for part in message:
-			#     print("\t> {} /{}".format(part, type(part)))
 			return message
 		except zmq.Again as a:
-			print("[!zmq!] sub_receive_multi zmq.Again: {}".format(a))
+			# print("[!zmq!] sub_receive_multi zmq.Again: {}".format(a))
 			# print(traceback.format_exc())
+			print("[@] No messages received")
 			return None
 		except zmq.ZMQError as e:
 			print("[!zmq!] sub_receive_multi ZMQError: {}".format(e))

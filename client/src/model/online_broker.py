@@ -36,12 +36,7 @@ class OnlineBroker:
 	
 	def landing_page(self):
 		print("[#] Retrieving landing page data...")
-		# send WELCOME command and get back the data to display in landing page
-		info = {'status': 'WELCOME', 'recipient': 'SERVER'}
 		try:
-			self.mq.send(self.player.ID, info, {})
-			# maybe a little wait
-			time.sleep(1)
 			response = self.mq.sub_receive_multi()
 			return response
 		except Exception as e:
