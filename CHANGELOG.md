@@ -14,8 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - redo unittests for server and client
 - on successful save of settings data, go to start page
 - check that client in available_players aren't expired
-- READY messages sent by server not being read by clients
-- going from waiting screen to landing page, cause welcome and available messages !!
+- after successful handshake clients crash trying to start game, board is null
+- go to landing page when leaving online game
+- match payload not working right
 
 ## 2020-01-16
 ### Added

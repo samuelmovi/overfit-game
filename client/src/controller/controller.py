@@ -427,6 +427,9 @@ class Controller:
             self.opponent = opponent
             self.keyword = "game"
             self.draw_again = True
+            print('[#] Game START!')
+            self.board = board.Board()
+            print(f'[#] Opponent: {self.opponent}')
         else:
             text = "waiting message goes here"
             # set text for wait-screen
