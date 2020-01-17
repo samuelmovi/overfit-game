@@ -34,15 +34,6 @@ class OnlineBroker:
 		self.mq = zmq
 		self.player = player
 	
-	def landing_page(self):
-		# print("[#] Retrieving landing page data...")
-		try:
-			response = self.mq.sub_receive_multi()
-			return response
-		except Exception as e:
-			print(f"[broker!] Error landing_page: {e}")
-		return None
-	
 	def set_player_available(self):
 		self.player.online = 'available'
 		info = {'status': 'AVAILABLE', 'recipient': 'SERVER'}

@@ -16,7 +16,7 @@ class ZmqConnector:
 	subscriber = None
 	base_dir = None
 
-	HOST = ''
+	host = ''
 
 	opponent_id = None
 	available_player = 'XXX'
@@ -35,7 +35,7 @@ class ZmqConnector:
 	
 	def start(self, host, topic):
 		print("[zmq] Initializing ZMQ client object...")
-		self.HOST = host
+		self.host = host
 		self.context = zmq.Context()
 		
 		self.base_dir = os.getcwd()
@@ -79,9 +79,9 @@ class ZmqConnector:
 		self.context.curve_serverkey, _ = zmq.auth.load_certificate(server_public_file)
 
 	def connect_push(self, port=5555):
-		print("[zmq] Connecting PUSH socket: {}/{}".format(self.HOST, port))
+		print("[zmq] Connecting PUSH socket: {}/{}".format(self.host, port))
 		self.pusher = self.context.socket(zmq.PUSH)
-		self.pusher.connect("tcp://{}:{}".format(self.HOST, port))
+		self.pusher.connect("tcp://{}:{}".format(self.host, port))
 
 	def push_send_multi(self, message):
 		try:
@@ -98,9 +98,9 @@ class ZmqConnector:
 			# print(traceback.format_exc())
 			
 	def connect_sub(self, port=5556):
-		print("[zmq] Connecting SUB socket: {}/{}".format(self.HOST, port))
+		print("[zmq] Connecting SUB socket: {}/{}".format(self.host, port))
 		self.subscriber = self.context.socket(zmq.SUB)
-		self.subscriber.connect("tcp://{}:{}".format(self.HOST, port))
+		self.subscriber.connect("tcp://{}:{}".format(self.host, port))
 
 	def sub_receive_multi(self):
 		try:

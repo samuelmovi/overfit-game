@@ -11,10 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - client changes for new revision:
     - only send data on state change
     - manage zmq client auth failing 
-- redo unittests for server and client
 - on successful save of settings data, go to start page
 - check that client in available_players aren't expired
 - go to landing page when leaving online game
+- tests:
+    - plant the messages returned by mock mq in online broker test
 
 ## 2020-01-17
 ### Added

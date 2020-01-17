@@ -93,7 +93,7 @@ class Controller:
                 info = {'status': 'WELCOME', 'recipient': 'SERVER'}
                 self.mq.send(self.player.ID, info, {})
                 for i in range(5):
-                    response = self.broker.landing_page()
+                    response = self.mq.sub_receive_multi()
                     if response:
                         # display landing page
                         # print(f"[@] Got Response: {response}")
@@ -259,7 +259,7 @@ class Controller:
                     self.mq.send(self.player.ID, info, {})
                     print("[C] Retrieving landing page data...")
                     for i in range(5):
-                        response = self.broker.landing_page()
+                        response = self.mq.sub_receive_multi()
                         if response:
                             self.landing_data = response
                             break
