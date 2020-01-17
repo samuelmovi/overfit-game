@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - on successful save of settings data, go to start page
 - check that client in available_players aren't expired
 - go to landing page when leaving online game
+- move condition checks out of methods, put before calls
 
 ## 2020-01-17
 ### Added

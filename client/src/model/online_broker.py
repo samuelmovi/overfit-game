@@ -51,7 +51,7 @@ class OnlineBroker:
 		self.landing_page()
 
 	def check_for_ready(self):
-		# read from subscription and check
+		# read from sub and check for READY status form SERVER
 		response = self.mq.sub_receive_multi()
 		if response:
 			# check for READY status
@@ -62,7 +62,7 @@ class OnlineBroker:
 				self.mq.send(self.player.ID, my_info, {})
 	
 	def check_for_start(self):
-		# read from subscription and check
+		# read from sub and check for START status, with opponent's id as sender
 		response = self.mq.sub_receive_multi()
 		if response:
 			# check for START status

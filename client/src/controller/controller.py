@@ -353,7 +353,8 @@ class Controller:
         # update board model top display changes
         self.board.update_counts()
         
-        self.check_online_play()
+        if self.player.online == 'playing':
+            self.check_online_play()
 
         # paint changes to view
         self.view.update_game_screen(self.player, self.board)
@@ -429,6 +430,7 @@ class Controller:
     
     # ONLINE FUNCTIONS
     def find_match(self):
+        # checks for opponent from broker and responds accordingly
         opponent = self.broker.negotiate_match()
         if opponent:
             self.player.online = 'playing'
@@ -438,7 +440,6 @@ class Controller:
             print('[#] Game START!')
             print(f'[#] Opponent: {self.opponent}')
             self.board = board.Board()
-            # self.player.connected = True
         else:
             text = "waiting message goes here"
             # set text for wait-screen
@@ -448,15 +449,13 @@ class Controller:
             elif self.player.online == 'ready':
                 text = 'Get ready to start'
                 self.draw_again = True
-                # self.player.connected = True
             self.txt_msg = text
     
     def check_online_play(self):
-        if self.opponent:
-            self.check_on_opponent()
-            self.update_player_stats()
-            # draw opponents score board
-            # self.view.draw_opponent(self.opponent_state)
+        self.check_on_opponent()
+        self.update_player_stats()
+        # draw opponents score board
+        # self.view.draw_opponent(self.opponent_state)
 
     def check_on_opponent(self):
         # check for messages from opponent and update info
@@ -484,7 +483,6 @@ class Controller:
             # send new stats to opponent
             sender = self.player.ID
             info = {'status': 'PLAYING', 'recipient': self.opponent}
-            info = {'status': 'PLAYING', 'recipient': self.opponent}
             self.match_state = {'id': sender,
                                 'name': self.player.name,
                                 'status': self.player.status,
@@ -495,15 +493,17 @@ class Controller:
             self.mq.send(sender, info, self.match_state)
     
     def reset_state(self):
+        # disconnect zmq handler
         if self.mq:
             # disconnect from server with QUIT message
             sender = self.player.ID
             info = {'status': 'QUIT', 'recipient': 'SERVER'}
             self.mq.send(sender, info, {})
-            time.sleep(0.1)
+            time.sleep(0.01)
             # close sockets
             self.mq.disconnect()
-
+        
+        # reset value of game variables
         self.opponent = None
         self.opponent_state = {'id': '', 'name': '', 'status': '', 'score': 0, 'total': 0, 'longest': 0}
         self.send_counter = 0
