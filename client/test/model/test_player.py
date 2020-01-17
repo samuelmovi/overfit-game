@@ -104,17 +104,17 @@ class TestPlayer(unittest.TestCase):
         self.assertNotEqual(ray_coords, coords)
         # test full player, full column
         column_list[0].figures = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]  # 10 elements == full column
-        test_player.status = 'empty'
+        test_player.status = 'full'
         coords = test_player.action(column_list)
         self.assertEqual(ray_coords, coords)
         # test full player, empty column
         column_list[0].figures = []  # 10 elements == full column
-        test_player.status = 'empty'
+        test_player.status = 'full'
         coords = test_player.action(column_list)
         self.assertNotEqual(ray_coords, coords)
         # test full player, normal column
         column_list[0].figures = [0, 1, 2, 3, 4, 5, ]  # 10 elements == full column
-        test_player.status = 'empty'
+        test_player.status = 'full'
         coords = test_player.action(column_list)
         self.assertNotEqual(ray_coords, coords)
         # TODO: assert more exacting results
@@ -133,11 +133,10 @@ class TestPlayer(unittest.TestCase):
     def test_reset(self):
         # set context
         test_player = player.Player()
-        self.assertIsNotNone(test_player.captured_figure)
-        self.assertNotEqual('empty', test_player.status)
-        self.assertNotEqual('', test_player.online)
-        self.assertNotEqual(0, test_player.score)
-        self.assertNotEqual(0, test_player.steps)
+        test_player.status = 'qerqewr'
+        test_player.online = 'qerqewr'
+        test_player.score = 5
+        test_player.steps = 6
         # execute method
         test_player.reset()
         # assert expected outcome

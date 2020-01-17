@@ -64,9 +64,6 @@ class Player:
 		elif self.status in ('capturing', 'returning'):
 			# this probably never happens
 			print("[player] Patience, small grasshopper")
-		else:
-			# Do Nothing
-			print("[player !!! ] Either: player and column empty, or player and column full")
 
 		# print('[#] {} @ column #{}'.format(self.status, position+1))
 		return ray_coords
