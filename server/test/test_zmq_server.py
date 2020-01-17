@@ -2,7 +2,7 @@ import unittest
 import sys
 import os
 sys.path.append(os.path.abspath('../src/'))
-import zmq_connector
+import zmq_server
 
 
 class TestMQ(unittest.TestCase):
@@ -16,20 +16,20 @@ class TestMQ(unittest.TestCase):
 	def test_init(self):
 		# set object state
 		# execute method
-		self.test_mq = zmq_connector.ZmqConnector()
+		self.test_mq = zmq_server.ZmqConnector()
 		# assert expected result
 		self.assertEqual('127.0.0.1', self.test_mq.HOST)
 		self.assertIsNotNone(self.test_mq.context)
 		
 		# execute method
-		self.test_mq = zmq_connector.ZmqConnector('172.17.0.2')
+		self.test_mq = zmq_server.ZmqConnector('172.17.0.2')
 		# assert expected result
 		self.assertEqual('172.17.0.2', self.test_mq.HOST)
 		self.assertIsNotNone(self.test_mq.context)
 	
 	def test_check_folder_structure(self):
 		# set object state
-		self.test_mq = zmq_connector.ZmqConnector()
+		self.test_mq = zmq_server.ZmqConnector()
 		# execute method
 		outcome = self.test_mq.check_folder_structure()
 		# assert expected outcome
