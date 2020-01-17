@@ -56,7 +56,7 @@ class ZmqConnector:
 		self.push_send_multi(message)
 
 	def check_folder_structure(self):
-		keys_dir = os.path.join(self.base_dir, '../certs')
+		keys_dir = os.path.join(os.getcwd(), '../certs')
 		print(f"[#] checking folder structure: {keys_dir}")
 		self.secret_keys_dir = os.path.join(keys_dir, 'private')   # has the client's private key
 		self.public_keys_dir = os.path.join(keys_dir, 'public')   # has the server's public key

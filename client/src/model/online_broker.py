@@ -38,8 +38,6 @@ class OnlineBroker:
 		self.player.online = 'available'
 		info = {'status': 'AVAILABLE', 'recipient': 'SERVER'}
 		self.mq.send(self.player.ID, info, {})
-		# go to landing page
-		self.landing_page()
 
 	def check_for_ready(self):
 		# read from sub and check for READY status form SERVER
