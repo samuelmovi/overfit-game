@@ -8,6 +8,8 @@ import start
 
 class TestStart(unittest.TestCase):
     
+    # test the self.db, self.mq, and self.server not null
+    
     def __init__(self, *args, **kwargs):
         super(TestStart, self).__init__(*args, **kwargs)
         pass
@@ -20,17 +22,8 @@ class TestStart(unittest.TestCase):
         # assert expected outcome
         # server and mq are none
         self.assertIsNone(test_start.mq)
-        self.assertIsNone(test_start.my_server)
-
-    # def test_server(self):
-    #     # set object state
-    #     # mock server
-    #     # execute method
-    #
-    #     # assert expected outcome
-    #     # server.mq not none
-    #     # calls to server set_up, loop
-    #     pass
+        self.assertIsNone(test_start.mq)
+        self.assertIsNone(test_start.server)
 
 
 if __name__ == '__main__':

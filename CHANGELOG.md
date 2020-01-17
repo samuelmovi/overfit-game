@@ -16,6 +16,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - check that client in available_players aren't expired
 - go to landing page when leaving online game
 
+## 2020-01-17
+### Added
+- test file for server db_controller module
+
+### Changed
+- tests for server start module
+
+
 ## 2020-01-16
 ### Added
 - when returning to online_setup screen send QUIT message and WELCOME message to server
