@@ -18,28 +18,31 @@ class TestController(unittest.TestCase):
     
     def test_init(self):
         # check nulls
-        self.assertIsNone(controller.Controller.my_view)
+        self.assertIsNone(controller.Controller.view)
         self.assertIsNone(controller.Controller.player)
         self.assertIsNone(controller.Controller.FPSCLOCK)
 
         # set object state
         mock_view = mock.Mock()
         mock_player = mock.Mock()
+        mock_mq = mock.Mock()
+        mock_broker = mock.Mock()
         # execute method
-        self.test_ctrl = controller.Controller(mock_view, mock_player)
+        self.test_ctrl = controller.Controller(mock_view, mock_player, mock_mq, mock_broker)
 
         # assert expected outcome
         self.assertIsNotNone(self.test_ctrl.targets)
         self.assertIsNotNone(self.test_ctrl.FPSCLOCK)
-        self.assertEqual(mock_view, self.test_ctrl.my_view)
-        self.assertEqual(mock_player, self.test_ctrl.player)
-    
+        self.assertEqual(mock_view, self.test_ctrl.view)
+        self.assertEqual(mock_mq, self.test_ctrl.mq)
+        self.assertEqual(mock_broker, self.test_ctrl.broker)
     
     # def test_main_loop(self):
     #     # set object state
     #     # mock inner method calls
-    #     # set all keywords: start, game, online_setup, find_online_match, settings, confirm_exit, confirm_leave,
-    #     #     game_over, victory
+    #     # test all keywords:
+    #     #     [start, game, online_setup, connect_online, landing_page, find_online_match, settings,
+    #     #     confirm_exit, confirm_leave, game_over, victory]
     #     # set loop_finished boolean side effects to limit looping
     #     # set draw_again boolean
     #     # execute method

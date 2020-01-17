@@ -46,7 +46,7 @@ class ZmqConnector:
 			self.client_auth()
 			self.connect_push()  	# where we send our packets
 			self.connect_sub()  	# where we get our packets
-			self.filter_sub_socket(topic)
+			self.filter_sub_socket(topic)		# filter subscription to those staring with player ID
 	
 	def send(self, sender, info, payload):
 		message = list()

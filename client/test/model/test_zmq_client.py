@@ -13,20 +13,26 @@ class TestMQ(unittest.TestCase):
 		super(TestMQ, self).__init__(*args, **kwargs)
 		pass
 	
-	def test_init(self):
-		# set object state
-		# execute method
-		self.test_mq = zmq_client.ZmqConnector()
-		# assert expected result
-		self.assertEqual('127.0.0.1', self.test_mq.HOST)
-		self.assertIsNotNone(self.test_mq.context)
+	def test_start(self):
+		# set state
+		host = 'qwerqew'
+		topic = 'asfdadsf'
 		
-		# execute method
-		self.test_mq = zmq_client.ZmqConnector('172.17.0.2')
-		# assert expected result
-		self.assertEqual('172.17.0.2', self.test_mq.HOST)
-		self.assertIsNotNone(self.test_mq.context)
-	
+		# create object and test
+		test_mq = zmq_client.ZmqConnector()
+		self.assertEquals(test_mq.host, '')
+		self.assertIsNone(test_mq.context)
+		self.assertIsNone(test_mq.pusher)
+		self.assertIsNone(test_mq.subscriber)
+		
+		# execute method and test
+		test_mq.start(host, topic)
+		self.assertIsNotNone(test_mq.context)
+		self.assertEquals(test_mq.host, host)
+		self.assertIsNotNone(test_mq.base_dir)
+		# should mock check_folder_structure
+		# check execution of methods: client_auth, connect_push, connect_sub, filter_sub_socket [with topic]
+
 	def test_check_folder_structure(self):
 		# set object state
 		self.test_mq = zmq_client.ZmqConnector()

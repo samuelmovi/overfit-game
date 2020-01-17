@@ -20,7 +20,7 @@ class Controller:
     # variables
     frame = 0  # to keep track of frames during explosion animations
     base_dir = os.path.join(os.getcwd(), '../')
-    keyword = ""  # stores value used to control flow inside main_loop
+    keyword = ""  # stores value used to control flow inside main_loop:
     draw_again = True
     loop_finished = False
     txt_msg = ""  # hold string to be displayed on waiting screens
