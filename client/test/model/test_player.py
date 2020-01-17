@@ -2,7 +2,7 @@ import unittest
 import sys
 import os
 sys.path.append(os.path.abspath('../../src/'))
-from model import player, figure
+from model import player, figure, column
 
 
 class TestPlayer(unittest.TestCase):
@@ -71,15 +71,53 @@ class TestPlayer(unittest.TestCase):
         self.assertEqual(test_figure, test_player.captured_figure)
         self.assertEqual('full', test_player.status)
     
-    # def test_action(self):
-    #     # set object state
-    #     # set player status empty/full
-    #     # create test column
-    #     # execute method
-    #
-    #     # assert expected outcome
-    #
-    #     pass
+    def test_action(self):
+        # set state
+        # create player instance
+        test_player = player.Player()
+        # set player at position 0
+        test_player.position = 0
+        # create column list
+        column_list = [column.Column()]     # position 0
+        # dictionary of coordinates returned by action()
+        ray_coords = {
+            'position': 0,  # player's position in the board (column number)
+            'top': 0,  # where the first figure in that column starts, in pixels
+            'x': 0,  # pixel number of x coordinate for ray start
+            'y': 0,  # pixel number of x coordinate for ray start
+            'c': 0  # counter
+        }
+        # test empty player, full column
+        column_list[0].figures = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]     # 10 elements == full column
+        test_player.status = 'empty'
+        coords = test_player.action(column_list)
+        self.assertNotEqual(ray_coords, coords)
+        # test empty player, empty column
+        column_list[0].figures = []  # 10 elements == full column
+        test_player.status = 'empty'
+        coords = test_player.action(column_list)
+        self.assertEqual(ray_coords, coords)
+        # test empty player, normal column
+        column_list[0].figures = [0, 1, 2, 3, ]  # 10 elements == full column
+        test_player.status = 'empty'
+        coords = test_player.action(column_list)
+        self.assertNotEqual(ray_coords, coords)
+        # test full player, full column
+        column_list[0].figures = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]  # 10 elements == full column
+        test_player.status = 'empty'
+        coords = test_player.action(column_list)
+        self.assertEqual(ray_coords, coords)
+        # test full player, empty column
+        column_list[0].figures = []  # 10 elements == full column
+        test_player.status = 'empty'
+        coords = test_player.action(column_list)
+        self.assertNotEqual(ray_coords, coords)
+        # test full player, normal column
+        column_list[0].figures = [0, 1, 2, 3, 4, 5, ]  # 10 elements == full column
+        test_player.status = 'empty'
+        coords = test_player.action(column_list)
+        self.assertNotEqual(ray_coords, coords)
+        # TODO: assert more exacting results
     
     def test_empty(self):
         # set context
@@ -95,6 +133,11 @@ class TestPlayer(unittest.TestCase):
     def test_reset(self):
         # set context
         test_player = player.Player()
+        self.assertIsNotNone(test_player.captured_figure)
+        self.assertNotEqual('empty', test_player.status)
+        self.assertNotEqual('', test_player.online)
+        self.assertNotEqual(0, test_player.score)
+        self.assertNotEqual(0, test_player.steps)
         # execute method
         test_player.reset()
         # assert expected outcome
@@ -103,15 +146,13 @@ class TestPlayer(unittest.TestCase):
         self.assertEqual('', test_player.online)
         self.assertEqual(0, test_player.score)
         self.assertEqual(0, test_player.steps)
-        self.assertFalse(test_player.connected)
 
     def test_get_stats(self):
         # set context
         test_player = player.Player()
         test_stats = {
-            'sender': test_player.ID,  # random string that identifies player in server
+            'id': test_player.ID,  # random string that identifies player in server
             'name': test_player.name,  # name chosen by player
-            'online': test_player.online,  # player's online status
             'status': test_player.status,  # status of the game's character
             'score': test_player.score}
         # execute method

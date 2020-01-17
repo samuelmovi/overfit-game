@@ -34,6 +34,7 @@ class TestController(unittest.TestCase):
         self.assertEqual(mock_view, self.test_ctrl.my_view)
         self.assertEqual(mock_player, self.test_ctrl.player)
     
+    
     # def test_main_loop(self):
     #     # set object state
     #     # mock inner method calls
@@ -59,6 +60,7 @@ class TestController(unittest.TestCase):
     #     # returned object
     #     pass
     #
+    # EVENT LISTENERS
     # def test_welcome_listener(self):
     #     # set object state
     #     # inject mock inputs
@@ -158,6 +160,7 @@ class TestController(unittest.TestCase):
     #     # value of draw loop finished
     #     pass
     #
+    # GAMING FUNCTIONS
     # def test_game_handler(self):
     #     # set object state
     #     # mock pygame.event.get
@@ -211,20 +214,8 @@ class TestController(unittest.TestCase):
     #     pass
     #
     #
-    # def test_update_player_stats(self):
-    #     # set object state
-    #     # set player state,
-    #     # set board total, longest
-    #     # mock controller.board.columns
-    #     # execute method
-    #     test_controller.update_player_stats()
-    #     # assert expected outcome
-    #     # calls to board.add_row()
-    #     # values of player state
-    #     # values for board total, longest
-    #     #
-    #     pass
     #
+    # ONLINE FUNCTIONS
     # def test_find_match(self):
     #     # beware of while true
     #     # mock zmq connector, online broker, pygame.event.get()
@@ -239,7 +230,8 @@ class TestController(unittest.TestCase):
     #     # values of player online
     #     # values received for self.my_view.draw_wait_screen(text)
     #     #
-    #     pass    #
+    #     pass
+    #
     # def test_check_online_play(self):
     #     # set object state
     #     # set value for self.player.connected
@@ -261,6 +253,20 @@ class TestController(unittest.TestCase):
     #     # execute method
     #     test_controller.check_on_opponent()
     #     # assert expected outcome
+    #     pass
+    #
+    # def test_update_player_stats(self):
+    #     # set object state
+    #     # set player state,
+    #     # set board total, longest
+    #     # mock controller.board.columns
+    #     # execute method
+    #     test_controller.update_player_stats()
+    #     # assert expected outcome
+    #     # calls to board.add_row()
+    #     # values of player state
+    #     # values for board total, longest
+    #     #
     #     pass
     #
     # def test_reset_state(self):

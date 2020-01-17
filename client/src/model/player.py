@@ -6,14 +6,14 @@ class Player:
 	name = 'PLAYER 1'
 	position = None
 	captured_figure = None
-	status = ''  # Player's character gameplay status: empty | full | | capturing | returning
+	status = ''  # character's gameplay status: empty | full | | capturing | returning
 	online = ''  # Player's online status: '' | connected | available | ready | playing
 	score = 0
-	steps = 0
+	steps = 0		# player step counter for row generation
 	ID = ''		# random string to id player, requires reboot to change
 
 	def __init__(self):
-		self.position = 3  # starts in middle of 7 columns
+		self.position = 3  		# starts in center of 7 columns
 		self.status = 'empty'
 		all_chars = string.ascii_letters + string.digits  # + string.punctuation
 		self.ID = ''.join(random.choice(all_chars) for x in range(10))
@@ -32,11 +32,18 @@ class Player:
 		print('[player] Capture: {}'.format(figure.shape))
 
 	def action(self, columns):
-		# store player position in case it changes
+		# capture the player's position (0-6)
 		player_position = self.position
+		# check how many figures in column
 		active_column_occupancy = columns[player_position].occupancy()
 		# dictionary of coordinates for the ray to be drawn
-		ray_coords = {'position': 0, 'top': 0, 'x': 0, 'y': 0, 'c': 0}
+		ray_coords = {
+			'position': 0,		# player's position in the board (column number)
+			'top': 0,			# where the first figure in that column starts, in pixels
+			'x': 0,				# pixel number of x coordinate for ray start
+			'y': 0,				# pixel number of x coordinate for ray start
+			'c': 0				# counter
+		}
 
 		if self.status == 'empty' and active_column_occupancy > 0:
 			self.status = 'capturing'
@@ -46,7 +53,6 @@ class Player:
 			top = 500 - active_column_occupancy * 50
 			c = 1
 			ray_coords = {'position': player_position, 'top': top, 'x': x, 'y': y, 'c': c}
-
 		elif self.status == 'full' and active_column_occupancy < 10:
 			self.status = 'returning'
 			# print('[player] {} @ column #{}'.format(self.player.status, position))
@@ -56,10 +62,11 @@ class Player:
 			c = 1
 			ray_coords = {'position': player_position, 'top': top, 'x': x, 'y': y, 'c': c}
 		elif self.status in ('capturing', 'returning'):
+			# this probably never happens
 			print("[player] Patience, small grasshopper")
 		else:
-			print("[player] WEIRD THING HAPPENNED!!!!!!!!!!!!!!!!!!")
-			print("[player] Either: player and column empty, or player and column full")
+			# Do Nothing
+			print("[player !!! ] Either: player and column empty, or player and column full")
 
 		# print('[#] {} @ column #{}'.format(self.status, position+1))
 		return ray_coords
@@ -74,10 +81,10 @@ class Player:
 		self.online = ''
 		self.score = 0
 		self.steps = 0
-		self.connected = False
 
 	def get_stats(self):
 		stats = {
+			'id': self.ID,				# player's id string
 			'name': self.name,			# name chosen by player
 			'status': self.status,		# status of the game's character
 			'score': self.score,		# current game score
