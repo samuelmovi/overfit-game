@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - tests:
     - plant the messages returned by mock mq in online broker test
 
+
 ## 2020-01-17
 ### Added
 - test file for server db_controller module

@@ -22,6 +22,8 @@ class TestServer(unittest.TestCase):
         # assert expected outcome
         self.assertIsNotNone(test_server.mq)
         self.assertIsNotNone(test_server.db)
+        self.assertEqual(mock_connector, test_server.mq)
+        self.assertEqual(mock_db, test_server.db)
 
     def test_onboard_client(self, sender):
         # # add player id to active_players

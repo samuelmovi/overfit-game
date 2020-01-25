@@ -13,24 +13,20 @@ class TestStart(unittest.TestCase):
         super(TestStart, self).__init__(*args, **kwargs)
         pass
     
-    # TODO: workaround server execution during testing
-    # def test_init(self):
-    #     # set object state
-    #
-    #     # execute method
-    #     test_start = start.Start()
-    #     # assert expected outcome
-    #     # server and mq are none
-    #     self.assertIsNone(test_start.db)
-    #     self.assertIsNone(test_start.mq)
-    #     self.assertIsNone(test_start.server)
-    #
+    def test_init(self):
+        # set object state
+        # execute method
+        test_start = start.Start()
+        # assert expected outcome
+        # server and mq are none
+        self.assertIsNone(test_start.db)
+        self.assertIsNone(test_start.mq)
+        self.assertIsNone(test_start.server)
+    
+    # TODO: find way to mock the imported modules
     # def test_now(self):
     #     # set object state
     #     test_start = start.Start()
-    #     test_start.mq = Mock()
-    #     test_start.db = Mock()
-    #     # TODO: inject dependency on server module PullPubServer
     #     # execute method
     #     test_start.now()
     #     # assert results
