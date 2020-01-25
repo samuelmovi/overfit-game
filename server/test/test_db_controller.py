@@ -2,6 +2,7 @@ import unittest
 import sys
 import os
 from unittest.mock import Mock
+# TODO: look into sqlalchemy testing
 
 sys.path.append(os.path.abspath('../src/'))
 import db_controller

@@ -13,8 +13,7 @@ class PullPubServer:
 	
 	online_players = []			# list of id values for all online players
 	available_players = []		# list of id values for all online players waiting for a match
-	matches = []				# list of ongoing matches: [ {'player_1_id': 'playing/won/lost', 'player_2_id':
-	# 'playing/won/lost'} ]
+	matches = []			# ongoing matches: [ {'id_1': 'WAIT/READY/PLAY/won/lost', 'id_2': 'WAIT/READY/PLAY/won/lost'} ]
 	
 	def __init__(self, connector=None, db=None):
 		if connector and db:
@@ -96,8 +95,8 @@ class PullPubServer:
 				self.mq.send(client, new_info, {})
 			# add match to matches
 			match = dict()
-			match[player_1] = 'playing'
-			match[player_2] = 'playing'
+			match[player_1] = 'WAIT'
+			match[player_2] = 'WAIT'
 			self.matches.append(match)
 		else:
 			print("[#] No other players available...")
@@ -110,18 +109,17 @@ class PullPubServer:
 	
 	def handle_ready(self, sender):
 		# find corresponding match and set client as ready
-		# TODO: this code doesn't look efficient, should be improved
 		# send PLAY messages, with each other as sender
 		for match in self.matches:
 			if sender in match.keys():
 				match[sender] = 'READY'
-				# check if both are ready
+				# check if other player ready too
 				c = 0
 				for key in match.keys():
 					if match[key] == 'READY':
 						c += 1
 				if c == 2:
-					# both are ready, send command START
+					# both are ready, send status START
 					players = list(match.keys())
 					# inform one player
 					new_info = {'sender': players[1], 'status': 'START'}
@@ -130,7 +128,7 @@ class PullPubServer:
 					new_info = {'sender': players[0], 'status': 'START'}
 					self.mq.send(players[1], new_info, {})
 				else:
-					# continue
+					# not both players are ready
 					break
 	
 	def handle_playing(self, recipient, sender, payload):
@@ -145,12 +143,12 @@ class PullPubServer:
 		for match in self.matches:
 			if loser in match.keys():
 				# set loser
-				match[loser] = 'LOSER'
+				match[loser] = 'LOST'
 			# inform other client
 			for key in match.keys():
 				if key != loser:
 					winner = key
-					match[winner] = 'WINNER'
+					match[winner] = 'WON'
 		# capture match data and create new db entry
 		self.db.save_match(winner, loser)
 		# forward message to winner

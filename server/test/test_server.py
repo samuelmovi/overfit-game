@@ -16,119 +16,167 @@ class TestServer(unittest.TestCase):
     def test_init(self):
         # set object state
         mock_db = Mock()
-        mock_connector = Mock()
+        mock_mq = Mock()
         # execute method
-        test_server = server.PullPubServer(mock_connector, mock_db)
+        test_server = server.PullPubServer(mock_mq, mock_db)
         # assert expected outcome
         self.assertIsNotNone(test_server.mq)
         self.assertIsNotNone(test_server.db)
-        self.assertEqual(mock_connector, test_server.mq)
+        self.assertEqual(mock_mq, test_server.mq)
         self.assertEqual(mock_db, test_server.db)
+        self.assertEqual(len(test_server.online_players), 0)
+        self.assertEqual(len(test_server.available_players), 0)
+        # TODO: fix this failing when other test methods use matches -> self.assertEqual(len(test_server.matches), 0)
+        self.assertTrue(mock_mq.setup.called)
+    
+    def test_onboard_client(self):
+        # prepare state
+        mock_db = Mock()
+        mock_mq = Mock()
+        test_server = server.PullPubServer(mock_mq, mock_db)
+        sender = "sender_id1"
+        # execute method
+        test_server.onboard_client(sender)
+        # assert expected results
+        self.assertEqual(len(test_server.online_players), 1)
+        # assert db.load_matches() called
+        self.assertTrue(mock_db.load_matches.called)
+        # assert mq.send() called
+        self.assertTrue(mock_mq.send.called)
+        # TODO: assert data passed to send()
 
-    def test_onboard_client(self, sender):
-        # # add player id to active_players
-        # self.online_players.append(sender)
-        # print(f"[#] User '{sender}' added to online_players")
-        # # send directly to landing
-        # # send landing page info
-        # new_info = {'status': 'WELCOME', 'sender': 'SERVER'}
-        # match_data = self.db.load_matches()
-        # self.mq.send(sender, new_info, match_data)
-        pass
+    def test_handle_welcome(self):
+        sender = "sender_id1"
+        # TODO: assert data passed to mq.send()
+        # SCENARIO 1: sender not in available players
+        # prepare state
+        mock_db = Mock()
+        mock_mq = Mock()
+        test_server = server.PullPubServer(mock_mq, mock_db)
+        # execute method
+        test_server.handle_welcome(sender)
+        # assert expected results
+        self.assertTrue(mock_db.load_matches.called)
+        self.assertTrue(mock_mq.send.called)
 
-    def test_handle_welcome(self, sender):
-        # # if sender in available players, remove
-        # if sender in self.available_players:
-        #     self.available_players.remove(sender)
-        #     print(f"[#] User '{sender}' removed from available players")
-        # # send landing page info
-        # new_info = {'status': 'WELCOME', 'sender': 'SERVER'}
-        # match_data = self.db.load_matches()
-        # self.mq.send(sender, new_info, match_data)
-        pass
+        # SCENARIO 2: sender in available players
+        # prepare state
+        mock_db = Mock()
+        mock_mq = Mock()
+        test_server = server.PullPubServer(mock_mq, mock_db)
+        test_server.available_players.append(sender)
+        # execute method
+        test_server.handle_welcome(sender)
+        # assert expected results
+        self.assertTrue(mock_db.load_matches.called)
+        self.assertTrue(mock_mq.send.called)
+        self.assertEqual(len(test_server.available_players), 0)
 
-    def handle_available(self, sender):
-        # # check for available players to match client with
-        # if len(self.available_players) > 0:
-        #     print("[#] Pairing up available players...")
-        #     player_1 = self.available_players.pop()
-        #     player_2 = sender
-        #     # send ready signal to both players
-        #     for client in (player_1, player_2):
-        #         new_info = {'sender': 'SERVER', 'status': 'READY'}
-        #         self.mq.send(client, new_info, {})
-        #     # add match to matches
-        #     match = dict()
-        #     match[player_1] = 'playing'
-        #     match[player_2] = 'playing'
-        #     self.matches.append(match)
-        # else:
-        #     print("[#] No other players available...")
-        #     # add to available_players
-        #     self.available_players.append(sender)
-        #     print(f"[#] Adding '{sender}' to available players")
-        #     # respond
-        #     new_info = {'sender': 'SERVER', 'status': 'WAIT'}
-        #     self.mq.send(sender, new_info, {})
-        pass
+    def test_handle_available(self):
+        sender = "sender_id1"
+        # SCENARIO 1: no available players
+        # prepare state
+        mock_db = Mock()
+        mock_mq = Mock()
+        test_server = server.PullPubServer(mock_mq, mock_db)
+        # execute method
+        test_server.handle_available(sender)
+        # assert expected results
+        self.assertEqual(len(test_server.available_players), 1)
+        self.assertEqual(test_server.available_players[0], sender)
+        self.assertTrue(mock_mq.send.called)
+        
+        # SCENARIO 2: 1 available player
+        opponent = "opponnent1"
+        # prepare state
+        mock_db2 = Mock()
+        mock_mq2 = Mock()
+        test_server2 = server.PullPubServer(mock_mq2, mock_db2)
+        test_server2.available_players[0] = opponent
+        # execute method
+        test_server2.handle_available(sender)
+        # assert expected results
+        self.assertEqual(len(test_server2.available_players), 0)
+        self.assertTrue(mock_mq2.send.called)
+        # TODO: test number of send calls and data
+        # TODO: assert ids in new match
+        self.assertEqual(len(test_server2.matches), 1)
 
-    def handle_ready(self, sender):
-        # # find corresponding match and set client as ready
-        # # TODO: this code doesn't look efficient, should be improved
-        # # send PLAY messages, with each other as sender
-        # for match in self.matches:
-        #     if sender in match.keys():
-        #         match[sender] = 'READY'
-        #         # check if both are ready
-        #         c = 0
-        #         for key in match.keys():
-        #             if match[key] == 'READY':
-        #                 c += 1
-        #         if c == 2:
-        #             # both are ready, send command START
-        #             players = list(match.keys())
-        #             # inform one player
-        #             new_info = {'sender': players[1], 'status': 'START'}
-        #             self.mq.send(players[0], new_info, {})
-        #             # inform the other
-        #             new_info = {'sender': players[0], 'status': 'START'}
-        #             self.mq.send(players[1], new_info, {})
-        #         else:
-        #             # continue
-        #             break
-        pass
+    def test_handle_ready(self):
+        sender = "sender_id1"
+        opponent = "opponnent1"
+        # SCENARIO 1: match exists
+        # prepare state
+        mock_db = Mock()
+        mock_mq = Mock()
+        test_server = server.PullPubServer(mock_mq, mock_db)
+        test_match = {sender: 'WAIT', opponent: 'READY'}
+        test_server.matches[0] = test_match
+        # execute method
+        test_server.handle_ready(sender)
+        # assert expected results
+        # TODO: assert time called, and data
+        self.assertTrue(mock_mq.send.called)
 
-    def handle_playing(self, recipient, sender, payload):
-        # # if playing, reformat and resend
-        # new_info = {'sender': sender, 'status': 'PLAYING'}
-        # self.mq.send(recipient, new_info, payload)
-        pass
+        # SCENARIO 2: no matching match
+        # prepare state
+        mock_db2 = Mock()
+        mock_mq2 = Mock()
+        test_server2 = server.PullPubServer(mock_mq2, mock_db2)
+        test_server2.matches = []
+        # execute method
+        test_server2.handle_ready(sender)
+        # assert expected results
+        # TODO: assert times called, and data
+        self.assertFalse(mock_mq2.send.called)
 
-    def handle_over(self, sender, payload):
-        # # find match of sender
-        # loser = sender
-        # winner = None
-        # for match in self.matches:
-        #     if loser in match.keys():
-        #         # set loser
-        #         match[loser] = 'LOSER'
-        #     # inform other client
-        #     for key in match.keys():
-        #         if key != loser:
-        #             winner = key
-        #             match[winner] = 'WINNER'
-        # # capture match data and create new db entry
-        # self.db.save_match(winner, loser)
-        # # forward message to winner
-        # new_info = {'sender': 'SERVER', 'status': 'OVER'}  # OVER commands signals victory
-        # self.mq.send(winner, new_info, payload)
-        pass
+    def test_handle_playing(self):
+        sender = "sender_id1"
+        opponent = "opponnent1"
+        # SCENARIO 1: match exists
+        # prepare state
+        mock_db = Mock()
+        mock_mq = Mock()
+        test_server = server.PullPubServer(mock_mq, mock_db)
+        # execute method
+        test_server.handle_playing(sender, opponent, {'sender': sender, 'status': 'PLAYING'})
+        # assert expected results
+        # TODO: assert data
+        self.assertTrue(mock_mq.send.called)
+    
+    def test_handle_over(self):
+        sender = "sender_id1"
+        opponent = "opponnent1"
+        # SCENARIO 1: match exists
+        # prepare state
+        mock_db = Mock()
+        mock_mq = Mock()
+        test_server = server.PullPubServer(mock_mq, mock_db)
+        test_match = {sender: 'PLAY', opponent: 'PLAY'}
+        test_server.matches[0] = test_match
+        payload = {}
+        # execute method
+        test_server.handle_over(sender, payload)
+        # assert expected results
+        self.assertEqual(test_server.matches[0][sender], 'LOST')
+        self.assertEqual(test_server.matches[0][opponent], 'WON')
+        # TODO: assert data
+        self.assertTrue(mock_db.save_match.called)
+        self.assertTrue(mock_mq.send.called)
 
-    def handle_quit(self, sender):
-        # # remove player id from online_players
-        # self.online_players.remove(sender)
-        # print(f"[#] User '{sender}' removed from online players")
-        pass
+    def test_handle_quit(self):
+        sender = "sender_id1"
+        # SCENARIO 1: match exists
+        # prepare state
+        mock_db = Mock()
+        mock_mq = Mock()
+        test_server = server.PullPubServer(mock_mq, mock_db)
+        test_server.online_players.append(sender)
+        # execute method
+        test_server.handle_quit(sender)
+        # assert expected results
+        self.assertEqual(len(test_server.online_players), 0)
+        self.assertNotIn(sender, test_server.online_players)
 
 
 if __name__ == '__main__':
