@@ -204,7 +204,7 @@ class View:
 		for match in matches:
 			self.screen.blit(match[0], match[1])
 		self.screen.blit(find_match_button.surface, find_match_button.rect)
-		
+		print(f'[V] landing screen inputs: {find_match_button}')
 		return find_match_button
 	
 	def draw_wait_screen(self, text='WAITING FOR A CHALLENGER'):

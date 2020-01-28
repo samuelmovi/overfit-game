@@ -132,7 +132,7 @@ class Controller:
         if keyword == "start":
             inputs = self.view.draw_start_screen()
         elif keyword == "game":
-            pass
+            pass    # ???
         elif keyword == "online_setup":
             inputs = self.view.draw_online_options_screen(self.player.name, self.HOST)
         elif self.keyword == "landing_page":
