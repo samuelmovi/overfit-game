@@ -188,6 +188,82 @@ class TestController(unittest.TestCase):
         test_ctrl.return_animation()
         # assert expected results
     
+    def test_explode_all_targets(self):
+        """
+        execution scenarios:
+        - self.frame < 16
+        """
+        # set object state
+        mock_view = mock.Mock()
+        mock_player = mock.Mock()
+        mock_player.score = 10
+        mock_mq = mock.Mock()
+        mock_broker = mock.Mock()
+        test_ctrl = controller.Controller(mock_view, mock_player, mock_mq, mock_broker)
+        mock_board = mock.Mock()
+        mock_board.eliminate_targets.return_value = 1
+        test_ctrl.board = mock_board
+        
+        # setup scenario
+        test_ctrl.frame = 15
+        # execute method
+        test_ctrl.explode_all_targets()
+        # assert expected results
+        self.assertTrue(mock_view.draw_explosion.called)
+        self.assertEqual(test_ctrl.frame, 16)
+        
+        # setup scenario frame == 16
+        # execute method
+        test_ctrl.explode_all_targets()
+        # assert expected results
+        self.assertTrue(mock_view.draw_explosion.called)
+        self.assertEqual(test_ctrl.frame, 0)
+        self.assertTrue(mock_board.eliminate_targets.called)
+    
+    def test_update_match_state(self):
+        """
+        execution scenarios:
+        - player.steps > 15
+        - self.board.longest_column_count >= 10
+        """
+        # set object state
+        mock_view = mock.Mock()
+        mock_player = mock.Mock()
+        mock_mq = mock.Mock()
+        mock_broker = mock.Mock()
+        test_ctrl = controller.Controller(mock_view, mock_player, mock_mq, mock_broker)
+        
+        mock_board = mock.Mock()
+        test_ctrl.board = mock_board
+        
+        # setup scenario
+        mock_player.steps = 16
+        mock_board.longest_column_count = 10
+        # execute method
+        test_ctrl.update_match_state()
+        # assert expected results
+        self.assertTrue(mock_board.add_row.called)
+        self.assertEqual(mock_player.steps, 0)
+        self.assertEqual(test_ctrl.keyword, 'game_over')
+        self.assertTrue(test_ctrl.draw_again)
+
+        # setup scenario
+        mock_player = mock.Mock()
+        mock_player.steps = 15
+        test_ctrl.player = mock_player
+        mock_board = mock.Mock()
+        mock_board.longest_column_count = 9
+        test_ctrl.board = mock_board
+        test_ctrl.keyword = ''
+        test_ctrl.draw_again = False
+        # execute method
+        test_ctrl.update_match_state()
+        # assert expected results
+        self.assertFalse(mock_board.add_row.called)
+        self.assertNotEqual(mock_player.steps, 0)
+        self.assertNotEqual(test_ctrl.keyword, 'game_over')
+        self.assertFalse(test_ctrl.draw_again)
+    
     
 if __name__ == '__main__':
     unittest.main()
