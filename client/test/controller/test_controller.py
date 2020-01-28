@@ -5,6 +5,7 @@ from unittest import mock
 
 sys.path.append(os.path.abspath('../../src/'))
 from controller import controller
+from model import figure, board
 
 
 # TODO: find way to patch-in a mock pygame.event
@@ -38,6 +39,7 @@ class TestController(unittest.TestCase):
         self.assertEqual(mock_broker, test_ctrl.broker)
     
     def test_draw(self):
+        # we test for every possible value of keyword
         # set object state
         mock_view = mock.Mock()
         mock_player = mock.Mock()
@@ -95,7 +97,49 @@ class TestController(unittest.TestCase):
         # assert expected results
         self.assertIsNone(inputs)
         self.assertTrue(mock_view.draw_victory.called)
-
+    
+    # EVENT LISTENERS: figure out way to mock pygame.event
+    
+    def test_game_handler(self):
+        # TODO: assert execution of test_ctrl own methods with
+        # test for player.status: capturing/returning and all_targets_acquired True
+        # set object state
+        mock_view = mock.Mock()
+        mock_player = mock.Mock()
+        mock_mq = mock.Mock()
+        mock_broker = mock.Mock()
+        test_ctrl = controller.Controller(mock_view, mock_player, mock_mq, mock_broker)
+        mock_board = mock.Mock()
+        mock_board.longest_column_count = 3
+        test_ctrl.board = mock_board
+        mock_player.steps = 5
+        test_ctrl.opponent = "opponent_me"
+        # set player status
+        # execute method
+        test_ctrl.game_handler()
+        # assert expected outcome
+        self.assertTrue(mock_board.update_counts.called)
+        self.assertTrue(mock_view.update_game_screen.called)
+    
+    def test_capture_animation(self):
+        # set object state
+        mock_view = mock.Mock()
+        mock_view.animate_return.return_value = False
+        mock_player = mock.Mock()
+        mock_player.capture_figure.return_value = figure.Figure()
+        mock_mq = mock.Mock()
+        mock_broker = mock.Mock()
+        test_ctrl = controller.Controller(mock_view, mock_player, mock_mq, mock_broker)
+        # mock_board = mock.Mock()
+        # mock_board.columns =
+        test_ctrl.board = board.Board()
+        test_ctrl.ray_coords = {'position': 3}
+        # execute method
+        test_ctrl.capture_animation()
+        # assert expected results
+        self.assertTrue(mock_view.animate_return.called)
+        self.assertTrue(mock_player.capture_figure.called)
+        
     
 if __name__ == '__main__':
     unittest.main()
