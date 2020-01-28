@@ -343,7 +343,53 @@ class TestController(unittest.TestCase):
         self.assertTrue(test_ctrl.draw_again)
         self.assertTrue(mock_board.add_row.called)
         self.assertEqual(test_ctrl.rows_received, 2)
+    
+    def test_update_player_stats(self):
+        # set object state
+        mock_view = mock.Mock()
+        mock_player = mock.Mock()
+        stats = {
+            'id': 'my id',
+            'name': 'player_name',
+            'status': 'im ok',
+            'score': 25
+        }
+        mock_player.get_stats.return_value = stats
+        mock_mq = mock.Mock()
+        mock_broker = mock.Mock()
+        test_ctrl = controller.Controller(mock_view, mock_player, mock_mq, mock_broker)
+        test_ctrl.player_stats = {}
+        mock_board = mock.Mock()
+        test_ctrl.board = mock_board
         
+        # execute method
+        test_ctrl.update_player_stats()
+        # assert expected results
+        self.assertEqual(test_ctrl.player_stats, stats)
+        self.assertTrue(mock_mq.send.called)
+    
+    def test_reset_state(self):
+        # set object state
+        mock_view = mock.Mock()
+        mock_player = mock.Mock()
+        mock_mq = mock.Mock()
+        mock_broker = mock.Mock()
+        test_ctrl = controller.Controller(mock_view, mock_player, mock_mq, mock_broker)
+    
+        mock_board = mock.Mock()
+        test_ctrl.board = mock_board
         
+        # execute method
+        test_ctrl.reset_state()
+        # assert expected results
+        self.assertIsNone(test_ctrl.opponent)
+        self.assertEqual(test_ctrl.opponent_state, {'id': '', 'name': '', 'status': '', 'score': 0, 'total': 0, 'longest': 0})
+        self.assertEqual(test_ctrl.explosion_counter, 1)
+        self.assertEqual(test_ctrl.rows_received, 0)
+        self.assertTrue(mock_player.reset.called)
+        self.assertTrue(mock_mq.send.called)
+        self.assertTrue(mock_mq.disconnect.called)
+
+    
 if __name__ == '__main__':
     unittest.main()

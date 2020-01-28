@@ -46,8 +46,6 @@ class Controller:
     match_state = {'id': '', 'name': '', 'status': '', 'score': 0, 'total': 0, 'longest': 0}
     opponent_state = {'id': '', 'name': '', 'status': '', 'score': 0, 'total': 0, 'longest': 0}
     opponent = None      # id of opponent
-    # info
-    send_counter = 0    # used to delay checking queues
     
     def __init__(self, view, player, mq, broker):
         print('[#] Initiating Controller...')
@@ -500,7 +498,6 @@ class Controller:
         # reset value of game variables
         self.opponent = None
         self.opponent_state = {'id': '', 'name': '', 'status': '', 'score': 0, 'total': 0, 'longest': 0}
-        self.send_counter = 0
         self.explosion_counter = 1
         self.rows_received = 0
         self.player.reset()
