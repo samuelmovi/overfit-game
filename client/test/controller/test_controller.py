@@ -58,6 +58,8 @@ class TestController(unittest.TestCase):
         # assert expected results
         self.assertIsNotNone(inputs)
         self.assertTrue(mock_view.draw_online_options_screen.called)
+        test_ctrl.landing_data = [1, 2, b'{"hello": 1}']
+        mock_player.name = 'my_player_name'
         # execute method
         inputs = test_ctrl.draw('landing_page')
         # assert expected results
