@@ -372,13 +372,13 @@ class Controller:
             self.explode_all_targets()
     
     def capture_animation(self):
-        if self.view.animate_return(self.ray_coords) is False:		# else ???
+        if self.view.animate_return(self.ray_coords) is False:
             # remove bottom figure from column and capture it
             self.player.capture_figure(self.board.columns[self.ray_coords['position']].figures.pop(-1))
     
     def return_animation(self):
         # after the ray has finished being drawn
-        if self.view.animate_return(self.ray_coords) is False:		# else ???
+        if self.view.animate_return(self.ray_coords) is False:
             # if column is empty add captured figure to column
             if len(self.board.columns[self.ray_coords['position']].figures) == 0:
                 self.board.columns[self.ray_coords['position']].figures.append(self.player.captured_figure)

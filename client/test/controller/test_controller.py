@@ -122,6 +122,49 @@ class TestController(unittest.TestCase):
         self.assertTrue(mock_view.update_game_screen.called)
     
     def test_capture_animation(self):
+        """
+        execution scenarios:
+        - self.view.animate_return(self.ray_coords): True/False
+        """
+        # set object state
+        mock_view = mock.Mock()
+        mock_player = mock.Mock()
+        mock_player.capture_figure.return_value = figure.Figure()
+        mock_mq = mock.Mock()
+        mock_broker = mock.Mock()
+        test_ctrl = controller.Controller(mock_view, mock_player, mock_mq, mock_broker)
+        test_ctrl.board = board.Board()
+        test_ctrl.ray_coords = {'position': 3}
+        
+        # setup scenario
+        mock_view.animate_return.return_value = False
+        # execute method
+        test_ctrl.capture_animation()
+        # assert expected results
+        self.assertTrue(mock_view.animate_return.called)
+        self.assertTrue(mock_player.capture_figure.called)
+        
+        # setup scenario
+        mock_player = mock.Mock()       # reset mock player
+        test_ctrl.player = mock_player
+        mock_view = mock.Mock()         # reset mock view
+        test_ctrl.view = mock_view
+        mock_view.animate_return.return_value = True
+        # execute method
+        test_ctrl.capture_animation()
+        # assert expected results
+        self.assertTrue(mock_view.animate_return.called)
+        self.assertFalse(mock_player.capture_figure.called)
+    
+    def test_return_animation(self):
+        """
+        execution scenarios:
+        - self.view.animate_return(self.ray_coords): True/False
+        - len(self.board.columns[self.ray_coords['position']].figures) == 0
+        - self.board.columns[self.ray_coords['position']].figures[-1].fits(self.player.captured_figure) == True
+            - self.board.columns[self.ray_coords['position']].figures[-1].empty is True
+
+        """
         # set object state
         mock_view = mock.Mock()
         mock_view.animate_return.return_value = False
@@ -130,16 +173,21 @@ class TestController(unittest.TestCase):
         mock_mq = mock.Mock()
         mock_broker = mock.Mock()
         test_ctrl = controller.Controller(mock_view, mock_player, mock_mq, mock_broker)
-        # mock_board = mock.Mock()
-        # mock_board.columns =
         test_ctrl.board = board.Board()
         test_ctrl.ray_coords = {'position': 3}
-        # execute method
-        test_ctrl.capture_animation()
-        # assert expected results
-        self.assertTrue(mock_view.animate_return.called)
-        self.assertTrue(mock_player.capture_figure.called)
         
+        # setup scenario
+        mock_view.animate_return.return_value = True
+        # execute method
+        test_ctrl.return_animation()
+        # assert expected results (nothing happens)
+        # TODO: actual assertions
+        # setup scenario
+        mock_view.animate_return.return_value = False
+        # execute method
+        test_ctrl.return_animation()
+        # assert expected results
+    
     
 if __name__ == '__main__':
     unittest.main()
