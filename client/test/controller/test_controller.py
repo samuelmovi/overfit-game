@@ -124,6 +124,49 @@ class TestController(unittest.TestCase):
         self.assertTrue(mock_view.update_game_screen.called)
     
     def test_capture_animation(self):
+        """
+        execution scenarios:
+        - self.view.animate_return(self.ray_coords): True/False
+        """
+        # set object state
+        mock_view = mock.Mock()
+        mock_player = mock.Mock()
+        mock_player.capture_figure.return_value = figure.Figure()
+        mock_mq = mock.Mock()
+        mock_broker = mock.Mock()
+        test_ctrl = controller.Controller(mock_view, mock_player, mock_mq, mock_broker)
+        test_ctrl.board = board.Board()
+        test_ctrl.ray_coords = {'position': 3}
+        
+        # setup scenario
+        mock_view.animate_return.return_value = False
+        # execute method
+        test_ctrl.capture_animation()
+        # assert expected results
+        self.assertTrue(mock_view.animate_return.called)
+        self.assertTrue(mock_player.capture_figure.called)
+        
+        # setup scenario
+        mock_player = mock.Mock()       # reset mock player
+        test_ctrl.player = mock_player
+        mock_view = mock.Mock()         # reset mock view
+        test_ctrl.view = mock_view
+        mock_view.animate_return.return_value = True
+        # execute method
+        test_ctrl.capture_animation()
+        # assert expected results
+        self.assertTrue(mock_view.animate_return.called)
+        self.assertFalse(mock_player.capture_figure.called)
+    
+    def test_return_animation(self):
+        """
+        execution scenarios:
+        - self.view.animate_return(self.ray_coords): True/False
+        - len(self.board.columns[self.ray_coords['position']].figures) == 0
+        - self.board.columns[self.ray_coords['position']].figures[-1].fits(self.player.captured_figure) == True
+            - self.board.columns[self.ray_coords['position']].figures[-1].empty is True
+
+        """
         # set object state
         mock_view = mock.Mock()
         mock_view.animate_return.return_value = False
@@ -132,16 +175,97 @@ class TestController(unittest.TestCase):
         mock_mq = mock.Mock()
         mock_broker = mock.Mock()
         test_ctrl = controller.Controller(mock_view, mock_player, mock_mq, mock_broker)
-        # mock_board = mock.Mock()
-        # mock_board.columns =
         test_ctrl.board = board.Board()
         test_ctrl.ray_coords = {'position': 3}
-        # execute method
-        test_ctrl.capture_animation()
-        # assert expected results
-        self.assertTrue(mock_view.animate_return.called)
-        self.assertTrue(mock_player.capture_figure.called)
         
+        # setup scenario
+        mock_view.animate_return.return_value = True
+        # execute method
+        test_ctrl.return_animation()
+        # assert expected results (nothing happens)
+        # TODO: actual assertions
+        # setup scenario
+        mock_view.animate_return.return_value = False
+        # execute method
+        test_ctrl.return_animation()
+        # assert expected results
+    
+    def test_explode_all_targets(self):
+        """
+        execution scenarios:
+        - self.frame < 16
+        """
+        # set object state
+        mock_view = mock.Mock()
+        mock_player = mock.Mock()
+        mock_player.score = 10
+        mock_mq = mock.Mock()
+        mock_broker = mock.Mock()
+        test_ctrl = controller.Controller(mock_view, mock_player, mock_mq, mock_broker)
+        mock_board = mock.Mock()
+        mock_board.eliminate_targets.return_value = 1
+        test_ctrl.board = mock_board
+        
+        # setup scenario
+        test_ctrl.frame = 15
+        # execute method
+        test_ctrl.explode_all_targets()
+        # assert expected results
+        self.assertTrue(mock_view.draw_explosion.called)
+        self.assertEqual(test_ctrl.frame, 16)
+        
+        # setup scenario frame == 16
+        # execute method
+        test_ctrl.explode_all_targets()
+        # assert expected results
+        self.assertTrue(mock_view.draw_explosion.called)
+        self.assertEqual(test_ctrl.frame, 0)
+        self.assertTrue(mock_board.eliminate_targets.called)
+    
+    def test_update_match_state(self):
+        """
+        execution scenarios:
+        - player.steps > 15
+        - self.board.longest_column_count >= 10
+        """
+        # set object state
+        mock_view = mock.Mock()
+        mock_player = mock.Mock()
+        mock_mq = mock.Mock()
+        mock_broker = mock.Mock()
+        test_ctrl = controller.Controller(mock_view, mock_player, mock_mq, mock_broker)
+        
+        mock_board = mock.Mock()
+        test_ctrl.board = mock_board
+        
+        # setup scenario
+        mock_player.steps = 16
+        mock_board.longest_column_count = 10
+        # execute method
+        test_ctrl.update_match_state()
+        # assert expected results
+        self.assertTrue(mock_board.add_row.called)
+        self.assertEqual(mock_player.steps, 0)
+        self.assertEqual(test_ctrl.keyword, 'game_over')
+        self.assertTrue(test_ctrl.draw_again)
+
+        # setup scenario
+        mock_player = mock.Mock()
+        mock_player.steps = 15
+        test_ctrl.player = mock_player
+        mock_board = mock.Mock()
+        mock_board.longest_column_count = 9
+        test_ctrl.board = mock_board
+        test_ctrl.keyword = ''
+        test_ctrl.draw_again = False
+        # execute method
+        test_ctrl.update_match_state()
+        # assert expected results
+        self.assertFalse(mock_board.add_row.called)
+        self.assertNotEqual(mock_player.steps, 0)
+        self.assertNotEqual(test_ctrl.keyword, 'game_over')
+        self.assertFalse(test_ctrl.draw_again)
+    
     
 if __name__ == '__main__':
     unittest.main()
