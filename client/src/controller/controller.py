@@ -353,15 +353,14 @@ class Controller:
         # update board model top display changes
         self.board.update_counts()
         
+        # check for online play
         if self.player.online == 'playing':
             self.check_online_play()
+            self.view.draw_opponent(self.opponent_state)
 
         # paint changes to view
         self.view.update_game_screen(self.player, self.board)
         
-        if self.opponent:
-            self.view.draw_opponent(self.opponent_state)
-    
         # check for capture
         if self.player.status == 'capturing':
             self.capture_animation()
