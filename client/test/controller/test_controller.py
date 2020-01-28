@@ -100,6 +100,8 @@ class TestController(unittest.TestCase):
     
     # EVENT LISTENERS: figure out way to mock pygame.event
     
+    # GAMING METHODS
+    
     def test_game_handler(self):
         # TODO: assert execution of test_ctrl own methods with
         # test for player.status: capturing/returning and all_targets_acquired True
@@ -264,6 +266,49 @@ class TestController(unittest.TestCase):
         self.assertNotEqual(test_ctrl.keyword, 'game_over')
         self.assertFalse(test_ctrl.draw_again)
     
+    # ONLINE METHODS
     
+    def test_find_match(self):
+        """
+        execution scenarios:
+        - opponent None
+            - player.online == 'available'/'ready'
+        - opponent not none
+        """
+        # set object state
+        mock_view = mock.Mock()
+        mock_player = mock.Mock()
+        mock_mq = mock.Mock()
+        mock_broker = mock.Mock()
+        test_ctrl = controller.Controller(mock_view, mock_player, mock_mq, mock_broker)
+        
+        # setup scenario
+        mock_broker.negotiate_match.return_value = None
+        mock_player.online = 'available'
+        # execute method
+        test_ctrl.find_match()
+        # assert expected results
+        self.assertEqual(test_ctrl.txt_msg, 'Waiting for challengers')
+
+        # setup scenario
+        mock_broker.negotiate_match.return_value = None
+        mock_player.online = 'ready'
+        # execute method
+        test_ctrl.find_match()
+        # assert expected results
+        self.assertEqual(test_ctrl.txt_msg, 'Get ready to start')
+
+        # setup scenario
+        mock_broker.negotiate_match.return_value = 'opponent_me'
+        # execute method
+        test_ctrl.find_match()
+        # assert expected results
+        self.assertEqual(test_ctrl.opponent, 'opponent_me')
+        self.assertEqual(mock_player.online, 'playing')
+        self.assertEqual(test_ctrl.keyword, 'game')
+        self.assertTrue(test_ctrl.draw_again)
+        self.assertIsNotNone(test_ctrl.board)
+
+        
 if __name__ == '__main__':
     unittest.main()
