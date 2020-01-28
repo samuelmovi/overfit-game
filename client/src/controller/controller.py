@@ -355,7 +355,8 @@ class Controller:
         
         # check for online play
         if self.player.online == 'playing':
-            self.check_online_play()
+            self.check_on_opponent()
+            self.update_player_stats()
             self.view.draw_opponent(self.opponent_state)
 
         # paint changes to view
@@ -450,12 +451,6 @@ class Controller:
                 self.draw_again = True
             self.txt_msg = text
     
-    def check_online_play(self):
-        self.check_on_opponent()
-        self.update_player_stats()
-        # draw opponents score board
-        # self.view.draw_opponent(self.opponent_state)
-
     def check_on_opponent(self):
         # check for messages from opponent and update info
         message = self.mq.sub_receive_multi()

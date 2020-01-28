@@ -18,12 +18,10 @@ class TestController(unittest.TestCase):
         pass
     
     def test_init(self):
-        # check view, player, FPSCLOCK, mq, broker
+        # check nulls
         self.assertIsNone(controller.Controller.view)
         self.assertIsNone(controller.Controller.player)
         self.assertIsNone(controller.Controller.FPSCLOCK)
-        self.assertIsNone(controller.Controller.mq)
-        self.assertIsNone(controller.Controller.broker)
 
         # set object state
         mock_view = mock.Mock()
@@ -310,7 +308,42 @@ class TestController(unittest.TestCase):
         self.assertEqual(test_ctrl.keyword, 'game')
         self.assertTrue(test_ctrl.draw_again)
         self.assertIsNotNone(test_ctrl.board)
+    
+    def test_check_on_opponent(self):
+        """
+        execution scenarios:
+        - message not None
+            - info['status'] : 'OVER'/'PLAYING'
+                - self.rows_received * 20 < int(self.opponent_state['score'])
+        """
+        # set object state
+        mock_view = mock.Mock()
+        mock_player = mock.Mock()
+        mock_mq = mock.Mock()
+        mock_broker = mock.Mock()
+        test_ctrl = controller.Controller(mock_view, mock_player, mock_mq, mock_broker)
+        
+        # setup scenario
+        mock_mq.sub_receive_multi.return_value = [0, b'{"status": "OVER"}', b'{"score": 1}']
+        # execute method
+        test_ctrl.check_on_opponent()
+        # assert expected results (nothing)
+        self.assertEqual(test_ctrl.keyword, 'victory')
+        self.assertTrue(test_ctrl.draw_again)
 
+        # setup scenario
+        mock_mq.sub_receive_multi.return_value = [0, b'{"status": "PLAYING"}', b'{"score": 25}']
+        mock_board = mock.Mock()
+        test_ctrl.board = mock_board
+        test_ctrl.rows_received = 1
+        # execute method
+        test_ctrl.check_on_opponent()
+        # assert expected results (nothing)
+        self.assertEqual(test_ctrl.keyword, 'victory')
+        self.assertTrue(test_ctrl.draw_again)
+        self.assertTrue(mock_board.add_row.called)
+        self.assertEqual(test_ctrl.rows_received, 2)
+        
         
 if __name__ == '__main__':
     unittest.main()
