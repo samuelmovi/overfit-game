@@ -132,13 +132,13 @@ class Controller:
         if keyword == "start":
             inputs = self.view.draw_start_screen()
         elif keyword == "game":
-            pass    # ???
+            pass    # why??
         elif keyword == "online_setup":
             inputs = self.view.draw_online_options_screen(self.player.name, self.HOST)
-        elif self.keyword == "landing_page":
+        elif keyword == "landing_page":
             match_data = json.loads(self.landing_data[2])
             inputs = self.view.draw_landing_screen(self.HOST, self.player.name, match_data)
-        elif self.keyword == "find_online_match":
+        elif keyword == "find_online_match":
             self.view.draw_wait_screen()
         elif keyword == "settings":
             inputs = self.view.draw_settings_screen(self.player.name, self.HOST)
@@ -146,9 +146,9 @@ class Controller:
             inputs = self.view.confirm_exit()
         elif keyword == "confirm_leave":
             inputs = self.view.confirm_leave_game()
-        elif self.keyword == "game_over":
+        elif keyword == "game_over":
             self.view.draw_game_over()
-        elif self.keyword == "victory":
+        elif keyword == "victory":
             self.view.draw_victory()
 
         self.draw_again = False
