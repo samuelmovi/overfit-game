@@ -2,7 +2,7 @@ import unittest
 import sys
 import os
 sys.path.append(os.path.abspath('../../src/'))
-from model import board
+from model import board, figure, column
 from unittest import mock
 
 
@@ -68,28 +68,41 @@ class TestBoard(unittest.TestCase):
 		self.assertEqual(my_longest, test_board.longest_column_count)
 	
 	# def test_acquire_targets(self):
+	# 	# TODO: fix recursion error
 	# 	# set object state
-	#	test_board = board.Board()
-	#	test_board.setup()
-	#	# SCENARIOS: specific column loads for expected outcome
-	#	test_position = 1	# between 0-6
-	#	test_height = 5
-	# 	# execute method
-	#	test_board.acquire_targers(test_position, test_height)
+	# 	test_board = board.Board()
+	# 	test_board.setup()
+	# 	# clear board's columns
+	# 	for c in test_board.columns:
+	# 		c.figures = []
+	#
+	# 	# SCENARIOS: all figures the same
+	# 	for i in range(5):
+	# 		test_board.columns[i].figures.append(figure.Figure('square'))
+	# 	# execute method, on first column top height
+	# 	result = test_board.acquire_targets(0, 0)
 	# 	# assert expected outcome
-	# 	pass
+	# 	self.assertIsNotNone(result)
+	# 	self.assertEqual(len(result), 5)
 	
 	def test_eliminate_targets(self):
+		# TODO: create extra testing scenarios
 		# set state
 		test_board = board.Board()
 		test_board.setup()
+		for c in test_board.columns:
+			c.figures = []
 		
-		# create test targets
-		test_targets = [(0, 5)]
+		for i in range(3):
+			test_board.columns[0].figures.append(figure.Figure('square'))
+	
+		test_targets = [(0, 2), (0, 1), (0, 0)]
 		# execute method
-		test_score = test_board.eliminate_targets(test_targets)
+		result = test_board.eliminate_targets(test_targets)
 		# assert expected outcome
-		self.assertIsNotNone(test_score)
+		self.assertIsNotNone(result)
+		self.assertEqual(len(test_board.columns[0].figures), 0)
+		self.assertEqual(result, 6)		# 3 squares, each 2 points
 
 
 if __name__ == '__main__':

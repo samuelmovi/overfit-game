@@ -73,7 +73,8 @@ class Board:
 		score = 0
 		for coordinates in target_list:
 			position, height = coordinates
-			print(f'[*] Destroying target [{position} / {height}]:  {self.columns[position].figures[height].value} points')
+			print(f'[*] Destroying target [{position} / {height}]:  ')
+			print(f'\t{self.columns[position].figures[height].value} points')
 			# update score
 			score += self.columns[position].figures[height].value
 			self.columns[position].figures.pop(height)
