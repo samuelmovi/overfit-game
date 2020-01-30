@@ -1,8 +1,6 @@
 import zmq
 import zmq.auth
-from zmq.auth.thread import ThreadAuthenticator
 import os
-import traceback
 import json
 import datetime
 
