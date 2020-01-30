@@ -5,6 +5,8 @@ from model import figure
 
 
 class Column:
+	
+	figures = None
 
 	def __init__(self):
 		self.figures = list()

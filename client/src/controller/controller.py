@@ -33,7 +33,7 @@ class Controller:
     player = None
     
     # gameplay variables
-    explosion_counter = 1
+    # explosion_counter = 1
     rows_received = 1
     ray_coords = {}
     targets = []        # list of figures to be destroyed during gameplay
@@ -498,7 +498,7 @@ class Controller:
         # reset value of game variables
         self.opponent = None
         self.opponent_state = {'id': '', 'name': '', 'status': '', 'score': 0, 'total': 0, 'longest': 0}
-        self.explosion_counter = 1
+        # self.explosion_counter = 1
         self.rows_received = 0
         self.player.reset()
 

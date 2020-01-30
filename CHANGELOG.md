@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - plant the messages returned by mock mq in online broker test
 
 
+## 2020-01-30
+### Changed
+- code improvements on models (board, column)
+- test code for models (board, column)
+
+
 ## 2020-01-25
 ### Added
 - new tests for server.py, complete but not exhaustive
