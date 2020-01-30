@@ -11,43 +11,50 @@ class TestFigure(unittest.TestCase):
 		super(TestFigure, self).__init__(*args, **kwargs)
 
 	def test_init(self):
-		# set object value
 		values = {'ball': 1, 'triangle': 2, 'square': 2, 'triangle-hole': 3, 'square-hole': 3}
 		compatibility = {'ball': None, 'triangle': 'ball', 'square': 'ball', 'triangle-hole': 'triangle',
 							'square-hole': 'square'}
 		
-		# execute method: empty constructor
+		# SCENARIO 1: empty constructor
+		# execute method
 		test_figure = figure.Figure()
+		# assert expected outcome
 		# value of figure correctly initialized
 		self.assertEqual(values[test_figure.shape], test_figure.value)
 		
-		# execute method: loaded constructor
-		for key, value in values.items():
-			test_figure = figure.Figure(key)
-			# value of figure correctly initialized
+		# SCENARIO 2: loaded constructor
+		# set state
+		for figure_type, value in values.items():
+			# execute method
+			test_figure = figure.Figure(figure_type)
+			# assert value of figure correctly initialized
 			self.assertEqual(test_figure.value, value)
 			
-		# execute method
+		# set state
 		for key, value in compatibility.items():
+			# execute method
 			test_figure = figure.Figure(key)
-			# compatibility value correclty initialized
+			# assert compatibility value correctly initialized
 			self.assertEqual(test_figure.compatible, value)
 
 	def test_fits(self):
-		# set context
 		compatibility = {'triangle': 'ball', 'square': 'ball', 'triangle-hole': 'triangle', 'square-hole': 'square'}
 		
-		# execute method
 		for key, value in compatibility.items():
+			# set state
 			test_figure = figure.Figure(key)
+			# execute method
+			result = test_figure.fits(figure.Figure(value))
 			# assert expected outcome
-			self.assertEqual(test_figure.fits(figure.Figure(value)), True)
+			self.assertTrue(result)
 		
-		# execute method
+		# check ball is incompatible with all of them
 		test_figure = figure.Figure('ball')
 		for key, value in compatibility.items():
+			# execute method
+			result = test_figure.fits(figure.Figure(key))
 			# assert expected outcome
-			self.assertEqual(test_figure.fits(figure.Figure(value)), False)
+			self.assertFalse(result)
 
 
 if __name__ == '__main__':
