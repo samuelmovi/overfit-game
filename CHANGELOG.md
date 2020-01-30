@@ -20,8 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 2020-01-30
 ### Changed
-- code improvements on models (board, column)
-- test code for models (board, column)
+- code improvements on models: board, column
+- test code for models: board, column, broker 
 
 
 ## 2020-01-25

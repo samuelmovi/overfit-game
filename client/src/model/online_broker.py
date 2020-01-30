@@ -1,7 +1,5 @@
 import json
-import traceback
 import time
-import timeit
 
 
 # Client message protocol:
@@ -26,8 +24,6 @@ class OnlineBroker:
 	no_challenger = True
 	challenging = False
 	player_stats = {}
-
-	# timer = None
 
 	def __init__(self, player, zmq):
 		print("[broker] Initializing online game broker...")

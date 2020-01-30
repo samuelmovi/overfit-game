@@ -2,102 +2,121 @@ import unittest
 from unittest.mock import Mock
 import sys
 import os
-import json
 
 sys.path.append(os.path.abspath('../../src/'))
 from model import online_broker
 
 
 class TestOnlineBroker(unittest.TestCase):
-	
-	test_broker = None
-	mock_mq = None
-	mock_player = None
-	player_stats = {'id': 'player.ID', 'name': 'Mr. Player', 'status': '', 'score': 0 }
-	mock_opponent = {'sender': 'opponent inbox', 'name': 'Mr. Opponent',  'status': '', 'online': '', 'score': 123, 'total': 231, 'longest': 312}
 
 	def __init__(self, *args, **kwargs):
 		super(TestOnlineBroker, self).__init__(*args, **kwargs)
-		self.mock_mq = Mock()
-		self.mock_mq.connect.return_value = None
-		self.mock_mq.send_message.return_value = True
-
-		self.mock_player = Mock()
-		self.mock_player.online.value = 'XXX'
-		self.mock_player.inbox.value = ''
-		self.mock_player.get_stats.return_value = self.player_stats
-
-		self.test_broker = online_broker.OnlineBroker(self.mock_player, self.mock_mq)
-		self.test_broker.opponent = self.mock_opponent
-	
-	def test_init(self):
-		# check initial state
-		self.assertIsNotNone(self.test_broker.player)
-		self.assertIsNotNone(self.test_broker.mq)
-		self.assertEqual(self.mock_player, self.test_broker.player)
-		self.assertEqual(self.mock_mq, self.test_broker.mq)
-
-	def test_set_player_available(self):
-		
-		# execute method
-		self.test_broker.set_player_available()
-		# assert expected changes
-		self.assertEqual(self.mock_player.online, 'available')
-		# mock and assert execution of landing_page()
-		# assert execution of mq.send with info = {'status': 'AVAILABLE', 'recipient': 'SERVER'}
-	
-	def test_check_for_ready(self):
-		# TODO: create fake messages for mock_mq.receive
-		# null message, execute method
-		# self.test_broker.check_for_ready()
-		# assert player status didn't change and mq.send wasn't triggered
-		# self.assertNotEqual(self.mock_player.online, 'ready')
-		# good message, execute method
-		# self.test_broker.check_for_ready()
-		# assert player status changed to ready and mq.send triggered with correct package
-		# self.assertEqual(self.mock_player.online, 'ready')
 		pass
 	
-	def test_check_for_start(self):
+	def test_init(self):
+		# set state
+		mock_mq = Mock()
+		mock_player = Mock()
+		# execute method
+		test_broker = online_broker.OnlineBroker(mock_player, mock_mq)
+		# check initial state
+		self.assertIsNotNone(test_broker.player)
+		self.assertIsNotNone(test_broker.mq)
+		self.assertEqual(mock_player, test_broker.player)
+		self.assertEqual(mock_mq, test_broker.mq)
+
+	def test_set_player_available(self):
+		# set state
+		mock_mq = Mock()
+		mock_player = Mock()
+		test_broker = online_broker.OnlineBroker(mock_player, mock_mq)
+		# execute method
+		test_broker.set_player_available()
+		# assert expected changes
+		self.assertEqual(mock_player.online, 'available')
+		self.assertTrue(mock_mq.send.called)
+
+	def test_check_for_ready(self):
+		# set state
+		mock_mq = Mock()
+		mock_player = Mock()
+		test_broker = online_broker.OnlineBroker(mock_player, mock_mq)
 		
-		# TODO: plant null message, execute method, test response
-		response = self.test_broker.check_for_start()
-		self.assertIsNone(response)
-		# TODO: plant good message with status START, execute method, test response
-		# response = self.test_broker.check_for_ready()
-		# self.assertNotNone(response)
-		# self.assertTrue(type(response) == str())
+		mock_mq.sub_receive_multi.return_value = [0, b'{"sender": "SERVER", "status": "READY"}', 1]
+		# execute method
+		test_broker.check_for_ready()
+		# assert expected results
+		self.assertEqual(mock_player.online, 'ready')
+		self.assertTrue(mock_mq.send.called)
+	
+	def test_check_for_start(self):
+		# set state
+		mock_mq = Mock()
+		mock_player = Mock()
+		test_broker = online_broker.OnlineBroker(mock_player, mock_mq)
+		
+		# SCENARIO 1: no start
+		mock_mq.sub_receive_multi.return_value = [0, b'{"sender": "SERVER", "status": "qwerwqe"}', 1]
+		# execute method
+		result = test_broker.check_for_start()
+		# assert expected results
+		self.assertIsNone(result)
+		
+		# SCENARIO 2: start
+		mock_mq.sub_receive_multi.return_value = [0, b'{"sender": "OPPONENT_ID", "status": "START"}', 1]
+		# execute method
+		result = test_broker.check_for_start()
+		# assert expected results
+		self.assertIsNotNone(result)
+		self.assertEqual(result, "OPPONENT_ID")
 	
 	def test_negotiate_match(self):
-		# manipulate value of player.online: connected, available, ready
+		# set state
+		mock_mq = Mock()
+		mock_player = Mock()
+		test_broker = online_broker.OnlineBroker(mock_player, mock_mq)
+		
+		# SCENARIOS for player.online: connected, available, ready
 		# connected
-		self.mock_player.online = 'connected'
-		# execute method and test
-		response = self.test_broker.negotiate_match()
+		test_broker.set_player_available = Mock()
+		mock_player.online = 'connected'
+		# execute method
+		response = test_broker.negotiate_match()
+		# assert expected outcome
 		self.assertIsNone(response)
-		# TODO: assert execution of set_player_available
+		self.assertTrue(test_broker.set_player_available.called)
+		
 		# available
-		self.mock_player.online = 'available'
-		# execute method and test
-		response = self.test_broker.negotiate_match()
+		test_broker.check_for_ready = Mock()
+		mock_player.online = 'available'
+		# execute method
+		response = test_broker.negotiate_match()
+		# assert expected outcome
 		self.assertIsNone(response)
-		# TODO: assert execution of check_for_ready
-		# ready, no opponent
-		self.mock_player.online = 'ready'
-		# execute method and test
-		response = self.test_broker.negotiate_match()
-		self.assertIsNone(response)
-		# TODO: assert execution of check_for_start, with null and good results
-	
+		self.assertTrue(test_broker.check_for_ready.called)
+		
+		# ready
+		test_broker.check_for_start = Mock()
+		test_broker.check_for_start.return_value = 1
+		mock_player.online = 'ready'
+		# execute method
+		response = test_broker.negotiate_match()
+		# assert expected outcome
+		self.assertIsNotNone(response)
+		self.assertTrue(test_broker.check_for_start.called)
+
 	def test_quit(self):
-		# execute and test
-		self.test_broker.quit()
-		# TODO: assert message sent
-		# TODO: assert mq.disconnect executed
-		# mq is none
-		self.test_broker.mq = None
-		self.test_broker.quit()
-		# TODO: assert nothing happened
+		# set state
+		mock_mq = Mock()
+		mock_player = Mock()
+		test_broker = online_broker.OnlineBroker(mock_player, mock_mq)
+		
+		# execute method
+		test_broker.quit()
+		
+		# assert expected outcome
+		self.assertTrue(mock_mq.send.called)
+		self.assertTrue(mock_mq.disconnect.called)
 
 
 if __name__ == '__main__':
