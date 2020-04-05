@@ -79,7 +79,8 @@ class ZmqConnector:
 
 	def pull_receive_multi(self):
 		try:
-			message = self.puller.recv_multipart(flags=zmq.DONTWAIT)
+			# message = self.puller.recv_multipart(flags=zmq.DONTWAIT)
+			message = self.puller.recv_multipart()
 			print(f"[zmq] Received :\n\t{datetime.datetime.now()}- {message}")
 			return message
 		except zmq.Again as a:
