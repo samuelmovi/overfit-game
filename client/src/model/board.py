@@ -43,21 +43,22 @@ class Board:
 		# get shape of figure @ coordinates
 		target_shape = self.columns[column_index].figures[height].shape
 		# add compatible adjacent figures to self.targets
+		# from above
 		if (height+1) < self.columns[column_index].occupancy():
 			if self.columns[column_index].figures[height + 1].shape == target_shape:
 				if (column_index, height + 1) not in targets:
 					compatible.append((column_index, height + 1))
-		# on the left
+		# from the left
 		if column_index > 0 and self.columns[column_index - 1].occupancy() >= (height + 1):
 			if self.columns[column_index - 1].figures[height].shape == target_shape:
 				if (column_index - 1, height) not in targets:
 					compatible.append((column_index - 1, height))
-		# on the right
+		# from the right
 		if column_index < 6 and height < self.columns[column_index + 1].occupancy():
 			if self.columns[column_index + 1].figures[height].shape == target_shape:
 				if (column_index + 1, height) not in targets:
 					compatible.append((column_index + 1, height))
-		# on top
+		# from below
 		if height > 0:
 			if self.columns[column_index].figures[height - 1].shape == target_shape:
 				if (column_index, height - 1) not in targets:

@@ -378,17 +378,14 @@ class Controller:
     def return_animation(self):
         # after the ray has finished being drawn
         if self.view.animate_return(self.ray_coords) is False:
-            # if column is empty add captured figure to column
-            if len(self.board.columns[self.ray_coords['position']].figures) == 0:
-                self.board.columns[self.ray_coords['position']].figures.append(self.player.captured_figure)
-            # if bottom figure in column fits captured figure
-            elif self.board.columns[self.ray_coords['position']].figures[-1].fits(self.player.captured_figure):
+            # if bottom figure in column fits returned figure
+            if self.board.columns[self.ray_coords['position']].figures[-1].fits(self.player.captured_figure):
                 # and  bottom figure is empty, fit them
                 if self.board.columns[self.ray_coords['position']].figures[-1].empty is True:
                     self.board.columns[self.ray_coords['position']].figures[-1].value += self.player.captured_figure.value
                     self.board.columns[self.ray_coords['position']].figures[-1].empty = False
                 else:
-                    # if bottom figure is not empty
+                    # if bottom figure is not empty it will explode
                     # list adjacent compatible figures
                     self.targets.clear()
                     self.targets = self.board.acquire_targets(
@@ -401,7 +398,7 @@ class Controller:
                         print('\t> Position: {}\t> Height: {}'.format(target[0], target[1]))
                     self.frame = 0
             else:
-                # if figures don't fit add to column
+                # add figure to column
                 self.board.columns[self.ray_coords['position']].figures.append(self.player.captured_figure)
             self.player.empty()
     
