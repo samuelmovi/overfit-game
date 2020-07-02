@@ -3,10 +3,10 @@ import sys
 import os
 from unittest import mock
 
-sys.path.append(os.path.abspath('../../src/'))
+sys.path.append(os.path.realpath('../src/'))
 from controller import controller
 from model import figure, board
-
+# from ..src.controller import controller
 
 # TODO: find way to patch-in a mock pygame.event
 class TestController(unittest.TestCase):

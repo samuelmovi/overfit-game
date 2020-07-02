@@ -13,10 +13,14 @@ class Player:
 	ID = ''		# random string to id player, requires reboot to change
 
 	def __init__(self):
-		self.position = 3  		# starts in center of 7 columns
+		# set center position
+		self.position = 3 
+		# set emtpy status
 		self.status = 'empty'
+		# create and assign random player ID
 		all_chars = string.ascii_letters + string.digits  # + string.punctuation
 		self.ID = ''.join(random.choice(all_chars) for x in range(10))
+		print(f'[Player] Initialized {self.ID}')
 
 	def move_player(self, direction):
 		if direction is 'left' and self.position > 0:

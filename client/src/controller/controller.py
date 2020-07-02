@@ -169,12 +169,12 @@ class Controller:
                     self.keyword = 'game'
                     self.draw_again = True
                     print('[#] Game START!')
-                    self.board = board.Board()
-                    print('[#] Opponent: {}'.format(self.opponent))
-                    
+                    self.board = board.Board() 
+                    self.board.setup()                
                 elif online_multi_button.rect.collidepoint((mouse_x, mouse_y)):
                     self.keyword = 'online_setup'
                     self.draw_again = True
+                    # print('[#] Opponent: {}'.format(self.opponent))
                 elif settings_button.rect.collidepoint((mouse_x, mouse_y)):
                     self.keyword = 'settings'
                     self.draw_again = True
@@ -530,5 +530,5 @@ class Controller:
         my_view.ray = pygame.image.load(os.path.join(resource_dir, 'ray-short.png'))
     
     
-if __name__ == '__main__':
-    pass
+# if __name__ == '__main__':
+#     pass

@@ -1,7 +1,7 @@
 import unittest
 import sys
 import os
-sys.path.append(os.path.abspath('../../src/'))
+sys.path.append(os.path.abspath('../src/'))
 from view import view
 from controller import controller
 import pygame
@@ -9,15 +9,13 @@ import pygame
 
 class TestView(unittest.TestCase):
     base_dir = os.getcwd()
-    resource_folder = os.path.join(os.getcwd(), 'resources')
+    resource_folder = os.path.join(os.getcwd(), '../resources')
     
     def __init__(self, *args, **kwargs):
         super(TestView, self).__init__(*args, **kwargs)
         pygame.init()
         self.test_view = view.View()
-        self.test_view.base_dir = os.path.join(os.getcwd(), '../../')
         # could use a mock surface object to replace screen
-        pass
 
     def test_init(self):
         # set object state

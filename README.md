@@ -14,7 +14,26 @@ Simply clone the repository to your desired destination.
 git clone git@github.com:samuelmovi/overfit-game.git
 ```
 
+## Tests
+
+To execute the unit tests (from project's folder):
+```bash
+cd server/tests
+python -m unittest discover
+cd ../../
+cd client/tests
+python -m unittest discover
+
+```
+
 ## Usage
+
+To correctly execute the client (from project's folder):
+```bash
+cd client/src/
+python start.py
+```
+
 ### Welcome Screen
 It has three buttons:
 
