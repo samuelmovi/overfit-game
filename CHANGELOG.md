@@ -16,12 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - go to landing page when leaving online game
 - client git tests:
     - plant the messages returned by mock mq in online broker test
-- FIX maximum recursion error in explosion method
 - FIX `AttributeError: 'NoneType' object has no attribute 'send_multipart'` when exiting single player game 
 
 ## 2020-07-12
 ### Fixed
-- Missing slef.board.setup() in controller during game initialization
+- Missing self.board.setup() in controller during game initialization
+- Misshandling of figure explosion
 
 ### Changed
 - Relocated test files

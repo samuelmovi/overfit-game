@@ -72,10 +72,11 @@ class Board:
 
 	def eliminate_targets(self, target_list):
 		score = 0
+		import ipdb; ipdb.set_trace()
 		for coordinates in target_list:
 			position, height = coordinates
 			print(f'[*] Destroying target [{position} / {height}]:  ')
-			print(f'\t{self.columns[position].figures[height].value} points')
+			# print(f'\t{self.columns[position].figures[height].value} points')
 			# update score
 			score += self.columns[position].figures[height].value
 			self.columns[position].figures.pop(height)

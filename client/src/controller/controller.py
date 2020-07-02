@@ -391,12 +391,12 @@ class Controller:
                     self.targets = self.board.acquire_targets(
                         self.player.position,
                         self.board.columns[self.player.position].occupancy() - 1)
-                    self.all_targets_acquired = True
+                    self.all_targets_acquired = True    # so game_handler knows to explode them
                     self.player.score += self.player.captured_figure.value
                     print('[#] All targets acquired: {} [{}]'.format(self.all_targets_acquired, len(self.targets)))
                     for target in self.targets:
                         print('\t> Position: {}\t> Height: {}'.format(target[0], target[1]))
-                    self.frame = 0
+                    self.frame = 0      # required for explosion handling
             else:
                 # add figure to column
                 self.board.columns[self.ray_coords['position']].figures.append(self.player.captured_figure)
@@ -404,13 +404,16 @@ class Controller:
     
     def explode_all_targets(self):
         if self.frame < 16:
+            # continue drawing the explosion
             self.view.draw_explosion(self.targets, self.frame)
             self.frame += 1
         else:
+            # eliminate all exploded figures from board
             # sorting targets by height, to avoid IndexOutOfBoundsError
             self.targets.sort(key=lambda x: x[1], reverse=True)
             self.player.score += self.board.eliminate_targets(self.targets)
             self.frame = 0
+            self.all_targets_acquired = False
     
     def update_match_state(self):
         # add new row to self for every 15 moves
