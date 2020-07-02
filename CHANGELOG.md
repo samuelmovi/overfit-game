@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - go to landing page when leaving online game
 - client git tests:
     - plant the messages returned by mock mq in online broker test
+- cannot change settings
 
 ## 2020-07-12
 ### Fixed
