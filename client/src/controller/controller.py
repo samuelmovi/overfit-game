@@ -486,7 +486,7 @@ class Controller:
     
     def reset_state(self):
         # disconnect zmq handler
-        if self.mq:
+        if self.mq.connected:
             # disconnect from server with QUIT message
             sender = self.player.ID
             info = {'status': 'QUIT', 'recipient': 'SERVER'}

@@ -18,6 +18,7 @@ class ZmqConnector:
 
 	opponent_id = None
 	available_player = 'XXX'
+	connected = False
 	
 	# Client message protocol:
 	#
@@ -45,6 +46,7 @@ class ZmqConnector:
 			self.connect_push()  	# where we send our packets
 			self.connect_sub()  	# where we get our packets
 			self.filter_sub_socket(topic)		# filter subscription to those staring with player ID
+			self.connected = True
 	
 	def send(self, sender, info, payload):
 		message = list()
@@ -131,6 +133,7 @@ class ZmqConnector:
 			if socket is not None:
 				socket.close()
 		self.context.term()
+		self.connected = False
 
 
 if __name__ == '__main__':
