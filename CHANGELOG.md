@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - check that client in available_players aren't expired
 - go to landing page when leaving online game
 
-## 2020-07-12
+## 2020-07-02
 ### Fixed
 - Missing self.board.setup() in controller during game initialization
 - Misshandling of figure explosion
