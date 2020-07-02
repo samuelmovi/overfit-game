@@ -8,14 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - figure out way to spy on test classes
 - allow certs.py to create required folders if non-existing
 - add logic for client trying to connect to non-existent server
-- client changes for new revision:
-    - only send data on state change
-    - manage zmq client auth failing 
 - on successful save of settings data, go to start page
 - check that client in available_players aren't expired
 - go to landing page when leaving online game
-- client git tests:
-    - plant the messages returned by mock mq in online broker test
 - cannot change settings
 
 ## 2020-07-12

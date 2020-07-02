@@ -387,10 +387,12 @@ class View:
 
 		return yes_button, no_button
 
-	def update_game_screen(self, player1, board):
+	def update_game_screen(self, player1, board, opponent_state):
 		self.draw_game_board(player1, board.figure_count, board.longest_column_count)
 		self.draw_figures(board.columns)
 		self.draw_player(player1)
+		if player1.online == 'playing':
+			self.draw_opponent(opponent_state)
 
 
 if __name__ == '__main__':

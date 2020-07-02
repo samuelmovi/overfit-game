@@ -44,7 +44,7 @@ class Controller:
     HOST = '127.0.0.1'
     landing_data = None     # hold match data sent by server for display on landing page
     match_state = {'id': '', 'name': '', 'status': '', 'score': 0, 'total': 0, 'longest': 0}
-    opponent_state = {'id': '', 'name': '', 'status': '', 'score': 0, 'total': 0, 'longest': 0}
+    opponent_state = {'id': 'XXX', 'name': 'XXX', 'status': '', 'score': 0, 'total': 0, 'longest': 0}
     opponent = None      # id of opponent
     
     def __init__(self, view, player, mq, broker):
@@ -318,7 +318,7 @@ class Controller:
                     self.keyword = "start"
                     self.draw_again = True
                 elif no_button.rect.collidepoint((mouse_x, mouse_y)):
-                    self.keyword = "game"
+                    self.keyword = "game"       # redundant??
                     self.draw_again = True
     
     def game_over_listener(self):
@@ -355,10 +355,9 @@ class Controller:
         if self.player.online == 'playing':
             self.check_on_opponent()
             self.update_player_stats()
-            self.view.draw_opponent(self.opponent_state)
 
         # paint changes to view
-        self.view.update_game_screen(self.player, self.board)
+        self.view.update_game_screen(self.player, self.board, self.opponent_state)
         
         # check for capture
         if self.player.status == 'capturing':
@@ -438,6 +437,7 @@ class Controller:
             print('[#] Game START!')
             print(f'[#] Opponent: {self.opponent}')
             self.board = board.Board()
+            self.board.setup()
         else:
             text = "waiting message goes here"
             # set text for wait-screen
