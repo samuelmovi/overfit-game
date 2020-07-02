@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - client git tests:
     - plant the messages returned by mock mq in online broker test
 - FIX maximum recursion error in explosion method
+- FIX `AttributeError: 'NoneType' object has no attribute 'send_multipart'` when exiting single player game 
 
 ## 2020-07-12
 ### Fixed

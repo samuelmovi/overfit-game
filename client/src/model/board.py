@@ -4,7 +4,7 @@ from model import figure
 
 class Board:
 	columns = []		# list of column objects
-	# targets = []		# list of tuples of target coordinates (position, height)
+	targets = []		# global list of tuples of target coordinates (position, height)
 	# explosion_counter = 1
 	longest_column_count = 0
 	figure_count = 0
@@ -38,7 +38,7 @@ class Board:
 		self.longest_column_count = longest
 
 	def acquire_targets(self, column_index, height):
-		targets = []
+		# targets = []
 		compatible = [(column_index, height)]
 		# get shape of figure @ coordinates
 		target_shape = self.columns[column_index].figures[height].shape
@@ -46,29 +46,29 @@ class Board:
 		# from above
 		if (height+1) < self.columns[column_index].occupancy():
 			if self.columns[column_index].figures[height + 1].shape == target_shape:
-				if (column_index, height + 1) not in targets:
+				if (column_index, height + 1) not in self.targets:
 					compatible.append((column_index, height + 1))
 		# from the left
 		if column_index > 0 and self.columns[column_index - 1].occupancy() >= (height + 1):
 			if self.columns[column_index - 1].figures[height].shape == target_shape:
-				if (column_index - 1, height) not in targets:
+				if (column_index - 1, height) not in self.targets:
 					compatible.append((column_index - 1, height))
 		# from the right
 		if column_index < 6 and height < self.columns[column_index + 1].occupancy():
 			if self.columns[column_index + 1].figures[height].shape == target_shape:
-				if (column_index + 1, height) not in targets:
+				if (column_index + 1, height) not in self.targets:
 					compatible.append((column_index + 1, height))
 		# from below
 		if height > 0:
 			if self.columns[column_index].figures[height - 1].shape == target_shape:
-				if (column_index, height - 1) not in targets:
+				if (column_index, height - 1) not in self.targets:
 					compatible.append((column_index, height - 1))
 		# check the list and add if missing, to avoid errors
 		for target in compatible:
-			if target not in targets:
-				targets.append(target)
+			if target not in self.targets:
+				self.targets.append(target)
 				self.acquire_targets(target[0], target[1])
-		return targets
+		return self.targets
 
 	def eliminate_targets(self, target_list):
 		score = 0
