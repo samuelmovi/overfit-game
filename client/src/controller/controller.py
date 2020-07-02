@@ -285,6 +285,10 @@ class Controller:
                     self.player.name = input_boxes[1].text
                     print("[#] Data updated\n\t> Host: {}\n\t> Player Name: {}"
                           .format(input_boxes[0].text, input_boxes[1].text))
+                    # go back to main window
+                    pygame.event.clear()
+                    self.keyword = "start"
+                    self.draw_again = True
             for instance in input_boxes:
                 instance.handle_event(event)
         self.view.refresh_input(input_boxes)

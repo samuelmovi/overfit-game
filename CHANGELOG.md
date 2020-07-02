@@ -8,10 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - figure out way to spy on test classes
 - allow certs.py to create required folders if non-existing
 - add logic for client trying to connect to non-existent server
-- on successful save of settings data, go to start page
 - check that client in available_players aren't expired
 - go to landing page when leaving online game
-- cannot change settings
 
 ## 2020-07-12
 ### Fixed
@@ -19,9 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Misshandling of figure explosion
 - Controller.reset_state now checking newly created variable self.mq.connected to avoid errors exiting single player games
 
-
 ### Changed
 - Relocated test files
+- on successful save of settings data, go to start page
 
 
 ## 2020-01-30
